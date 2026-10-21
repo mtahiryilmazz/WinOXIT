@@ -17,6 +17,7 @@ namespace WinoxIT
         private static readonly HttpClient _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
         private Process? _serverProcess = null;
         private bool _isInitialized = false;
+        private bool _isDarkMode = true;
 
         public MainWindow()
         {
@@ -36,6 +37,55 @@ namespace WinoxIT
             await LoadSystemSpecsAsync();
             await CheckServerStatusAsync();
             PopulateLanAddresses();
+        }
+
+        private void BtnThemeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            _isDarkMode = !_isDarkMode;
+            ApplyTheme(_isDarkMode);
+        }
+
+        private void ApplyTheme(bool isDark)
+        {
+            var appRes = Application.Current.Resources;
+            if (isDark)
+            {
+                // Dark Palette
+                appRes["BrushBgWindow"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x18, 0x18, 0x18));
+                appRes["BrushBgSidebar"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x1F, 0x1F, 0x1F));
+                appRes["BrushBgCard"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x25, 0x25, 0x25));
+                appRes["BrushBgCardHover"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2C, 0x2C, 0x2C));
+                appRes["BrushBorder"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x33, 0x33, 0x33));
+                appRes["BrushTextPrimary"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF));
+                appRes["BrushTextSecondary"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xA0, 0xA0, 0xA0));
+                appRes["BrushTextMuted"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x70, 0x70, 0x70));
+                appRes["BrushButtonBg"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2A, 0x2A, 0x2A));
+                appRes["BrushButtonBgHover"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x33, 0x33, 0x33));
+                appRes["BrushButtonBorder"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x3D, 0x3D, 0x3D));
+                appRes["BrushAccent"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x00, 0xD2, 0xFF));
+
+                BtnThemeToggle.Content = "🌙 Koyu Tema";
+                Log("Arayüz Koyu Temaya geçirildi.");
+            }
+            else
+            {
+                // Light Palette
+                appRes["BrushBgWindow"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xF3, 0xF4, 0xF6));
+                appRes["BrushBgSidebar"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xE9, 0xEC, 0xF0));
+                appRes["BrushBgCard"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF));
+                appRes["BrushBgCardHover"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFA, 0xFA, 0xFA));
+                appRes["BrushBorder"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xD5, 0xD9, 0xE0));
+                appRes["BrushTextPrimary"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x11, 0x18, 0x27));
+                appRes["BrushTextSecondary"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x4B, 0x55, 0x63));
+                appRes["BrushTextMuted"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x9C, 0xA3, 0xAF));
+                appRes["BrushButtonBg"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xEA, 0xEE, 0xF4));
+                appRes["BrushButtonBgHover"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xDF, 0xE4, 0xED));
+                appRes["BrushButtonBorder"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xCF, 0xD5, 0xE1));
+                appRes["BrushAccent"] = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x00, 0x78, 0xD4));
+
+                BtnThemeToggle.Content = "☀️ Açık Tema";
+                Log("Arayüz Açık Temaya geçirildi.");
+            }
         }
 
         private void Log(string message)
