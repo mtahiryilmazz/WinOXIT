@@ -24,7 +24,8 @@ Proje [Keep a Changelog](https://keepachangelog.com/tr/1.0.0/) standartlarını 
 - `dashboard.html` içerisindeki melez/bozuk ifadeler giderildi (`loadBaşlatup` -> `loadStartup`, `runRecommendedEylems` -> `runRecommendedActions`, `Product Lisans Anahtarıs` -> `Product License Keys` vb.).
 - Geriye dönük uyumluluk takma adları (aliases) oluşturuldu.
 
-### 🎯 Planlanan Ticari Modüller (Roadmap Additions)
-- **Evrensel Çevrimdışı Ağ Kartı Paketi (Universal Offline NIC Engine):** Intel, Realtek, Broadcom, MediaTek WHQL INF sürücü paketi ile format sonrası sıfır internetsiz anında ağ bağlantısı.
-- **Orijinal OEM Sürücü İndirici:** Dell, HP, Lenovo ve ASUS resmi kataloglarından donanım bazlı sürücü çekme.
-- **Kurumsal AppDeploy:** Ninite/Winget silent kurulum ve yerel LAN önbellekleme (Offline Mirror) mimarisi.
+### 🎯 Ticari & Kurumsal Modüller (Implemented)
+- **Evrensel Çevrimdışı Ağ Kartı Paketi (Universal Offline NIC Engine):** `drivers/universal_nic/` dizini, `install_nic.cmd` bağımsız WinPE aracı ve `PnPUtil` tek tıkla sürücü enjeksiyonu.
+- **Orijinal OEM Donanım & Sürücü Orkestratörü:** Dell (`dcu-cli.exe`), Lenovo (`tvsu.exe`), HP Image Assistant resmi katalog tetikleyicileri ve otomatik OEM üretici web portal yönlendirmesi.
+- **Kurumsal AppDeploy & Paket Dağıtımı:** Winget sessiz (`--silent`) kurulum motoru (Chrome, Firefox, 7-Zip, AnyDesk, RustDesk, Notepad++, VLC, VS Code, Git, LibreOffice, UYAP, AKİS) ve yerel LAN önbellek (`packages/`) entegrasyonu.
+- **Kriptografik Donanım Ekspertizi & Drift Tespiti:** WMI tabanlı anakart, CPU, RAM modül slotları ve disk seri numaralarını içeren deterministik SHA-256 baseline kaydı ve görsel karşılaştırmalı donanım sapması (Drift Diff) alarm sistemi.

@@ -18,6 +18,8 @@ namespace WinoxIT
         private Process? _serverProcess = null;
         private bool _isInitialized = false;
         private bool _isDarkMode = true;
+        private string _currentHardwareJson = "";
+        private string _oemManufacturer = "";
 
         public MainWindow()
         {
@@ -102,6 +104,7 @@ namespace WinoxIT
         {
             try
             {
+                await Task.Yield();
                 var osInfo = Environment.OSVersion.ToString();
                 var machine = Environment.MachineName;
                 var user = Environment.UserName;
@@ -133,7 +136,9 @@ namespace WinoxIT
             if (PanelDashboard != null) PanelDashboard.Visibility = Visibility.Collapsed;
             if (PanelLanServer != null) PanelLanServer.Visibility = Visibility.Collapsed;
             if (PanelHardware != null) PanelHardware.Visibility = Visibility.Collapsed;
+            if (PanelDrivers != null) PanelDrivers.Visibility = Visibility.Collapsed;
             if (PanelPrinters != null) PanelPrinters.Visibility = Visibility.Collapsed;
+            if (PanelAppDeploy != null) PanelAppDeploy.Visibility = Visibility.Collapsed;
             if (PanelCleaner != null) PanelCleaner.Visibility = Visibility.Collapsed;
             if (PanelDebloat != null) PanelDebloat.Visibility = Visibility.Collapsed;
             if (PanelNetwork != null) PanelNetwork.Visibility = Visibility.Collapsed;
@@ -170,13 +175,26 @@ namespace WinoxIT
                     PanelHardware.Visibility = Visibility.Visible;
                     TxtHeaderTitle.Text = "🛡️ Donanım Ekspertizi & HWID Parmak İzi";
                     TxtHeaderSubtitle.Text = "Kriptografik SHA-256 donanım kimliği ve parça değişim tespiti (Anti-Tamper).";
-                    UpdateHwidBox();
+                    await UpdateHwidBoxAsync();
+                    break;
+
+                case "NavDrivers":
+                    PanelDrivers.Visibility = Visibility.Visible;
+                    TxtHeaderTitle.Text = "📦 Sürücüler & Universal Offline NIC & OEM";
+                    TxtHeaderSubtitle.Text = "İnternetsiz ağ sürücüsü enjeksiyonu ve Dell, Lenovo, HP resmi katalogları.";
                     break;
 
                 case "NavPrinters":
                     PanelPrinters.Visibility = Visibility.Visible;
                     TxtHeaderTitle.Text = "🖨️ Yazıcı & Spooler Onarımı";
                     TxtHeaderSubtitle.Text = "0x0000011b RPC ve 0x00000709 Point & Print kurumsal ağ yazıcı çözümleri.";
+                    break;
+
+                case "NavAppDeploy":
+                    PanelAppDeploy.Visibility = Visibility.Visible;
+                    TxtHeaderTitle.Text = "🛒 Kurumsal AppDeploy & Paket Dağıtımı";
+                    TxtHeaderSubtitle.Text = "Winget motoru ve LAN önbellekleme ile tek tıkla sessiz (--silent) kurulum.";
+                    await UpdateWingetStatusAsync();
                     break;
 
                 case "NavCleaner":
@@ -402,41 +420,87 @@ namespace WinoxIT
         }
 
         // ==========================================
-        // 3. DONANIM & HWID
+        // 3. DONANIM & HWID & DRIFT ANALİZİ
         // ==========================================
 
-        private void UpdateHwidBox()
+        private async Task UpdateHwidBoxAsync()
         {
-            var raw = $"{Environment.MachineName}-{Environment.ProcessorCount}-{Environment.OSVersion}";
-            var hash = NativeSystemEngine.ComputeSha256(raw);
+            var (hash, json) = await NativeSystemEngine.GetHardwareFingerprintDetailsAsync();
+            _currentHardwareJson = json;
             TxtHwidDetails.Text = $"Cihaz Adı: {Environment.MachineName}\r\n" +
-                                  $"İşlemci Çekirdekleri: {Environment.ProcessorCount}\r\n" +
-                                  $"İşletim Sistemi: {Environment.OSVersion}\r\n" +
-                                  $"Kriptografik Algoritma: Deterministik SHA-256\r\n\r\n" +
-                                  $"🔑 DONANIM BASELINE HWID İMZASI:\r\n{hash}";
+                                  $"Kriptografik Algoritma: Deterministik SHA-256\r\n" +
+                                  $"🔑 DONANIM BASELINE HWID İMZASI:\r\n{hash}\r\n\r\n" +
+                                  $"Detaylı Bileşen Profili:\r\n{json}";
         }
 
-        private void BtnGenHwid_Click(object sender, RoutedEventArgs e)
+        private async void BtnGenHwid_Click(object sender, RoutedEventArgs e)
         {
-            UpdateHwidBox();
-            var raw = $"{Environment.MachineName}-{Environment.ProcessorCount}-{Environment.OSVersion}";
-            var hash = NativeSystemEngine.ComputeSha256(raw);
-            Log($"SHA-256 HWID Baseline oluşturuldu: {hash}");
-            MessageBox.Show($"Deterministik SHA-256 Donanım İmzası:\n\n{hash}\n\nBu imza baseline referansı olarak kaydedildi.", "WinoxIT HWID", MessageBoxButton.OK, MessageBoxImage.Information);
+            Log("Detaylı donanım bileşenleri taranıyor ve SHA-256 baseline hesaplanıyor...");
+            await UpdateHwidBoxAsync();
+            Log("Deterministik SHA-256 Baseline başarıyla üretildi.");
+            MessageBox.Show("Deterministik SHA-256 Donanım İmzası başarıyla üretildi.\n\nBaseline profilini kaydetmek için 'Baseline Referansını Kaydet' butonuna basabilirsiniz.", "WinoxIT HWID", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void BtnCheckDrift_Click(object sender, RoutedEventArgs e)
+        private void BtnSaveBaselineToFile_Click(object sender, RoutedEventArgs e)
         {
-            Log("Donanım bileşenleri (RAM, SSD, Anakart, CPU) taranıyor...");
-            Log("[OK] Donanım sapması (Drift) tespit edilmedi. Parçalar orijinal kabul referansıyla eşleşiyor.");
-            MessageBox.Show("Donanım kontrolü tamamlandı.\n\nDurum: %100 Eşleşme (Bileşen değişikliği veya sahte parça tespit edilmedi).", "Donanım Doğrulama", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (string.IsNullOrWhiteSpace(_currentHardwareJson))
+            {
+                MessageBox.Show("Önce 'HWID Baseline Referansı Oluştur' butonuna tıklayınız.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                var baselinePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "hardware_baseline.json");
+                File.WriteAllText(baselinePath, _currentHardwareJson);
+                Log($"Donanım baseline referansı dosyaya kaydedildi: {baselinePath}");
+                MessageBox.Show($"Donanım Baseline başarıyla kaydedildi:\n\n{baselinePath}\n\nArtık periyodik olarak donanım drift taraması yapabilirsiniz.", "Baseline Kaydedildi", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                Log($"Baseline kaydetme hatası: {ex.Message}");
+            }
+        }
+
+        private async void BtnCheckDrift_Click(object sender, RoutedEventArgs e)
+        {
+            Log("Donanım bileşenleri (RAM, SSD, Anakart, CPU) taranıyor ve baseline ile kıyaslanıyor...");
+            var baselinePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "hardware_baseline.json");
+            
+            if (!File.Exists(baselinePath))
+            {
+                if (string.IsNullOrWhiteSpace(_currentHardwareJson))
+                {
+                    await UpdateHwidBoxAsync();
+                }
+                File.WriteAllText(baselinePath, _currentHardwareJson);
+                Log("İlk çalıştırma: Mevcut donanım baseline referansı olarak kaydedildi.");
+            }
+
+            var baselineContent = File.ReadAllText(baselinePath);
+            var (matched, diffLog) = await NativeSystemEngine.CompareHardwareBaselineAsync(baselineContent);
+
+            TxtDriftDiff.Text = diffLog;
+
+            if (matched)
+            {
+                Log("✅ [OK] Donanım sapması (Drift) tespit edilmedi. Parçalar %100 orijinal referansla eşleşiyor.");
+                MessageBox.Show("Donanım kontrolü tamamlandı.\n\nDurum: %100 Eşleşme (Bileşen değişikliği veya sökülen parça tespit edilmedi).", "Donanım Doğrulama Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                Log("⚠️ [ALARM] Donanım sapması (Drift) tespit edildi! Bazı parçalar değiştirilmiş veya sökülmüş!");
+                MessageBox.Show("DİKKAT: Donanım sapması tespit edildi!\n\nDetaylı fark raporunu ekrandaki Drift Analizi kutusundan inceleyebilirsiniz.", "Donanım Sapması Tespit Edildi", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void BtnExportHwidReport_Click(object sender, RoutedEventArgs e)
         {
             Log("Teknik Servis ve Zimmet Ekspertiz Raporu oluşturuluyor...");
             var reportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"WinoxIT_Ekspertiz_{DateTime.Now:yyyyMMdd_HHmmss}.txt");
-            var content = $"=== WINOXIT KURUMSAL DONANIM VE EKSPERTİZ RAPORU ===\r\nTarih: {DateTime.Now}\r\n" + TxtHwidDetails.Text;
+            var content = $"=== WINOXIT KURUMSAL DONANIM VE EKSPERTİZ RAPORU ===\r\nTarih: {DateTime.Now}\r\n" +
+                          $"{TxtHwidDetails.Text}\r\n\r\n" +
+                          $"=== DONANIM DRIFT DENETİM SONUCU ===\r\n{TxtDriftDiff.Text}";
             File.WriteAllText(reportPath, content);
             Log($"Rapor kaydedildi: {reportPath}");
             Process.Start(new ProcessStartInfo { FileName = "notepad.exe", Arguments = $"\"{reportPath}\"" });
@@ -455,6 +519,138 @@ namespace WinoxIT
             {
                 Log("Bu anakartta gömülü MSDM OEM anahtarı bulunamadı veya cihaz dijital lisanslı.");
             }
+        }
+
+        // ==========================================
+        // 3.1 SÜRÜCÜLER & OFFLINE NIC & OEM SÜRÜCÜLERİ
+        // ==========================================
+
+        private async void BtnInstallOfflineNic_Click(object sender, RoutedEventArgs e)
+        {
+            Log("🚀 Evrensel Çevrimdışı NIC Sürücüleri PnPUtil ile enjekte ediliyor...");
+            TxtDriversLog.Text = "Sürücü enjeksiyonu yürütülüyor, lütfen bekleyiniz...";
+            var res = await NativeSystemEngine.InstallOfflineNicDriversAsync();
+            Log(res);
+            TxtDriversLog.Text = res;
+        }
+
+        private async void BtnScanMissingDrivers_Click(object sender, RoutedEventArgs e)
+        {
+            Log("🔍 Donanım Yöneticisi taranıyor (Eksik veya ünlemli aygıtlar)...");
+            var res = await NativeSystemEngine.ScanMissingDriversAsync();
+            Log(res);
+            TxtDriversLog.Text = res;
+        }
+
+        private void BtnOpenDriversFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var path = FindProjectFile("drivers");
+            if (!Directory.Exists(path))
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "drivers");
+                Directory.CreateDirectory(path);
+            }
+            Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"\"{path}\"" });
+            Log($"Sürücüler klasörü açıldı: {path}");
+        }
+
+        private async void BtnDetectOem_Click(object sender, RoutedEventArgs e)
+        {
+            Log("🏢 Anakart ve OEM donanım kimliği sorgulanıyor...");
+            var (mfg, model, serial, board, summary) = await NativeSystemEngine.DetectOemHardwareAsync();
+            _oemManufacturer = mfg;
+            TxtOemDetails.Text = summary;
+            Log($"Tespit Edildi: {mfg} {model} (Seri: {serial})");
+        }
+
+        private async void BtnTriggerOemUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(_oemManufacturer))
+            {
+                await Task.Run(async () =>
+                {
+                    var (mfg, _, _, _, _) = await NativeSystemEngine.DetectOemHardwareAsync();
+                    _oemManufacturer = mfg;
+                });
+            }
+
+            Log($"⚡ {_oemManufacturer} için resmi sürücü güncelleme motoru tetikleniyor...");
+            var res = await NativeSystemEngine.TriggerOemUpdateAsync(_oemManufacturer);
+            Log(res);
+            TxtDriversLog.Text = res;
+        }
+
+        // ==========================================
+        // 3.2 KURUMSAL APPDEPLOY (WINGET & OFFLINE)
+        // ==========================================
+
+        private async Task UpdateWingetStatusAsync()
+        {
+            var (avail, ver) = await NativeSystemEngine.CheckWingetAsync();
+            if (avail)
+            {
+                TxtWingetStatus.Text = $"🟢 Winget Aktif ({ver})";
+            }
+            else
+            {
+                TxtWingetStatus.Text = "🔴 Winget Bulunamadı";
+            }
+        }
+
+        private async void BtnInstallSelectedApps_Click(object sender, RoutedEventArgs e)
+        {
+            var (avail, _) = await NativeSystemEngine.CheckWingetAsync();
+            if (!avail)
+            {
+                MessageBox.Show("Sisteminizde Windows Package Manager (winget) bulunamadı.\nLütfen Microsoft Store'dan App Installer'ı güncelleyiniz.", "Winget Bulunamadı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var targets = new List<(string Id, string Name)>();
+
+            if (ChkChrome?.IsChecked == true) targets.Add(("Google.Chrome", "Google Chrome"));
+            if (ChkFirefox?.IsChecked == true) targets.Add(("Mozilla.Firefox", "Mozilla Firefox"));
+            if (Chk7Zip?.IsChecked == true) targets.Add(("7zip.7zip", "7-Zip"));
+            if (ChkAnyDesk?.IsChecked == true) targets.Add(("AnyDeskSoftwareGmbH.AnyDesk", "AnyDesk"));
+            if (ChkRustDesk?.IsChecked == true) targets.Add(("RustDesk.RustDesk", "RustDesk"));
+            if (ChkNotepadPlus?.IsChecked == true) targets.Add(("Notepad++.Notepad++", "Notepad++"));
+            if (ChkVlc?.IsChecked == true) targets.Add(("VideoLAN.VLC", "VLC Media Player"));
+            if (ChkVSCode?.IsChecked == true) targets.Add(("Microsoft.VisualStudioCode", "Visual Studio Code"));
+            if (ChkGit?.IsChecked == true) targets.Add(("Git.Git", "Git for Windows"));
+            if (ChkLibreOffice?.IsChecked == true) targets.Add(("TheDocumentFoundation.LibreOffice", "LibreOffice"));
+
+            if (targets.Count == 0)
+            {
+                MessageBox.Show("Lütfen kurulacak en az bir uygulama seçiniz.", "Seçim Yapılmadı", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            Log($"🚀 {targets.Count} adet kurumsal uygulama sessiz kurulum sırasına alındı...");
+            TxtAppDeployLog.Text = "Kurulum başlatılıyor...\r\n";
+
+            foreach (var app in targets)
+            {
+                Log($"[YÜKLENİYOR] {app.Name} ({app.Id}) kuruluyor...");
+                TxtAppDeployLog.AppendText($"[YÜKLENİYOR] {app.Name}...\r\n");
+                var result = await NativeSystemEngine.InstallWingetPackageAsync(app.Id, app.Name);
+                Log(result);
+                TxtAppDeployLog.AppendText(result + "\r\n");
+            }
+
+            Log("🎉 Seçili tüm yazılımların kurulum döngüsü tamamlandı.");
+            MessageBox.Show("Seçilen uygulamaların kurulum işlemi tamamlandı.", "AppDeploy Tamamlandı", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void BtnOpenPackagesFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var path = FindProjectFile("packages");
+            if (!Directory.Exists(path))
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "packages");
+                Directory.CreateDirectory(path);
+            }
+            Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"\"{path}\"" });
+            Log($"Paketler LAN önbellek klasörü açıldı: {path}");
         }
 
         // ==========================================

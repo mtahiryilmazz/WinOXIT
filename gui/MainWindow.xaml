@@ -57,7 +57,11 @@
 
                         <TextBlock Text="DONANIM &amp; EKSPERTİZ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="20,16,20,4"/>
                         <RadioButton x:Name="NavHardware" Content="🛡️  Donanım Ekspertizi &amp; HWID" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavDrivers" Content="📦  Sürücüler &amp; Offline NIC" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
                         <RadioButton x:Name="NavPrinters" Content="🖨️  Yazıcı &amp; Spooler Onarımı" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+
+                        <TextBlock Text="YAZILIM &amp; DAĞITIM" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="20,16,20,4"/>
+                        <RadioButton x:Name="NavAppDeploy" Content="🛒  Kurumsal AppDeploy (Winget)" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
 
                         <TextBlock Text="SİSTEM ONARIMI &amp; GİZLİLİK" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="20,16,20,4"/>
                         <RadioButton x:Name="NavCleaner" Content="🧹  Sistem Temizliği &amp; Cache" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
@@ -249,15 +253,140 @@
 
                                 <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
                                     <Button Content="🛡️ HWID Baseline Referansı Oluştur" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnGenHwid_Click"/>
+                                    <Button Content="💾 Baseline Referansını Kaydet" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnSaveBaselineToFile_Click"/>
                                     <Button Content="🔍 Parça Değişim / Drift Taraması Yap" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnCheckDrift_Click"/>
                                     <Button Content="📄 Ekspertiz / Zimmet Raporu Çıkar" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnExportHwidReport_Click"/>
                                     <Button Content="🔑 Anakart OEM Windows Lisansını Oku" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnReadOemKey_Click"/>
                                 </WrapPanel>
 
-                                <TextBlock Text="Donanım Kimlik Bilgileri ve SHA-256 İmzası:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
-                                <TextBox x:Name="TxtHwidDetails" Height="150" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                        <TextBlock Text="Mevcut Donanım Parmak İzi (SHA-256):" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                        <TextBox x:Name="TxtHwidDetails" Height="170" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
+                                                 BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
+                                                 FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="Donanım Sapması (Drift Diff) Analizi:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                        <TextBox x:Name="TxtDriftDiff" Height="170" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushAccent}" 
+                                                 BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
+                                                 FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"
+                                                 Text="Henüz drift analizi çalıştırılmadı. 'Parça Değişim / Drift Taraması Yap' butonuna tıklayınız."/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+
+                    <!-- 3.1 VIEW: SÜRÜCÜLER & OFFLINE NIC & OEM SÜRÜCÜ ORKESTRATÖRÜ -->
+                    <StackPanel x:Name="PanelDrivers" Visibility="Collapsed">
+                        <!-- Universal NIC Card -->
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="🌐 Gömülü Evrensel Çevrimdışı Ağ Kartı Sürücü Enjektörü (Universal Offline NIC)" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                <TextBlock Text="Format sonrası internet bağlantısı olmayan bilgisayarlara Intel, Realtek, Broadcom, MediaTek WHQL Ethernet ve Wi-Fi sürücülerini 5 saniyede internetsiz enjekte eder." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <Button x:Name="BtnInstallOfflineNic" Content="🚀 Universal NIC Sürücülerini Enjekte Et" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnInstallOfflineNic_Click"/>
+                                    <Button x:Name="BtnScanMissingDrivers" Content="🔍 Eksik / Hatalı Sürücüleri Tara" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnScanMissingDrivers_Click"/>
+                                    <Button x:Name="BtnOpenDriversFolder" Content="📂 Sürücü Klasörünü Aç (drivers/)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnOpenDriversFolder_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- OEM Hardware & Driver Card -->
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="🏢 OEM Donanım / Anakart Tespiti &amp; Orijinal Sürücü İndirici" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                <TextBlock Text="Dell Command Update (dcu-cli), Lenovo System Update / ThinInstaller ve HP Image Assistant resmi kataloglarından temiz sürücü çeker." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <Button x:Name="BtnDetectOem" Content="🔍 Anakart &amp; OEM Modelini Tara" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDetectOem_Click"/>
+                                    <Button x:Name="BtnTriggerOemUpdate" Content="⚡ Üretici Resmi Sürücü Motorunu Tetikle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnTriggerOemUpdate_Click"/>
+                                </WrapPanel>
+
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                        <TextBlock Text="Tespit Edilen OEM / Anakart Profili:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                        <TextBox x:Name="TxtOemDetails" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushAccentGreen}" 
+                                                 BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
+                                                 FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                                                 Text="Henüz tarama yapılmadı. 'Anakart &amp; OEM Modelini Tara' butonuna tıklayınız."/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="Sürücü Operasyon Günlüğü:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                        <TextBox x:Name="TxtDriversLog" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
+                                                 BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
+                                                 FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+
+                    <!-- 3.2 VIEW: KURUMSAL APPDEPLOY (WINGET & OFFLINE MIRROR) -->
+                    <StackPanel x:Name="PanelAppDeploy" Visibility="Collapsed">
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="🛒 Kurumsal AppDeploy — Sessiz &amp; Katılımsız Yazılım Dağıtımı" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,4"/>
+                                        <TextBlock Text="Winget ve yerel LAN önbellekleme (Offline Mirror) ile tek tıkla reklamsız, parametresiz sessiz (--silent) kurulum." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" Style="{StaticResource FluentBadge}" VerticalAlignment="Center">
+                                        <TextBlock x:Name="TxtWingetStatus" Text="Winget Kontrol Ediliyor..." FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource BrushAccent}"/>
+                                    </Border>
+                                </Grid>
+
+                                <Separator Background="{DynamicResource BrushBorder}" Margin="0,0,0,12"/>
+
+                                <TextBlock Text="🏢 Standart Kurumsal Paketler (Tek Tıkla Katılımsız Kurulum):" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <CheckBox x:Name="ChkChrome" Content="Google Chrome" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkFirefox" Content="Mozilla Firefox" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="Chk7Zip" Content="7-Zip" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkAnyDesk" Content="AnyDesk" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkRustDesk" Content="RustDesk" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkNotepadPlus" Content="Notepad++" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkVlc" Content="VLC Media Player" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkVSCode" Content="Visual Studio Code" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkGit" Content="Git for Windows" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                </WrapPanel>
+
+                                <TextBlock Text="🏛️ Kamu &amp; Özel Kurum Paketleri (e-İmza &amp; Doküman):" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,4,0,8"/>
+                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                    <CheckBox x:Name="ChkUyap" Content="⚖️ UYAP Editör (Adalet Bakanlığı)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkAkis" Content="🔐 AKİS Akıllı Kart (TÜBİTAK UEKAE)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    <CheckBox x:Name="ChkLibreOffice" Content="📄 LibreOffice (Açık Kaynak Ofis)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                </WrapPanel>
+
+                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                    <Button x:Name="BtnInstallSelectedApps" Content="🚀 Seçili Programları Sessiz Kur (--silent)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnInstallSelectedApps_Click"/>
+                                    <Button x:Name="BtnOpenPackagesFolder" Content="📂 Yerel LAN Önbellek (packages/) Klasörünü Aç" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnOpenPackagesFolder_Click"/>
+                                </WrapPanel>
+
+                                <TextBlock Text="Kurulum Süreç ve Terminal Durumu:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                <TextBox x:Name="TxtAppDeployLog" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
                                          BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                         FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                                         FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

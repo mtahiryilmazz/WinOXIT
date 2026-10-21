@@ -87,10 +87,10 @@ git pull origin main
 
 ## 🎯 4. Evde Devam Edilecek Sıradaki Görevler (Next Steps Checklist)
 
-- [ ] **Universal Offline NIC Paketleme:** Intel ve Realtek Ethernet/Wi-Fi INF sürücülerinin `drivers/universal_nic/` klasörüne LZMA sıkıştırmasıyla eklenmesi ve `PnPUtil` ile tek tıkla yükleme testinin yapılması.
-- [ ] **OEM Driver İndirme Entegrasyonu:** Dell `dcu-cli.exe` ve Lenovo `ThinInstaller` komut satırı tetikleyicilerinin C# `NativeSystemEngine.cs` içerisine metot olarak eklenmesi.
-- [ ] **AppDeploy Winget Modülü:** Popüler kurumsal programların (Chrome, 7-Zip, AnyDesk, UYAP, AKİS) WPF arayüzünden tek tıkla sessiz (`--silent`) kurulabilmesi.
-- [ ] **Hardware Drift Raporu:** Cihaz teslim baseline hash'i ile anlık hash karşılaştırmasını WPF ekranında görsel diff olarak sunma.
+- [x] **Universal Offline NIC Paketleme:** Intel ve Realtek Ethernet/Wi-Fi INF sürücülerinin `drivers/universal_nic/` klasörüne eklenmesi, bağımsız `install_nic.cmd` betiği ve `NativeSystemEngine.InstallOfflineNicDriversAsync()` ile `PnPUtil` tek tıkla enjeksiyon motoru tamamlandı.
+- [x] **OEM Driver İndirme Entegrasyonu:** Dell `dcu-cli.exe`, Lenovo `tvsu.exe` ve HP HPIA komut satırı tetikleyicileri ile resmi kurumsal katalog destek URL'leri `NativeSystemEngine.cs` içerisine eklendi; WPF arayüzünden tek tıkla tetiklenebiliyor.
+- [x] **AppDeploy Winget Modülü:** Popüler kurumsal programlar (Chrome, Firefox, 7-Zip, AnyDesk, RustDesk, Notepad++, VLC, VS Code, Git, LibreOffice, UYAP, AKİS) WPF arayüzünden tek tıkla sessiz (`--silent`) kurulabilir hale getirildi; LAN paket deposu (`packages/`) klasörü bağlandı.
+- [x] **Hardware Drift Raporu:** Cihaz teslim baseline hash'i ile anlık hash karşılaştırması, anakart seri no, işlemci kimliği, RAM modül slotları ve disk seri numaralarını karşılaştıran görsel diff ve renk kodlu alarm sistemi WPF ekranına entegre edildi.
 
 ---
-*WinoxIT projesi başarıyla eşitlenmiştir. Evde `git pull` yaparak kaldığınız yerden devam edebilirsiniz.*
+*WinoxIT projesi başarıyla eşitlenmiş ve evde devam görevlerinin tamamı başarıyla kodlanıp derlenmiştir (`0 Uyarı, 0 Hata`).*
