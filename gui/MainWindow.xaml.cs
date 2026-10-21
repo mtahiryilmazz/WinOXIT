@@ -16,15 +16,20 @@ namespace WinoxIT
     {
         private static readonly HttpClient _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
         private Process? _serverProcess = null;
+        private bool _isInitialized = false;
 
         public MainWindow()
         {
             InitializeComponent();
+            _isInitialized = true;
             Loaded += MainWindow_Loaded;
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            HideAllPanels();
+            if (PanelDashboard != null) PanelDashboard.Visibility = Visibility.Visible;
+
             Log("⚡ WinoxIT Enterprise Suite v1.0.0 başlatıldı.");
             Log("Sistem donanım profili ve ağ durumu taranıyor...");
             
@@ -58,6 +63,7 @@ namespace WinoxIT
                                 $"Kullanıcı: {user}\r\n" +
                                 $"İşletim Sistemi: Windows {osInfo} ({is64})\r\n" +
                                 $"İşlemci Çekirdekleri: {cores} Mantıksal Çekirdek\r\n" +
+                                $"Sürüm: WinoxIT v1.0.0-enterprise\r\n" +
                                 $"Platform: WinoxIT Native C# & Rust Motoru hazır.";
 
                 Log("Donanım özellikleri başarıyla yüklendi.");
@@ -74,21 +80,22 @@ namespace WinoxIT
 
         private void HideAllPanels()
         {
-            PanelDashboard.Visibility = Visibility.Collapsed;
-            PanelLanServer.Visibility = Visibility.Collapsed;
-            PanelHardware.Visibility = Visibility.Collapsed;
-            PanelPrinters.Visibility = Visibility.Collapsed;
-            PanelCleaner.Visibility = Visibility.Collapsed;
-            PanelDebloat.Visibility = Visibility.Collapsed;
-            PanelNetwork.Visibility = Visibility.Collapsed;
-            PanelDiagnostics.Visibility = Visibility.Collapsed;
-            PanelProcesses.Visibility = Visibility.Collapsed;
-            PanelStartup.Visibility = Visibility.Collapsed;
-            PanelAI.Visibility = Visibility.Collapsed;
+            if (PanelDashboard != null) PanelDashboard.Visibility = Visibility.Collapsed;
+            if (PanelLanServer != null) PanelLanServer.Visibility = Visibility.Collapsed;
+            if (PanelHardware != null) PanelHardware.Visibility = Visibility.Collapsed;
+            if (PanelPrinters != null) PanelPrinters.Visibility = Visibility.Collapsed;
+            if (PanelCleaner != null) PanelCleaner.Visibility = Visibility.Collapsed;
+            if (PanelDebloat != null) PanelDebloat.Visibility = Visibility.Collapsed;
+            if (PanelNetwork != null) PanelNetwork.Visibility = Visibility.Collapsed;
+            if (PanelDiagnostics != null) PanelDiagnostics.Visibility = Visibility.Collapsed;
+            if (PanelProcesses != null) PanelProcesses.Visibility = Visibility.Collapsed;
+            if (PanelStartup != null) PanelStartup.Visibility = Visibility.Collapsed;
+            if (PanelAI != null) PanelAI.Visibility = Visibility.Collapsed;
         }
 
         private async void Nav_Checked(object sender, RoutedEventArgs e)
         {
+            if (!_isInitialized) return;
             if (sender is not RadioButton rb) return;
 
             HideAllPanels();

@@ -8,6 +8,17 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>WinoxIT</AssemblyName>
     <RootNamespace>WinoxIT</RootNamespace>
+
+    <!-- Versioning & Assembly Metadata -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0-enterprise</InformationalVersion>
+    <Product>WinoxIT Enterprise IT &amp; Hardware Suite</Product>
+    <Company>WinoxIT Systems</Company>
+    <Authors>M. Tahir Yılmaz</Authors>
+    <Copyright>Copyright © 2026 M. Tahir Yılmaz. All rights reserved.</Copyright>
+    <Description>Enterprise Windows IT, Hardware Engineering &amp; Automated Deployment Suite</Description>
   </PropertyGroup>
 
   <ItemGroup>
