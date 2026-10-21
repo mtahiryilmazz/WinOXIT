@@ -14,4 +14,10 @@
     <PackageReference Include="System.Management" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\server.js" Link="server.js" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\Launch-NodeServer.cmd" Link="Launch-NodeServer.cmd" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\web\**" Link="web\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
