@@ -1,0 +1,36 @@
+# Rust build artifacts
+/target/
+**/*.rs.bk
+Cargo.lock.orig
+
+# .NET / C# build artifacts
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Windows temporary files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.temp
+
+# WinoxIT Local Cache & Exports
+packages/cache/
+drivers/cache/
+reports/*.pdf
+reports/*.html
+!reports/.gitkeep

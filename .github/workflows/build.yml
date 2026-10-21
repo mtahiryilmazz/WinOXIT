@@ -1,0 +1,40 @@
+name: WinoxIT CI Build & Verification
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-verify:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Setup Rust Toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Verify Node.js Server Syntax
+      run: |
+        node --check server.js
+
+    - name: Build C# WPF Solution
+      run: |
+        dotnet build gui/WinoxIT.csproj --configuration Release
+
+    - name: Check Rust Core Engine
+      run: |
+        cargo check --manifest-path Cargo.toml
