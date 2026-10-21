@@ -112,9 +112,9 @@
                         <TextBlock x:Name="TxtHeaderSubtitle" Text="Tüm çekirdek modüller, donanım parmak izi ve ağ operasyonları hazır." FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="0,2,0,0"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
-                        <Button x:Name="BtnQuickServer" Content="🌐 Sanal Ağ Sunucusunu Aç (Port 9999)" Style="{StaticResource FluentPrimaryButton}" Click="BtnQuickServer_Click"/>
-                        <Button x:Name="BtnQuickClean" Content="🧹 Hızlı Temizle" Style="{StaticResource FluentSecondaryButton}" Click="BtnQuickClean_Click"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button x:Name="BtnQuickServer" Content="🌐 Sanal Ağ Sunucusunu Aç (Port 9999)" Style="{StaticResource FluentPrimaryButton}" Margin="0,0,10,0" Click="BtnQuickServer_Click"/>
+                        <Button x:Name="BtnQuickClean" Content="🧹 Hızlı Temizle" Style="{StaticResource FluentSecondaryButton}" Margin="0,0,10,0" Click="BtnQuickClean_Click"/>
                         <Button x:Name="BtnFlushDns" Content="📡 DNS Temizle" Style="{StaticResource FluentSecondaryButton}" Click="BtnFlushDns_Click"/>
                     </StackPanel>
                 </Grid>
@@ -122,7 +122,7 @@
 
             <!-- Main Content Area -->
             <ScrollViewer Grid.Row="1" Padding="24,20" VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="MainContainer" Spacing="16">
+                <StackPanel x:Name="MainContainer">
 
                     <!-- System Status Metric Cards -->
                     <Grid>
@@ -171,9 +171,9 @@
                     </Grid>
 
                     <!-- Dynamic Action Panel -->
-                    <Border Style="{StaticResource FluentCard}">
-                        <StackPanel Spacing="14">
-                            <TextBlock Text="⚡ Hızlı Operasyonlar ve Çekirdek İşlemler" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"/>
+                    <Border Style="{StaticResource FluentCard}" Margin="0,16,0,16">
+                        <StackPanel>
+                            <TextBlock Text="⚡ Hızlı Operasyonlar ve Çekirdek İşlemler" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,12"/>
                             <WrapPanel Orientation="Horizontal">
                                 <Button Content="🛡️ HWID Parmak İzi Oluştur" Style="{StaticResource FluentSecondaryButton}" Margin="0,0,10,10" Click="BtnGenHwid_Click"/>
                                 <Button Content="🖨️ 0x11b &amp; 0x709 Yazıcı Onar" Style="{StaticResource FluentSecondaryButton}" Margin="0,0,10,10" Click="BtnFixPrinters_Click"/>
@@ -189,8 +189,8 @@
 
                     <!-- System Information Spec Box -->
                     <Border Style="{StaticResource FluentCard}">
-                        <StackPanel Spacing="10">
-                            <TextBlock Text="💻 Algılanan Donanım &amp; İşletim Sistemi Profili" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"/>
+                        <StackPanel>
+                            <TextBlock Text="💻 Algılanan Donanım &amp; İşletim Sistemi Profili" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,8"/>
                             <TextBox x:Name="TxtSpecs" Height="140" Background="#1A1A1A" Foreground="{StaticResource BrushTextSecondary}" 
                                      BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" Padding="12" 
                                      FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
