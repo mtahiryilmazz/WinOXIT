@@ -34,3 +34,6 @@ drivers/cache/
 reports/*.pdf
 reports/*.html
 !reports/.gitkeep
+
+# Publish output (GitHub Releases uzerinden dagitilir, 100 MB dosya limiti)
+/publish/

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 256" width="640" height="256">
+  <defs>
+    <linearGradient id="lShGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F2FE" />
+      <stop offset="100%" stop-color="#4FACFE" />
+    </linearGradient>
+    <linearGradient id="lCoreGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF0844" />
+      <stop offset="100%" stop-color="#FFB199" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(16, 0)">
+    <polygon points="128,16 226,66 226,178 128,240 30,178 30,66" fill="url(#lShGrad)" />
+    <polygon points="128,32 212,74 212,170 128,222 44,170 44,74" fill="#0f172a" />
+    <path d="M78 88 L128 138 L178 88 M78 168 L128 118 L178 168" fill="none" stroke="url(#lCoreGrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="128" cy="128" r="14" fill="#ffffff" />
+    <circle cx="128" cy="128" r="8" fill="#FF0844" />
+  </g>
+  <text x="278" y="146" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="76" font-weight="900" fill="#0f172a" letter-spacing="-1">Win<tspan fill="#00c6ff">OX</tspan><tspan fill="#4FACFE">IT</tspan></text>
+  <text x="282" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="18" font-weight="700" fill="#64748b" letter-spacing="3">CYBERNETIC SYSTEM SUITE</text>
+</svg>

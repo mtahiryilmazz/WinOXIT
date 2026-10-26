@@ -1,0 +1,13 @@
+<Configuration>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>D:\mtahiryilmazz\Github\winoxit</HostFolder>
+      <SandboxFolder>C:\WinoxIT</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>powershell -NoExit -Command "Write-Host 'WinoxIT Sandbox Test Çerçevesi Başlatıldı' -ForegroundColor Green; cd C:\WinoxIT\bin\Release; .\WinoxIT.exe"</Command>
+  </LogonCommand>
+  <Networking>Default</Networking>
+</Configuration>

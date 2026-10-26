@@ -5,6 +5,25 @@ Proje [Keep a Changelog](https://keepachangelog.com/tr/1.0.0/) standartlarını 
 
 ---
 
+## [1.0.1] - 2026-10-26
+
+### ✨ Eklenenler (Added)
+- **Yeni marka kimliği:** "Windows Dynamic X-O Blades" logosu; `branding/` altında kaynak SVG'ler, siyah/beyaz/kare varyantlar, PWA ikon seti ve `site.webmanifest`.
+- **Uygulama simgesi:** `gui/app.ico` (16/32/48/256 px) `WinoxIT.csproj` içine `ApplicationIcon` olarak bağlandı.
+- **Web kokpit varlıkları:** `web/favicon.ico`, `web/logo.png`, `web/winoxit-logo.svg`.
+- **Windows Sandbox test profili:** `WinoxIT_Sandbox_Test.wsb`.
+
+### 🔧 Değişenler (Changed)
+- `publish/` çıktısı `.gitignore`'a eklendi (self-contained tek dosya ~155 MB; GitHub Releases ile dağıtılacak).
+- README: logo, marka kimliği ve derleme/yayımlama bölümleri eklendi.
+
+### 📝 Düzeltmeler (Fixed)
+- README'deki "Rust Native Engine" ifadesi düzeltildi: Rust modülleri henüz `main.rs`'e bağlı değil, işlemler C# `NativeSystemEngine` ile çalışıyor.
+
+### 🗺️ Planlanan
+- SysForge-Studio'nun tüm özelliklerinin WinoxIT'e (.NET 8) taşınması; ek araçlar sessiz modda menülere entegre edilecek.
+
+---
 ## [1.0.0-alpha] - 2026-10-21
 
 ### ✨ Yeni Özellikler (Added)

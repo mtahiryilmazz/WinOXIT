@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 256" width="640" height="256">
+  <defs>
+    <linearGradient id="l1Blue" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00C6FF"/><stop offset="100%" stop-color="#0072FF"/></linearGradient>
+    <linearGradient id="l1Violet" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7F00FF"/><stop offset="100%" stop-color="#E100FF"/></linearGradient>
+    <linearGradient id="l1Green" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00F260"/><stop offset="100%" stop-color="#0575E6"/></linearGradient>
+    <linearGradient id="l1Amber" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF416C"/><stop offset="100%" stop-color="#FF4B2B"/></linearGradient>
+  </defs>
+  <g transform="translate(16, 0)">
+    <path d="M42 46 C42 36, 50 32, 60 38 L114 70 C122 75, 122 85, 114 90 L68 116 C58 122, 42 114, 42 102 Z" fill="url(#l1Blue)"/>
+    <path d="M214 46 C214 36, 206 32, 196 38 L142 70 C134 75, 134 85, 142 90 L188 116 C198 122, 214 114, 214 102 Z" fill="url(#l1Violet)"/>
+    <path d="M42 210 C42 220, 50 224, 60 218 L114 186 C122 181, 122 171, 114 166 L68 140 C58 134, 42 142, 42 154 Z" fill="url(#l1Green)"/>
+    <path d="M214 210 C214 220, 206 224, 196 218 L142 186 C134 181, 134 171, 142 166 L188 140 C198 134, 214 142, 214 154 Z" fill="url(#l1Amber)"/>
+    <circle cx="128" cy="128" r="26" fill="#ffffff"/>
+    <circle cx="128" cy="128" r="14" fill="#0f172a"/>
+    <circle cx="128" cy="128" r="7" fill="#00C6FF"/>
+  </g>
+  <text x="278" y="146" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="76" font-weight="900" fill="#0f172a" letter-spacing="-1">Win<tspan fill="#0072FF">OX</tspan><tspan fill="#7F00FF">IT</tspan></text>
+  <text x="282" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="18" font-weight="700" fill="#64748b" letter-spacing="3">ENTERPRISE IT ECOSYSTEM</text>
+</svg>

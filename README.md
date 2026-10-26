@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="branding/concepts/v3-concept-1-lockup.svg" alt="WinoxIT logo" width="520" />
+</p>
+
 # ⚡ WinoxIT — Enterprise Windows IT, Hardware & Deployment Suite
 
 <p align="center">
   <img src="https://img.shields.io/badge/.NET-8.0%20WPF%20Fluent-512bd4?style=for-the-badge&logo=dotnet&logoColor=white" alt=".NET 8 WPF" />
-  <img src="https://img.shields.io/badge/Rust-Native%20Engine-DEA584?style=for-the-badge&logo=rust&logoColor=black" alt="Rust Native Engine" />
+  <img src="https://img.shields.io/badge/Rust-Core%20(Deneysel)-DEA584?style=for-the-badge&logo=rust&logoColor=black" alt="Rust Core (Deneysel)" />
   <img src="https://img.shields.io/badge/Node.js-Virtual%20Server%209999-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js Virtual Server" />
   <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20%7C%20Server-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows" />
   <img src="https://img.shields.io/badge/License-Commercial%20Enterprise-blue?style=for-the-badge" alt="Enterprise License" />
@@ -27,7 +31,7 @@ graph TD
     ClientDevice[Ağdaki İstemci / Tablet / Mobil] -->|LAN / Wi-Fi| NodeServer[Node.js Virtual Server 0.0.0.0:9999]
     
     NodeServer --> WebHUD[Cyber HUD Web Kokpiti dashboard.html]
-    WPF --> RustCore[WinoxIT Native Rust & C# Engine]
+    WPF --> RustCore[WinoxIT C# Native Engine - Rust cekirdek deneysel]
     WebHUD --> RustCore
     
     RustCore --> DriverEngine[OEM & Universal Driver Engine]
@@ -163,3 +167,28 @@ WinoxIT/
 
 Copyright © 2026 **M. Tahir Yılmaz / WinoxIT Systems**. Tüm Hakları Saklıdır.  
 Bu yazılım kurumsal kullanım ve ticari lisanslama standartlarına uygun olarak geliştirilmiştir.
+
+---
+
+## 🎨 Marka Kimliği
+
+Logo: **Windows Dynamic X-O Blades** — dört renkli Windows kanatlarının merkezde X kesişimi ve O portalı oluşturduğu modüler sembol.
+
+| Dosya | Kullanım |
+|---|---|
+| `gui/app.ico` | Masaüstü uygulama simgesi (16/32/48/256 px) |
+| `web/favicon.ico`, `web/logo.png`, `web/winoxit-logo.svg` | Web kokpit favicon ve logo |
+| `branding/dist/` | Siyah/beyaz/kare varyantlar, PWA ikonları, `site.webmanifest` |
+| `branding/concepts/` | Kaynak SVG'ler ve konsept sayfaları |
+
+## 🏗️ Derleme & Yayımlama
+
+```powershell
+# Tek dosya, .NET runtime gerektirmeyen masaüstü paketi
+dotnet publish gui\WinoxIT.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o publish
+```
+
+`publish/` repoya eklenmez (tek dosya ~155 MB, GitHub limiti 100 MB). Hazır paketler GitHub Releases üzerinden dağıtılır.
+Windows Sandbox testi için `WinoxIT_Sandbox_Test.wsb` dosyasını çalıştırın (repo salt-okunur bağlanır).
+
+> **Rust çekirdek durumu:** `src/modules/` altındaki Rust modülleri henüz `main.rs` tarafından bağlanmıyor; tüm sistem işlemleri şu an C# `NativeSystemEngine` üzerinden çalışır.

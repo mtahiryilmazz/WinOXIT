@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="cubeTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38EF7D" />
+      <stop offset="100%" stop-color="#11998E" />
+    </linearGradient>
+    <linearGradient id="cubeLeft" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00C9FF" />
+      <stop offset="100%" stop-color="#92FE9D" />
+    </linearGradient>
+    <linearGradient id="cubeRight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0072FF" />
+      <stop offset="100%" stop-color="#00C9FF" />
+    </linearGradient>
+    <linearGradient id="circuitGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9D423" />
+      <stop offset="100%" stop-color="#FF4E50" />
+    </linearGradient>
+    <filter id="boxShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0072FF" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- 3D Isometric Container Box (Windows Sandbox & System Engine) -->
+  <g filter="url(#boxShadow)">
+    <!-- Top Face -->
+    <polygon points="128,26 216,76 128,126 40,76" fill="url(#cubeTop)"/>
+    <!-- Left Face -->
+    <polygon points="40,76 128,126 128,228 40,178" fill="url(#cubeLeft)"/>
+    <!-- Right Face -->
+    <polygon points="128,126 216,76 216,178 128,228" fill="url(#cubeRight)"/>
+  </g>
+  <!-- Cyber Circuit Trace on Isometric Facets forming "W" -->
+  <path d="M72 108 L98 160 L128 136 L158 160 L184 108" 
+        fill="none" stroke="url(#circuitGold)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Gold Node Connection Hubs -->
+  <circle cx="72" cy="108" r="8" fill="#F9D423"/>
+  <circle cx="184" cy="108" r="8" fill="#FF4E50"/>
+  <circle cx="128" cy="136" r="10" fill="#ffffff" stroke="#FF4E50" stroke-width="4"/>
+</svg>

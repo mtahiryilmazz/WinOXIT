@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 256" width="640" height="256">
+  <defs>
+    <linearGradient id="l3Top" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#38EF7D"/><stop offset="100%" stop-color="#11998E"/></linearGradient>
+    <linearGradient id="l3Left" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#00C9FF"/><stop offset="100%" stop-color="#92FE9D"/></linearGradient>
+    <linearGradient id="l3Right" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0072FF"/><stop offset="100%" stop-color="#00C9FF"/></linearGradient>
+    <linearGradient id="l3Gold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F9D423"/><stop offset="100%" stop-color="#FF4E50"/></linearGradient>
+  </defs>
+  <g transform="translate(16, 0)">
+    <polygon points="128,26 216,76 128,126 40,76" fill="url(#l3Top)"/>
+    <polygon points="40,76 128,126 128,228 40,178" fill="url(#l3Left)"/>
+    <polygon points="128,126 216,76 216,178 128,228" fill="url(#l3Right)"/>
+    <path d="M72 108 L98 160 L128 136 L158 160 L184 108" fill="none" stroke="url(#l3Gold)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="72" cy="108" r="8" fill="#F9D423"/>
+    <circle cx="184" cy="108" r="8" fill="#FF4E50"/>
+    <circle cx="128" cy="136" r="10" fill="#ffffff" stroke="#FF4E50" stroke-width="4"/>
+  </g>
+  <text x="278" y="146" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="76" font-weight="900" fill="#0f172a" letter-spacing="-1">Win<tspan fill="#00C9FF">OX</tspan><tspan fill="#11998E">IT</tspan></text>
+  <text x="282" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="18" font-weight="700" fill="#64748b" letter-spacing="3">ISOMETRIC SANDBOX &amp; APPS</text>
+</svg>

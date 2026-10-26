@@ -1,0 +1,38 @@
+<svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><title>WinOXIT</title>
+  <defs>
+    <linearGradient id="winBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000000" />
+      <stop offset="100%" stop-color="#000000" />
+    </linearGradient>
+    <linearGradient id="winViolet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000000" />
+      <stop offset="100%" stop-color="#000000" />
+    </linearGradient>
+    <linearGradient id="winAmber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000000" />
+      <stop offset="100%" stop-color="#000000" />
+    </linearGradient>
+    <linearGradient id="winGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000000" />
+      <stop offset="100%" stop-color="#000000" />
+    </linearGradient>
+    <filter id="tileShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- 4 Isometric Windows Matrix Blades intersecting into an X-O portal -->
+  <g filter="url(#tileShadow)">
+    <!-- Top Left Blade (Blue) -->
+    <path d="M42 46 C42 36, 50 32, 60 38 L114 70 C122 75, 122 85, 114 90 L68 116 C58 122, 42 114, 42 102 Z" fill="url(#winBlue)"/>
+    <!-- Top Right Blade (Violet) -->
+    <path d="M214 46 C214 36, 206 32, 196 38 L142 70 C134 75, 134 85, 142 90 L188 116 C198 122, 214 114, 214 102 Z" fill="url(#winViolet)"/>
+    <!-- Bottom Left Blade (Green) -->
+    <path d="M42 210 C42 220, 50 224, 60 218 L114 186 C122 181, 122 171, 114 166 L68 140 C58 134, 42 142, 42 154 Z" fill="url(#winGreen)"/>
+    <!-- Bottom Right Blade (Amber) -->
+    <path d="M214 210 C214 220, 206 224, 196 218 L142 186 C134 181, 134 171, 142 166 L188 140 C198 134, 214 142, 214 154 Z" fill="url(#winAmber)"/>
+  </g>
+  <!-- Central Glowing Hyper Node (O) -->
+  <circle cx="128" cy="128" r="28" fill="#000000" filter="url(#tileShadow)"/>
+  <circle cx="128" cy="128" r="16" fill="#000000"/>
+  <circle cx="128" cy="128" r="8" fill="#000000"/>
+</svg>

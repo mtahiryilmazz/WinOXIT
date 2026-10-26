@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F2FE" />
+      <stop offset="100%" stop-color="#4FACFE" />
+    </linearGradient>
+    <linearGradient id="coreGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF0844" />
+      <stop offset="100%" stop-color="#FFB199" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#00F2FE" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- Background Shield Tile -->
+  <polygon points="128,16 226,66 226,178 128,240 30,178 30,66" 
+           fill="url(#shieldGrad)" filter="url(#glow)" />
+  <!-- Inner Contrast Shield -->
+  <polygon points="128,32 212,74 212,170 128,222 44,170 44,74" 
+           fill="#0f172a" />
+  <!-- Neon X/Core -->
+  <path d="M78 88 L128 138 L178 88 M78 168 L128 118 L178 168" 
+        fill="none" stroke="url(#coreGrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="128" cy="128" r="14" fill="#ffffff" />
+  <circle cx="128" cy="128" r="8" fill="#FF0844" />
+</svg>

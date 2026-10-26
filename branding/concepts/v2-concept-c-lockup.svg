@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 256" width="640" height="256">
+  <defs>
+    <linearGradient id="lMatrix" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="lElectric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#EF4444" />
+    </linearGradient>
+    <linearGradient id="lBgDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1e2f" />
+      <stop offset="100%" stop-color="#0d1117" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(16, 0)">
+    <rect x="28" y="28" width="200" height="200" rx="44" fill="url(#lBgDark)"/>
+    <path d="M60 84 L92 188 L128 136 L164 188 L196 84" fill="none" stroke="url(#lMatrix)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="128" cy="80" r="16" fill="url(#lElectric)"/>
+    <circle cx="128" cy="80" r="26" fill="none" stroke="#F59E0B" stroke-width="4" stroke-dasharray="6,4" opacity="0.8"/>
+  </g>
+  <text x="278" y="146" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="76" font-weight="900" fill="#0f172a" letter-spacing="-1">Win<tspan fill="#10B981">OX</tspan><tspan fill="#059669">IT</tspan></text>
+  <text x="282" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="18" font-weight="700" fill="#64748b" letter-spacing="3">TURBO DEPLOY &amp; DIAGNOSTICS</text>
+</svg>

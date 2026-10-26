@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 256" width="640" height="256">
+  <defs>
+    <linearGradient id="lPrism" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#667EEA" />
+      <stop offset="50%" stop-color="#764BA2" />
+      <stop offset="100%" stop-color="#F38181" />
+    </linearGradient>
+    <linearGradient id="lFlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(16, 0)">
+    <rect x="28" y="28" width="200" height="200" rx="48" fill="url(#lPrism)"/>
+    <path d="M72 184 L128 68 L184 184 Z" fill="none" stroke="#ffffff" stroke-width="16" stroke-linejoin="round" opacity="0.95"/>
+    <circle cx="128" cy="144" r="32" fill="url(#lFlow)" stroke="#ffffff" stroke-width="8"/>
+    <line x1="88" y1="144" x2="168" y2="144" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+    <line x1="128" y1="104" x2="128" y2="184" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="278" y="146" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="76" font-weight="900" fill="#0f172a" letter-spacing="-1">Win<tspan fill="#764BA2">OX</tspan><tspan fill="#667EEA">IT</tspan></text>
+  <text x="282" y="184" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="18" font-weight="700" fill="#64748b" letter-spacing="3">HYBRID CLOUD &amp; WORKSTATION</text>
+</svg>
