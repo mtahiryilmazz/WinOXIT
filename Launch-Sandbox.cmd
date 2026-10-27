@@ -26,7 +26,7 @@ echo       ^<ReadOnly^>false^</ReadOnly^>
 echo     ^</MappedFolder^>
 echo   ^</MappedFolders^>
 echo   ^<LogonCommand^>
-echo     ^<Command^>powershell -NoExit -Command "Write-Host 'WinoxIT Sandbox Test Ortami Baslatildi' -ForegroundColor Cyan; cd C:\WinoxIT; if (Test-Path '.\bin\Release\WinoxIT.exe') { .\bin\Release\WinoxIT.exe } else { .\Launch-NodeServer.cmd }"^</Command^>
+echo     ^<Command^>powershell -NoExit -Command "Write-Host 'WinoxIT Sandbox Test Ortami Baslatildi' -ForegroundColor Cyan; cd C:\WinoxIT; if (Test-Path '.\publish\WinoxIT.exe') { .\publish\WinoxIT.exe } else { .\Launch-NodeServer.cmd }"^</Command^>
 echo   ^</LogonCommand^>
 echo ^</Configuration^>
 ) > "%WSB_TEMP%"

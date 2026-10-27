@@ -7,7 +7,7 @@
     </MappedFolder>
   </MappedFolders>
   <LogonCommand>
-    <Command>powershell -NoExit -Command "Write-Host 'WinoxIT Sandbox Test Çerçevesi Başlatıldı' -ForegroundColor Green; cd C:\WinoxIT\bin\Release; .\WinoxIT.exe"</Command>
+    <Command>powershell -NoExit -Command "Write-Host 'WinoxIT Sandbox Test Çerçevesi Başlatıldı' -ForegroundColor Green; cd C:\WinoxIT\publish; .\WinoxIT.exe"</Command>
   </LogonCommand>
   <Networking>Default</Networking>
 </Configuration>
