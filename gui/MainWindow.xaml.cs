@@ -23,24 +23,56 @@ namespace WinoxIT
         private string _currentHardwareJson = "";
         private string _oemManufacturer = "";
 
+        private static void LogDiagnostic(string msg)
+        {
+            try
+            {
+                var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "startup.log");
+                System.IO.File.AppendAllText(path, $"[{DateTime.Now:HH:mm:ss.fff}] {msg}\r\n");
+            }
+            catch { }
+        }
+
         public MainWindow()
         {
-            InitializeComponent();
+            LogDiagnostic("MainWindow constructor start");
+            try
+            {
+                InitializeComponent();
+                LogDiagnostic("MainWindow InitializeComponent complete");
+            }
+            catch (Exception ex)
+            {
+                LogDiagnostic($"FATAL MainWindow InitializeComponent: {ex}");
+                throw;
+            }
             _isInitialized = true;
             Loaded += MainWindow_Loaded;
+            LogDiagnostic("MainWindow constructor complete");
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            LogDiagnostic("MainWindow_Loaded start");
             HideAllPanels();
             if (PanelDashboard != null) PanelDashboard.Visibility = Visibility.Visible;
 
             Log("⚡ WinoxIT Enterprise Suite v1.0.0 başlatıldı.");
             Log("Sistem donanım profili ve ağ durumu taranıyor...");
             
-            await LoadSystemSpecsAsync();
-            await CheckServerStatusAsync();
-            PopulateLanAddresses();
+            try
+            {
+                await LoadSystemSpecsAsync();
+                LogDiagnostic("LoadSystemSpecsAsync complete");
+                await CheckServerStatusAsync();
+                LogDiagnostic("CheckServerStatusAsync complete");
+                PopulateLanAddresses();
+                LogDiagnostic("PopulateLanAddresses complete");
+            }
+            catch (Exception ex)
+            {
+                LogDiagnostic($"ERROR MainWindow_Loaded async tasks: {ex}");
+            }
         }
 
         private void BtnThemeToggle_Click(object sender, RoutedEventArgs e)

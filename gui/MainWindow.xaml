@@ -563,7 +563,7 @@
                                              KeyDown="TxtAiIssueQuery_KeyDown"
                                              ToolTip="Örn: 0x0000011b, ekran kartı kilitlendi, mavi ekran nvlddmkm.sys, internet yok, regedit engellendi"/>
                                     <Button x:Name="BtnAiAnalyze" Grid.Column="2" Content="⚡ Yapay Zekâ &amp; Web Analizi" 
-                                            Style="{StaticResource FluentButtonPrimary}" Height="42" Padding="16,0" FontSize="13" 
+                                            Style="{StaticResource FluentButton}" Height="42" Padding="16,0" FontSize="13" 
                                             Click="BtnAiAnalyze_Click"/>
                                 </Grid>
 
@@ -625,7 +625,7 @@
                                          Padding="10" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
 
                                 <WrapPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                    <Button x:Name="BtnRunAiScript" Content="⚡ Bu Onarım Scriptini Çalıştır (PowerShell)" Style="{StaticResource FluentButtonPrimary}" Height="34" Padding="14,0" Margin="0,0,10,6" Click="BtnRunAiScript_Click"/>
+                                    <Button x:Name="BtnRunAiScript" Content="⚡ Bu Onarım Scriptini Çalıştır (PowerShell)" Style="{StaticResource FluentButton}" Height="34" Padding="14,0" Margin="0,0,10,6" Click="BtnRunAiScript_Click"/>
                                     <Button x:Name="BtnCopyAiScript" Content="📋 Komutu Kopyala" Style="{StaticResource FluentButton}" Height="34" Padding="12,0" Margin="0,0,10,6" Click="BtnCopyAiScript_Click"/>
                                     <Button x:Name="BtnSaveAiScript" Content="💾 Script Olarak Kaydet (.ps1)" Style="{StaticResource FluentButton}" Height="34" Padding="12,0" Margin="0,0,10,6" Click="BtnSaveAiScript_Click"/>
                                 </WrapPanel>

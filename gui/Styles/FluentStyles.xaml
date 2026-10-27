@@ -143,6 +143,7 @@
     <!-- Aliases so all button calls use the unified style -->
     <Style x:Key="FluentPrimaryButton" BasedOn="{StaticResource FluentButton}" TargetType="Button"/>
     <Style x:Key="FluentSecondaryButton" BasedOn="{StaticResource FluentButton}" TargetType="Button"/>
+    <Style x:Key="FluentButtonPrimary" BasedOn="{StaticResource FluentButton}" TargetType="Button"/>
 
     <!-- Theme Toggle Header Button -->
     <Style x:Key="FluentThemeToggleBtn" TargetType="Button">
