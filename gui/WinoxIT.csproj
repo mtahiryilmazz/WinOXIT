@@ -31,6 +31,7 @@
     <None Include="..\server.js" Link="server.js" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\Launch-NodeServer.cmd" Link="Launch-NodeServer.cmd" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\web\**" Link="web\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\target\release\winoxit_core.dll" Link="winoxit_core.dll" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

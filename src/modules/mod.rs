@@ -4,12 +4,6 @@ pub mod diagnostics;
 pub mod cleaner;
 pub mod debloat;
 pub mod network;
-pub mod processes;
-pub mod services;
-pub mod disks;
-pub mod startup;
-pub mod license;
-pub mod ai;
 
 use std::process::Command;
 

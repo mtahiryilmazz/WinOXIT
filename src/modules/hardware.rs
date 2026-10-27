@@ -131,7 +131,10 @@ pub fn generate_hwid() -> HardwareFingerprint {
     for r in &rams { hasher.update(r.as_bytes()); hasher.update(b";"); }
     
     let hash_bytes = hasher.finalize();
-    let hwid_hash = hex::encode(hash_bytes);
+    let hwid_hash = hash_bytes.iter().map(|b| format!("{:02x}", b)).collect::<String>();
+    let now = std::time::SystemTime::now();
+    let duration = now.duration_since(std::time::UNIX_EPOCH).unwrap_or_default();
+    let timestamp = format!("{}", duration.as_secs());
 
     HardwareFingerprint {
         motherboard_serial: mb,
@@ -140,7 +143,7 @@ pub fn generate_hwid() -> HardwareFingerprint {
         disk_serials: disks,
         ram_serials: rams,
         hwid_hash,
-        timestamp: chrono::Local::now().to_rfc3339(),
+        timestamp,
     }
 }
 

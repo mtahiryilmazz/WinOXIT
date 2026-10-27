@@ -1378,6 +1378,16 @@ namespace WinoxIT.Services
 
         private static async Task<LanHostNode> FastProbeHostAsync(string ipStr, CancellationToken ct)
         {
+            if (RustCoreBridge.IsAvailable())
+            {
+                try
+                {
+                    var rustNode = await Task.Run(() => RustCoreBridge.ProbeHostFast(ipStr), ct);
+                    if (rustNode != null) return rustNode;
+                }
+                catch { }
+            }
+
             var node = new LanHostNode
             {
                 IPAddress = ipStr,
