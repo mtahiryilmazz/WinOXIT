@@ -335,12 +335,31 @@
                                                   BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
                                                   Foreground="{DynamicResource BrushTextPrimary}" SelectionChanged="GridLanFleet_SelectionChanged">
                                             <DataGrid.Columns>
-                                                <DataGridTextColumn Header="IP Adresi" Binding="{Binding IPAddress}" Width="130" FontWeight="SemiBold"/>
-                                                <DataGridTextColumn Header="Durum" Binding="{Binding Status}" Width="170"/>
-                                                <DataGridTextColumn Header="Cihaz Adı / Hostname" Binding="{Binding Hostname}" Width="180"/>
-                                                <DataGridTextColumn Header="MAC Adresi" Binding="{Binding MACAddress}" Width="150"/>
-                                                <DataGridTextColumn Header="Yanıt (Ping)" Binding="{Binding Latency}" Width="130"/>
-                                                <DataGridTextColumn Header="Cihaz / Ağ Rolü" Binding="{Binding DeviceType}" Width="*"/>
+                                                <DataGridTextColumn Header="IP Adresi" Binding="{Binding IPAddress}" Width="115" FontWeight="SemiBold"/>
+                                                <DataGridTextColumn Header="Durum" Binding="{Binding Status}" Width="135"/>
+                                                <DataGridTextColumn Header="Cihaz Türü" Binding="{Binding DeviceType}" Width="190" FontWeight="SemiBold"/>
+                                                <DataGridTextColumn Header="Cihaz Adı / NetBIOS" Binding="{Binding Hostname}" Width="160"/>
+                                                <DataGridTextColumn Header="Üretici / Marka" Binding="{Binding Vendor}" Width="130"/>
+                                                <DataGridTextColumn Header="MAC Adresi" Binding="{Binding MACAddress}" Width="135"/>
+                                                <DataGridTextColumn Header="Portlar" Binding="{Binding OpenPorts}" Width="95"/>
+                                                <DataGridTextColumn Header="Gecikme" Binding="{Binding Latency}" Width="85"/>
+                                                <DataGridTemplateColumn Header="Hızlı Bağlantı &amp; Eylem" Width="200">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                                <Button Content="📁 SMB" Style="{StaticResource FluentButton}" Height="24" Padding="6,1" Margin="0,0,4,0" 
+                                                                        ToolTip="Windows Paylaşımını Aç (\\IP)" 
+                                                                        Click="BtnHostActionSmb_Click" Tag="{Binding}"/>
+                                                                <Button Content="🖥️ RDP" Style="{StaticResource FluentButton}" Height="24" Padding="6,1" Margin="0,0,4,0" 
+                                                                        ToolTip="Uzak Masaüstü Bağlantısı (mstsc /v:IP)" 
+                                                                        Click="BtnHostActionRdp_Click" Tag="{Binding}"/>
+                                                                <Button Content="🔍 Detay" Style="{StaticResource FluentButton}" Height="24" Padding="6,1" 
+                                                                        ToolTip="Cihaz Ayrıntılarını ve Port Raporunu Gör" 
+                                                                        Click="BtnHostActionDetail_Click" Tag="{Binding}"/>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </Border>

@@ -565,6 +565,7 @@ namespace WinoxIT
             var sw = Stopwatch.StartNew();
             Log($"Yerel ağ taraması başlatıldı: {startIp} — {endIp} ...");
 
+            int lastGridUpdateCount = 0;
             var progress = new Progress<(int Current, int Total, LanHostNode? Found)>(p =>
             {
                 ProgressSubnetScan.Maximum = p.Total;
@@ -590,7 +591,13 @@ namespace WinoxIT
                     TxtCountFirewall.Text = firewallCount.ToString();
                     TxtCountIdle.Text = idleCount.ToString();
 
-                    ApplyLanHostFilter();
+                    // Throttle grid update: only update when an active host is found, or every 20 hosts, or when complete
+                    bool isSignificant = p.Found.IsOnline;
+                    if (isSignificant || (p.Current - lastGridUpdateCount >= 20) || p.Current == p.Total)
+                    {
+                        lastGridUpdateCount = p.Current;
+                        ApplyLanHostFilter();
+                    }
                 }
             });
 
@@ -629,6 +636,74 @@ namespace WinoxIT
         {
             _subnetScanCts?.Cancel();
             BtnStopSubnetScan.IsEnabled = false;
+        }
+
+        private void BtnHostActionSmb_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is LanHostNode host)
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = $@"\\{host.IPAddress}",
+                        UseShellExecute = true
+                    });
+                    Log($"📁 SMB dosya paylaşımı açılıyor: \\\\{host.IPAddress} ({host.Hostname})");
+                }
+                catch (Exception ex)
+                {
+                    Log($"SMB açılırken hata: {ex.Message}");
+                }
+            }
+        }
+
+        private void BtnHostActionRdp_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is LanHostNode host)
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "mstsc.exe",
+                        Arguments = $"/v:{host.IPAddress}",
+                        UseShellExecute = true
+                    });
+                    Log($"🖥️ Uzak Masaüstü Bağlantısı (RDP) başlatılıyor: {host.IPAddress}");
+                }
+                catch (Exception ex)
+                {
+                    Log($"RDP başlatılırken hata: {ex.Message}");
+                }
+            }
+        }
+
+        private void BtnHostActionDetail_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is LanHostNode host)
+            {
+                string info = $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                              $"🌐 WINOXIT AĞ DÜĞÜMÜ TEŞHİS RAPORU\n" +
+                              $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                              $"• IP Adresi         : {host.IPAddress}\n" +
+                              $"• Ağ Durumu         : {host.Status}\n" +
+                              $"• Cihaz Türü        : {host.DeviceType}\n" +
+                              $"• Cihaz Adı / DNS   : {host.Hostname}\n" +
+                              $"• NetBIOS Adı       : {host.NetBiosName}\n" +
+                              $"• Çalışma Grubu     : {host.Workgroup}\n" +
+                              $"• MAC Adresi        : {host.MACAddress}\n" +
+                              $"• Donanım Üreticisi : {host.Vendor}\n" +
+                              $"• Gecikme (Ping)    : {host.Latency}\n" +
+                              $"• Açık Portlar      : {host.OpenPorts}\n" +
+                              $"• SMB Desteği (445) : {(host.HasSmb ? "✅ Aktif" : "❌ Kapalı")}\n" +
+                              $"• RDP Desteği (3389): {(host.HasRdp ? "✅ Aktif" : "❌ Kapalı")}\n" +
+                              $"• HTTP/Web (80/443) : {(host.HasHttp ? "✅ Aktif" : "❌ Kapalı")}\n" +
+                              $"• SSH Desteği (22)  : {(host.HasSsh ? "✅ Aktif" : "❌ Kapalı")}\n" +
+                              $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
+                ShowModal($"Cihaz Teşhis Detayı — {host.IPAddress}", info);
+            }
         }
 
         private void BtnFilterLan_Click(object sender, RoutedEventArgs e)

@@ -1336,7 +1336,8 @@ namespace WinoxIT.Services
             }
 
             int scannedCount = 0;
-            using var semaphore = new SemaphoreSlim(35); // 35 concurrent probes
+            // 50 concurrent workers: SendARP is 0.5ms so scanning 254 IPs takes only ~1.5s
+            using var semaphore = new SemaphoreSlim(50);
 
             var tasks = ipList.Select(async ip =>
             {
@@ -1345,7 +1346,7 @@ namespace WinoxIT.Services
                 {
                     if (ct.IsCancellationRequested) return;
 
-                    var node = await ProbeHostAsync(ip, ct);
+                    var node = await FastProbeHostAsync(ip, ct);
                     lock (results)
                     {
                         results.Add(node);
@@ -1375,12 +1376,16 @@ namespace WinoxIT.Services
             }
         }
 
-        private static async Task<LanHostNode> ProbeHostAsync(string ipStr, CancellationToken ct)
+        private static async Task<LanHostNode> FastProbeHostAsync(string ipStr, CancellationToken ct)
         {
             var node = new LanHostNode
             {
                 IPAddress = ipStr,
                 Hostname = "-",
+                NetBiosName = "-",
+                Workgroup = "-",
+                Vendor = "-",
+                OpenPorts = "-",
                 MACAddress = "-",
                 Status = "⚪ Boşta (Kullanılabilir)",
                 StatusCode = "Idle",
@@ -1391,6 +1396,7 @@ namespace WinoxIT.Services
 
             if (!IPAddress.TryParse(ipStr, out var ipAddr)) return node;
 
+            // STAGE 1: Win32 Layer-2 SendARP (sub-millisecond speed)
             bool arpSuccess = false;
             string mac = "";
 
@@ -1408,68 +1414,363 @@ namespace WinoxIT.Services
             }
             catch { }
 
-            // Ping probe
+            // Ping fallback if ARP failed (e.g. routed across different interface)
             bool pingSuccess = false;
             long pingMs = 0;
-            try
+            if (!arpSuccess)
             {
-                using var pinger = new Ping();
-                var reply = await pinger.SendPingAsync(ipAddr, 350);
-                if (reply != null && reply.Status == IPStatus.Success)
-                {
-                    pingSuccess = true;
-                    pingMs = reply.RoundtripTime;
-                }
-            }
-            catch { }
-
-            if (arpSuccess || pingSuccess)
-            {
-                node.IsOnline = true;
-                node.MACAddress = !string.IsNullOrEmpty(mac) ? mac : "ARP Gizli/Yönlendirilmiş";
-
-                if (pingSuccess)
-                {
-                    node.Status = "🟢 Açık (Online)";
-                    node.StatusCode = "Online";
-                    node.Latency = $"{pingMs} ms";
-                }
-                else
-                {
-                    node.Status = "🟡 Korumalı (Firewall)";
-                    node.StatusCode = "Firewall";
-                    node.Latency = "ARP Yanıtı (ICMP Kapalı)";
-                }
-
-                // Identify common device types by IP or MAC
-                var lastOctet = ipAddr.GetAddressBytes()[3];
-                if (lastOctet == 1 || lastOctet == 254)
-                {
-                    node.DeviceType = "Ağ Geçidi / Modem / Router";
-                }
-                else
-                {
-                    node.DeviceType = "Bilgisayar / Ağ Cihazı";
-                }
-
-                // Quick reverse DNS
                 try
                 {
-                    var dnsTask = Dns.GetHostEntryAsync(ipStr);
-                    var completed = await Task.WhenAny(dnsTask, Task.Delay(250, ct));
-                    if (completed == dnsTask && !dnsTask.IsFaulted)
+                    using var pinger = new Ping();
+                    var reply = await pinger.SendPingAsync(ipAddr, 120);
+                    if (reply != null && reply.Status == IPStatus.Success)
                     {
-                        var entry = await dnsTask;
-                        if (!string.IsNullOrWhiteSpace(entry.HostName))
-                        {
-                            node.Hostname = entry.HostName;
-                        }
+                        pingSuccess = true;
+                        pingMs = reply.RoundtripTime;
+                    }
+                }
+                catch { }
+            }
+            else
+            {
+                // Quick ping to measure latency for online host
+                try
+                {
+                    using var pinger = new Ping();
+                    var reply = await pinger.SendPingAsync(ipAddr, 100);
+                    if (reply != null && reply.Status == IPStatus.Success)
+                    {
+                        pingSuccess = true;
+                        pingMs = reply.RoundtripTime;
                     }
                 }
                 catch { }
             }
 
+            // If neither answered, host is idle. RETURN IMMEDIATELY (no NetBIOS/port delay)!
+            if (!arpSuccess && !pingSuccess)
+            {
+                return node;
+            }
+
+            // HOST IS ONLINE
+            node.IsOnline = true;
+            node.MACAddress = !string.IsNullOrEmpty(mac) ? mac : "ARP Gizli/Yönlendirildi";
+
+            if (pingSuccess)
+            {
+                node.Status = "🟢 Açık (Online)";
+                node.StatusCode = "Online";
+                node.Latency = $"{pingMs} ms";
+            }
+            else
+            {
+                node.Status = "🟡 Korumalı (Firewall)";
+                node.StatusCode = "Firewall";
+                node.Latency = "ARP Yanıtı (ICMP Kapalı)";
+            }
+
+            // STAGE 2: OUI MAC Vendor Lookup
+            string vendor = LookupMacVendor(node.MACAddress);
+            node.Vendor = vendor;
+
+            // STAGE 3: Run NetBIOS (UDP 137), TCP Port Prober, and Reverse DNS concurrently
+            var netbiosTask = QueryNetBiosAsync(ipAddr, 140);
+            var portsTask = ProbeCommonPortsAsync(ipAddr, 75);
+            var dnsTask = ResolveHostnameFastAsync(ipAddr, 150);
+
+            await Task.WhenAll(netbiosTask, portsTask, dnsTask);
+
+            var (nbName, workgroup) = await netbiosTask;
+            var openPortsList = await portsTask;
+            var hostname = await dnsTask;
+
+            if (!string.IsNullOrWhiteSpace(nbName))
+            {
+                node.NetBiosName = nbName;
+                node.Hostname = nbName;
+            }
+            else if (!string.IsNullOrWhiteSpace(hostname))
+            {
+                node.Hostname = hostname;
+            }
+
+            if (!string.IsNullOrWhiteSpace(workgroup))
+            {
+                node.Workgroup = workgroup;
+            }
+
+            node.HasSmb = openPortsList.Contains(445) || openPortsList.Contains(139);
+            node.HasRdp = openPortsList.Contains(3389);
+            node.HasHttp = openPortsList.Contains(80) || openPortsList.Contains(443);
+            node.HasSsh = openPortsList.Contains(22);
+
+            if (openPortsList.Count > 0)
+            {
+                node.OpenPorts = string.Join(", ", openPortsList);
+            }
+            else
+            {
+                node.OpenPorts = "-";
+            }
+
+            // STAGE 4: Detailed Device Type Classification
+            node.DeviceType = ClassifyDeviceType(ipAddr, node.MACAddress, vendor, node.Hostname, openPortsList, node.HasSmb, node.HasRdp);
+
             return node;
+        }
+
+        private static async Task<(string Name, string Workgroup)> QueryNetBiosAsync(IPAddress ip, int timeoutMs)
+        {
+            try
+            {
+                using var udp = new UdpClient();
+                udp.Client.SendTimeout = timeoutMs;
+                udp.Client.ReceiveTimeout = timeoutMs;
+
+                byte[] query = new byte[]
+                {
+                    0x80, 0x94, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x20, 0x43, 0x4B, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+                    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+                    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x00, 0x00, 0x21,
+                    0x00, 0x01
+                };
+
+                var endpoint = new IPEndPoint(ip, 137);
+                await udp.SendAsync(query, query.Length, endpoint);
+
+                var receiveTask = udp.ReceiveAsync();
+                var completed = await Task.WhenAny(receiveTask, Task.Delay(timeoutMs));
+                if (completed == receiveTask && !receiveTask.IsFaulted)
+                {
+                    var res = await receiveTask;
+                    var data = res.Buffer;
+                    if (data.Length > 56)
+                    {
+                        int numNames = data[56];
+                        string compName = "";
+                        string workgroup = "";
+
+                        int offset = 57;
+                        for (int i = 0; i < numNames && offset + 18 <= data.Length; i++)
+                        {
+                            string rawName = Encoding.ASCII.GetString(data, offset, 15).Trim();
+                            byte type = data[offset + 15];
+                            short flags = (short)((data[offset + 16] << 8) | data[offset + 17]);
+                            bool isGroup = (flags & 0x0080) != 0;
+
+                            if (isGroup && string.IsNullOrEmpty(workgroup))
+                            {
+                                workgroup = rawName;
+                            }
+                            else if (!isGroup && string.IsNullOrEmpty(compName) && type == 0x00)
+                            {
+                                compName = rawName;
+                            }
+                            offset += 18;
+                        }
+
+                        return (compName, workgroup);
+                    }
+                }
+            }
+            catch { }
+            return ("", "");
+        }
+
+        private static async Task<List<int>> ProbeCommonPortsAsync(IPAddress ip, int timeoutMs)
+        {
+            var open = new List<int>();
+            int[] testPorts = { 445, 3389, 80, 443, 22, 5060, 9100 };
+
+            var tasks = testPorts.Select(async port =>
+            {
+                try
+                {
+                    using var client = new TcpClient();
+                    using var cts = new CancellationTokenSource(timeoutMs);
+                    await client.ConnectAsync(ip, port, cts.Token);
+                    if (client.Connected)
+                    {
+                        lock (open) { open.Add(port); }
+                    }
+                }
+                catch { }
+            });
+
+            await Task.WhenAll(tasks);
+            return open.OrderBy(x => x).ToList();
+        }
+
+        private static async Task<string> ResolveHostnameFastAsync(IPAddress ip, int timeoutMs)
+        {
+            try
+            {
+                var dnsTask = Dns.GetHostEntryAsync(ip);
+                var completed = await Task.WhenAny(dnsTask, Task.Delay(timeoutMs));
+                if (completed == dnsTask && !dnsTask.IsFaulted)
+                {
+                    var entry = await dnsTask;
+                    if (!string.IsNullOrWhiteSpace(entry.HostName))
+                        return entry.HostName;
+                }
+            }
+            catch { }
+            return "";
+        }
+
+        private static string LookupMacVendor(string mac)
+        {
+            if (string.IsNullOrWhiteSpace(mac) || mac.Length < 8) return "Bilinmiyor";
+            var prefix = mac.Substring(0, 8).ToUpperInvariant();
+
+            // Yealink / Grandstream / Polycom (IP Phone)
+            if (prefix.StartsWith("00:15:65") || prefix.StartsWith("80:5E:C0") || prefix.StartsWith("00:26:8B")) return "Yealink";
+            if (prefix.StartsWith("00:0B:82")) return "Grandstream";
+            if (prefix.StartsWith("00:04:F2") || prefix.StartsWith("00:10:94") || prefix.StartsWith("48:25:67")) return "Polycom";
+
+            // Firewalls
+            if (prefix.StartsWith("00:09:0F") || prefix.StartsWith("70:4C:A5") || prefix.StartsWith("90:6C:AC")) return "Fortinet";
+            if (prefix.StartsWith("00:1B:17") || prefix.StartsWith("08:30:6B") || prefix.StartsWith("D4:1D:71")) return "Palo Alto Networks";
+            if (prefix.StartsWith("00:1A:8C") || prefix.StartsWith("7C:5A:1C")) return "Sophos";
+
+            // Routers / Switches
+            if (prefix.StartsWith("00:00:0C") || prefix.StartsWith("00:01:42") || prefix.StartsWith("F4:4B:2A") || prefix.StartsWith("70:69:79")) return "Cisco";
+            if (prefix.StartsWith("48:8F:5A") || prefix.StartsWith("64:D1:54") || prefix.StartsWith("CC:2D:E0") || prefix.StartsWith("D4:CA:6D")) return "MikroTik";
+            if (prefix.StartsWith("00:27:22") || prefix.StartsWith("74:83:C2") || prefix.StartsWith("F0:9F:C2")) return "Ubiquiti UniFi";
+            if (prefix.StartsWith("50:3E:AA") || prefix.StartsWith("74:56:3C") || prefix.StartsWith("F4:EC:38") || prefix.StartsWith("AC:84:C6") || prefix.StartsWith("C0:06:C3")) return "TP-Link";
+            if (prefix.StartsWith("EC:43:F6") || prefix.StartsWith("28:28:5D")) return "Keenetic";
+            if (prefix.StartsWith("00:13:49") || prefix.StartsWith("50:67:AE")) return "Zyxel";
+            if (prefix.StartsWith("00:09:5B") || prefix.StartsWith("A0:04:60") || prefix.StartsWith("C4:04:15")) return "Netgear";
+            if (prefix.StartsWith("00:15:F2") || prefix.StartsWith("18:31:BF") || prefix.StartsWith("AC:22:0B")) return "ASUS";
+
+            // Servers & Enterprise
+            if (prefix.StartsWith("00:14:22") || prefix.StartsWith("14:FE:B5") || prefix.StartsWith("B8:2A:72") || prefix.StartsWith("F8:BC:12")) return "Dell Technologies";
+            if (prefix.StartsWith("00:01:E6") || prefix.StartsWith("28:92:4A") || prefix.StartsWith("3C:D9:2B") || prefix.StartsWith("C4:34:6B")) return "HPE / HP";
+            if (prefix.StartsWith("00:25:90") || prefix.StartsWith("00:30:48") || prefix.StartsWith("AC:1F:6B")) return "Supermicro";
+
+            // Printers
+            if (prefix.StartsWith("00:00:85") || prefix.StartsWith("70:8A:09") || prefix.StartsWith("AC:64:17")) return "Canon";
+            if (prefix.StartsWith("00:00:48") || prefix.StartsWith("44:D2:44") || prefix.StartsWith("AC:18:26")) return "Epson";
+            if (prefix.StartsWith("00:80:77") || prefix.StartsWith("30:05:5C") || prefix.StartsWith("80:69:1A")) return "Brother";
+            if (prefix.StartsWith("00:00:AA") || prefix.StartsWith("00:08:74")) return "Xerox";
+            if (prefix.StartsWith("00:00:87") || prefix.StartsWith("40:B0:34")) return "Kyocera";
+
+            // Storage / NAS
+            if (prefix.StartsWith("00:11:32")) return "Synology NAS";
+            if (prefix.StartsWith("00:08:9B") || prefix.StartsWith("24:5E:BE")) return "QNAP NAS";
+
+            // Hypervisors & VMs
+            if (prefix.StartsWith("00:05:69") || prefix.StartsWith("00:0C:29") || prefix.StartsWith("00:50:56")) return "VMware";
+            if (prefix.StartsWith("08:00:27")) return "Oracle VirtualBox";
+
+            // Mobile & Smart Devices
+            if (prefix.StartsWith("F4:0F:24") || prefix.StartsWith("BC:52:B7") || prefix.StartsWith("3C:D0:F8") || prefix.StartsWith("A4:C3:61") || prefix.StartsWith("88:66:5A")) return "Apple";
+            if (prefix.StartsWith("08:D4:2B") || prefix.StartsWith("34:23:87") || prefix.StartsWith("84:25:DB") || prefix.StartsWith("FC:03:9F")) return "Samsung";
+            if (prefix.StartsWith("14:F6:5A") || prefix.StartsWith("38:A4:ED") || prefix.StartsWith("AC:C1:EE")) return "Xiaomi";
+            if (prefix.StartsWith("00:1E:10") || prefix.StartsWith("48:46:FB") || prefix.StartsWith("E8:CD:2D")) return "Huawei";
+
+            // IoT & Embedded
+            if (prefix.StartsWith("18:FE:34") || prefix.StartsWith("24:0A:C4") || prefix.StartsWith("30:AE:A4") || prefix.StartsWith("AC:67:B2")) return "Espressif (ESP)";
+            if (prefix.StartsWith("B8:27:EB") || prefix.StartsWith("DC:A6:32") || prefix.StartsWith("E4:5F:01")) return "Raspberry Pi";
+
+            // PC Chips
+            if (prefix.StartsWith("00:02:B3") || prefix.StartsWith("00:15:17") || prefix.StartsWith("00:1E:67")) return "Intel";
+            if (prefix.StartsWith("00:E0:4C") || prefix.StartsWith("52:54:00")) return "Realtek";
+
+            return "Ağ Arayüzü (" + prefix + ")";
+        }
+
+        private static string ClassifyDeviceType(IPAddress ip, string mac, string vendor, string hostname, List<int> openPorts, bool hasSmb, bool hasRdp)
+        {
+            var hostLower = hostname.ToLowerInvariant();
+            var lastOctet = ip.GetAddressBytes()[3];
+            bool isGateway = lastOctet == 1 || lastOctet == 254;
+
+            // 1. IP Telefon (VoIP)
+            if (vendor.Contains("Yealink") || vendor.Contains("Grandstream") || vendor.Contains("Polycom") || 
+                openPorts.Contains(5060) || hostLower.Contains("phone") || hostLower.Contains("sip") || hostLower.Contains("voip"))
+            {
+                return $"📞 IP Telefon (VoIP - {vendor})";
+            }
+
+            // 2. Ağ Yazıcısı / Fotokopi
+            if (openPorts.Contains(9100) || openPorts.Contains(515) || openPorts.Contains(631) ||
+                vendor.Contains("Canon") || vendor.Contains("Epson") || vendor.Contains("Brother") || vendor.Contains("Xerox") || vendor.Contains("Kyocera") ||
+                hostLower.Contains("printer") || hostLower.Contains("yazici") || hostLower.Contains("canon") || hostLower.Contains("hp-print"))
+            {
+                return $"🖨️ Ağ Yazıcısı ({vendor})";
+            }
+
+            // 3. Donanım Güvenlik Duvarı (Firewall / UTM)
+            if (vendor.Contains("Fortinet") || vendor.Contains("Palo Alto") || vendor.Contains("Sophos") || hostLower.Contains("firewall") || hostLower.Contains("utm"))
+            {
+                return $"🛡️ Donanım Güvenlik Duvarı ({vendor})";
+            }
+
+            // 4. NAS Depolama Sunucusu
+            if (vendor.Contains("Synology") || vendor.Contains("QNAP") || hostLower.Contains("nas") || hostLower.Contains("truenas"))
+            {
+                return $"💾 NAS Depolama Sunucusu ({vendor})";
+            }
+
+            // 5. Sanal Makine / Hypervisor
+            if (vendor.Contains("VMware") || vendor.Contains("VirtualBox") || hostLower.Contains("vmware") || hostLower.Contains("proxmox") || hostLower.Contains("esxi"))
+            {
+                return $"📦 Sanal Makine / VM ({vendor})";
+            }
+
+            // 6. Router / Modem / Ağ Geçidi
+            if (isGateway || vendor.Contains("Keenetic") || vendor.Contains("ASUS") || vendor.Contains("Netgear") || vendor.Contains("Zyxel") || vendor.Contains("TP-Link") && (openPorts.Contains(80) || openPorts.Contains(443)))
+            {
+                if (isGateway || openPorts.Contains(80) || openPorts.Contains(443))
+                    return $"🌐 Router / Modem / Gateway ({vendor})";
+                else
+                    return $"🔀 Dağıtıcı / Switch ({vendor})";
+            }
+
+            // 7. Yönetilebilir Ağ Switch
+            if (vendor.Contains("Cisco") || vendor.Contains("MikroTik") || vendor.Contains("Ubiquiti") || hostLower.Contains("switch") || hostLower.Contains("sw-"))
+            {
+                return $"🔀 Yönetilebilir Switch ({vendor})";
+            }
+
+            // 8. Akıllı Telefon / Tablet
+            if (vendor.Contains("Apple") || vendor.Contains("Samsung") || vendor.Contains("Xiaomi") || vendor.Contains("Huawei"))
+            {
+                if (!hasSmb && !hasRdp && !openPorts.Contains(22) && !openPorts.Contains(80))
+                    return $"📱 Akıllı Telefon / Mobil ({vendor})";
+            }
+
+            // 9. IoT / Akıllı Cihaz
+            if (vendor.Contains("Espressif") || vendor.Contains("Raspberry") || hostLower.Contains("esp") || hostLower.Contains("raspberry") || hostLower.Contains("smart"))
+            {
+                return $"⚡ IoT / Akıllı Cihaz ({vendor})";
+            }
+
+            // 10. Sunucu (Server)
+            if (vendor.Contains("Supermicro") || vendor.Contains("Dell") && (openPorts.Contains(22) || openPorts.Contains(3389) || openPorts.Contains(443)) ||
+                hostLower.Contains("server") || hostLower.Contains("dc-") || hostLower.Contains("srv") || hostLower.Contains("sunucu"))
+            {
+                return $"🖥️ Sunucu / Server ({vendor})";
+            }
+
+            // 11. Windows Bilgisayar (PC)
+            if (hasSmb || hasRdp || hostLower.Contains("desktop") || hostLower.Contains("laptop") || hostLower.Contains("pc"))
+            {
+                string tag = hasRdp ? "RDP+SMB" : "SMB Aktif";
+                return $"💻 Windows Bilgisayar ({tag} - {vendor})";
+            }
+
+            // 12. Linux / Unix
+            if (openPorts.Contains(22))
+            {
+                return $"🐧 Linux / Unix Cihaz ({vendor})";
+            }
+
+            // Default
+            return $"📡 Ağ Cihazı ({vendor})";
         }
 
         public static async Task<List<LanFleetNode>> DiscoverLanNodesAsync()
@@ -1804,6 +2105,14 @@ namespace WinoxIT.Services
         public string StatusCode { get; set; } = string.Empty; // Online, Firewall, Idle
         public string Latency { get; set; } = string.Empty;
         public string DeviceType { get; set; } = string.Empty;
+        public string Vendor { get; set; } = string.Empty;
+        public string NetBiosName { get; set; } = string.Empty;
+        public string Workgroup { get; set; } = string.Empty;
+        public string OpenPorts { get; set; } = string.Empty;
+        public bool HasSmb { get; set; }
+        public bool HasRdp { get; set; }
+        public bool HasHttp { get; set; }
+        public bool HasSsh { get; set; }
         public bool IsOnline { get; set; }
     }
 
