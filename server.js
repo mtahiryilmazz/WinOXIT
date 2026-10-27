@@ -124,7 +124,6 @@ const server = http.createServer((req, res) => {
             return;
         }
 
-        const ext = path.extname(filePath).toLowerCase();
         const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
         res.writeHead(200, {

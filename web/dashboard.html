@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="tr" data-theme="cyberpunk">
 
@@ -183,7 +183,7 @@ a{color:var(--a);text-decoration:none;}
 
 }
 
-.aurora1,.aurora2{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;animation:aur 20s infinite alternate ease-in-out;}
+.aurora1, .aurora2 { display: none !important; }
 
 .aurora1{width:60vw;height:60vw;top:-20vw;left:-10vw;background:radial-gradient(ellipse,rgba(var(--ar),var(--ag),var(--ab),.06) 0%,transparent 70%);}
 
@@ -191,7 +191,7 @@ a{color:var(--a);text-decoration:none;}
 
 @keyframes aur{0%{transform:translate(0,0) scale(1);}100%{transform:translate(40px,30px) scale(1.15);}}
 
-.scanlines{position:fixed;inset:0;background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.22) 50%),linear-gradient(90deg,rgba(255,0,0,.04),rgba(0,255,0,.01),rgba(0,0,255,.04));background-size:100% 3px,6px 100%;z-index:9998;pointer-events:none;opacity:.3;}
+.scanlines { display: none !important; opacity: 0 !important; pointer-events: none !important; }
 
 /* ═══════════════════════════════════════════════════
 
@@ -2503,7 +2503,7 @@ a{color:var(--a);text-decoration:none;}
 
 /* ═══════════════════════════════════════════════════
 
-   WINOXIT THEME
+   SYSFORGE STUDIO THEME
 
 ═══════════════════════════════════════════════════ */
 
@@ -3045,7 +3045,7 @@ a{color:var(--a);text-decoration:none;}
 
 /* --- Glow scanline enhancement --- */
 
-.scanlines { opacity: 0.18 !important; }
+.scanlines { display: none !important; opacity: 0 !important; pointer-events: none !important; }
 
 /* --- Page transition enhancement --- */
 
@@ -4785,34 +4785,91 @@ display: flex;
 
 
 /* ═══════════════════════════════════════════════════════════
-   LIQUID GLASS DESIGN SYSTEM (iOS 26 / Glassmorphism Pro)
-   Dynamic specular highlights, multi-layered depth, refraction
+   WINXOXIT LIQUID GLASS DESIGN SYSTEM (iOS 26 / Glassmorphism Pro)
+   - Guaranteed full-viewport layout (zero half-screen glitch)
+   - Dynamic specular top highlights, frosted depth, refraction
 ═══════════════════════════════════════════════════════════ */
 :root {
-  --glass-blur: blur(28px) saturate(190%);
+  --glass-blur: blur(24px) saturate(190%);
   --glass-border: 1px solid rgba(255, 255, 255, 0.12);
   --glass-specular: inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
   --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   --glass-bg: rgba(14, 20, 34, 0.62);
 }
 
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  background: var(--bg1) !important;
+}
+
 #bgc {
   position: fixed !important;
-  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
   z-index: 0 !important;
   pointer-events: none !important;
+  display: block !important;
 }
 
 .layout {
   position: relative !important;
-  z-index: 2 !important;
+  z-index: 1 !important;
+  display: flex !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
   background: transparent !important;
 }
 
-/* Liquid Glass Cards */
-.hud-card, .tool-card, .card, .nd-card, .sys-hero, .metric-box {
+.sb {
+  width: var(--sw, 272px) !important;
+  flex-shrink: 0 !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+  background: rgba(8, 12, 22, 0.72) !important;
+  backdrop-filter: blur(32px) saturate(210%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(210%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.09) !important;
+  box-shadow: 4px 0 28px rgba(0, 0, 0, 0.5) !important;
+}
+
+.main {
+  flex: 1 1 0% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.topbar {
+  background: rgba(8, 12, 22, 0.65) !important;
+  backdrop-filter: blur(32px) saturate(210%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(210%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.4) !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+#pages {
+  flex: 1 1 0% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Liquid Glass Cards & Modals */
+.hud-card, .tool-card, .card, .mod-card, .nd-card, .sys-hero, .metric-box, .qa-card {
   background: var(--glass-bg) !important;
   backdrop-filter: var(--glass-blur) !important;
   -webkit-backdrop-filter: var(--glass-blur) !important;
@@ -4824,7 +4881,7 @@ display: flex;
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease !important;
 }
 
-.hud-card::before, .tool-card::before, .card::before {
+.hud-card::before, .tool-card::before, .card::before, .mod-card::before {
   content: '' !important;
   position: absolute !important;
   inset: 0 !important;
@@ -4834,30 +4891,12 @@ display: flex;
   z-index: 1 !important;
 }
 
-.hud-card:hover, .tool-card:hover, .card:hover {
+.hud-card:hover, .tool-card:hover, .card:hover, .mod-card:hover, .qa-card:hover {
   transform: translateY(-3px) scale(1.008) !important;
   border-color: rgba(var(--ar), var(--ag), var(--ab), 0.55) !important;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 24px rgba(var(--ar), var(--ag), var(--ab), 0.25), var(--glass-specular) !important;
 }
 
-/* Liquid Sidebar and Header Navigation */
-.sb {
-  background: rgba(8, 12, 22, 0.72) !important;
-  backdrop-filter: blur(32px) saturate(210%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(210%) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.09) !important;
-  box-shadow: 4px 0 28px rgba(0, 0, 0, 0.5) !important;
-}
-
-.hh {
-  background: rgba(8, 12, 22, 0.65) !important;
-  backdrop-filter: blur(32px) saturate(210%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(210%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
-  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.4) !important;
-}
-
-/* Glass Modal */
 .modal {
   background: rgba(10, 15, 28, 0.82) !important;
   backdrop-filter: blur(36px) saturate(220%) !important;
@@ -4867,7 +4906,7 @@ display: flex;
   border-radius: 18px !important;
 }
 
-/* Glass Interactive Buttons */
+/* Glass Buttons & Interactive Pills */
 .btn, button.sbn, .pill, .filter-chip {
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
@@ -4882,11 +4921,58 @@ display: flex;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38), 0 0 16px rgba(var(--ar), var(--ag), var(--ab), 0.35) !important;
 }
 
+
+/* ═══════════════════════════════════════════════════════════
+   CLEAN ENTERPRISE IT COCKPIT STYLES (NO SCANLINES, CLEAN DEPTH)
+═══════════════════════════════════════════════════════════ */
+.scanlines {
+  display: none !important;
+}
+.aurora1, .aurora2 {
+  display: none !important;
+}
+.hud-card, .tool-card, .card, .mod-card, .nd-card {
+  background: rgba(14, 22, 38, 0.78) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 10px !important;
+}
+.hud-card:hover, .tool-card:hover, .card:hover, .mod-card:hover {
+  border-color: rgba(0, 220, 255, 0.4) !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55), 0 0 16px rgba(0, 220, 255, 0.15) !important;
+}
+.sbsec {
+  font-family: 'Segoe UI', system-ui, sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  color: var(--muted) !important;
+  padding: 12px 14px 4px !important;
+  text-transform: uppercase !important;
+}
+.sbn {
+  padding: 7px 12px !important;
+  margin: 1px 8px !important;
+  border-radius: 6px !important;
+  font-size: 12.5px !important;
+  transition: all 0.15s ease !important;
+}
+.sbn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+.sbn.active {
+  background: rgba(0, 220, 255, 0.12) !important;
+  border: 1px solid rgba(0, 220, 255, 0.28) !important;
+  color: #fff !important;
+}
+
 </style>
 
-<style id="winoxit-theme">
-/* Windows 11 Fluent Theme */
-[data-theme="fluent"] {
+<style id="sysforge-studio-theme">
+/* Match the desktop application's Fluent dark palette while keeping the dashboard's own UI and features. */
+:root,[data-theme] {
   --bg1:#181818; --bg2:#202020; --bg3:#262626;
   --panel:rgba(255,255,255,.025); --panel2:rgba(255,255,255,.045);
   --border:#383838; --borda:rgba(0,120,212,.55);
@@ -4898,8 +4984,7 @@ display: flex;
   --glow:none; --glow2:none; --glow3:none; --sb:rgba(24,24,24,.98);
   --card-glow:rgba(0,120,212,.04);
 }
-
-/* Light Mode Styling (Active only when Light Mode is selected) */
+ body { font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif !important; }
 html[data-color-mode="light"] {
   color-scheme: light;
   --bg1:#f3f6fa; --bg2:#ffffff; --bg3:#e9eef5;
@@ -4909,19 +4994,18 @@ html[data-color-mode="light"] {
   --sb:rgba(248,250,253,.98); --card-glow:rgba(0,120,212,.035);
   --glow:none; --glow2:none; --glow3:none;
 }
+html[data-color-mode="dark"] body { color-scheme:dark; background:var(--bg1)!important; color:var(--text)!important; }
 html[data-color-mode="light"] body { background:var(--bg1)!important; color:var(--text)!important; }
 html[data-color-mode="light"] :is(.card,.panel,.modal,.modal-content,.sidebar,.topbar,.header,.widget,.tile,.section,.content-card) { color:var(--text); }
 html[data-color-mode="light"] :is(input,select,textarea) { color:var(--text)!important; background:var(--bg2)!important; border-color:var(--border)!important; }
-html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { background:var(--sb)!important; color:var(--text)!important; border-color:var(--border)!important; }
-
-/* Clean UI & Topbar Layout Alignment */
-.color-mode-toggle { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; margin:0 6px; padding:0; border:1px solid var(--border); border-radius:8px; color:var(--text); background:var(--panel2); cursor:pointer; transition:background .18s,border-color .18s; }
-.color-mode-toggle:hover { background:var(--bg3); border-color:var(--a); }
+html[data-color-mode] #sb, html[data-color-mode] .sb { background:var(--sb)!important; color:var(--text)!important; border-color:var(--border)!important; }
+html[data-color-mode] #sb .sbn { color:var(--sub)!important; text-shadow:none!important; }
+html[data-color-mode] #sb .sbn:hover { background:var(--panel2)!important; color:var(--text)!important; }
+html[data-color-mode] #sb .sbn.active { background:var(--panel2)!important; color:var(--a)!important; text-shadow:none!important; }
+html[data-color-mode] #sb .sbsec { color:var(--muted)!important; }
+.color-mode-toggle { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; margin:0 8px; padding:0; border:1px solid var(--border); border-radius:8px; color:var(--text); background:var(--panel2); cursor:pointer; transition:background .18s,border-color .18s,transform .18s; }
+.color-mode-toggle:hover { background:var(--bg3); border-color:var(--a); transform:translateY(-1px); }
 .color-mode-toggle svg { width:18px; height:18px; }
-
-/* Ensure page content layout fills screen perfectly */
-.layout { display:flex; width:100vw; height:100vh; overflow:hidden; position:relative; }
-.main { flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; min-width:0; }
 </style>
 </head>
 
@@ -5002,108 +5086,60 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
     </div>
 
     <nav id="sbnav" style="padding: 10px 0;">
+      <div class="sbsec">🏢 GENEL BAKIŞ &amp; KONTROL</div>
+      <div class="sbn active" data-p="dashboard" onclick="go('dashboard',this)"><span class="nav-ico-box" style="color:#00ffff;background:rgba(0,255,255,0.12);">📊</span><span>Sistem Kokpiti</span></div>
+      <div class="sbn" data-p="sysinfo" onclick="go('sysinfo',this)"><span class="nav-ico-box" style="color:#00ff88;background:rgba(0,255,136,0.12);">🖥️</span><span>Donanım &amp; Sistem Künyesi</span></div>
+      <div class="sbn" data-p="quickact" onclick="go('quickact',this)"><span class="nav-ico-box" style="color:#ffd700;background:rgba(255,215,0,0.12);">⚡</span><span>Hızlı Eylemler (1-Click)</span></div>
+      <div class="sbn" data-p="themes" onclick="go('themes',this)"><span class="nav-ico-box" style="color:#ff00bf;background:rgba(255,0,191,0.12);">🎨</span><span>Arayüz &amp; Tema Seçici</span></div>
 
-      <div class="sbsec">Home</div>
+      <div class="sbsec">🏛️ KAMU &amp; KURUMSAL DAĞITIM</div>
+      <div class="sbn" data-p="apps100" onclick="go('apps100',this)"><span class="nav-ico-box" style="color:#00ffff;background:rgba(0,255,255,0.14);">🏛️</span><span>Kamu E-İmza &amp; Yazılımlar</span></div>
+      <div class="sbn" data-p="bundler" onclick="go('bundler',this)"><span class="nav-ico-box" style="color:#ff9900;background:rgba(255,153,0,0.12);">📦</span><span>Toplu Paket Dağıtıcı</span></div>
+      <div class="sbn" data-p="updater" onclick="go('updater',this)"><span class="nav-ico-box" style="color:#00ff88;background:rgba(0,255,136,0.12);">🔄</span><span>Yazılım Güncelleyici</span></div>
 
-      <div class="sbn active" data-p="dashboard" onclick="go('dashboard',this)"><span class="nav-ico-box" style="color: #00ffff; background: rgba(0, 255, 255, 0.12);">🏠</span><span>Ana Sayfa</span></div>
+      <div class="sbsec">🌐 AĞ &amp; ALTYAPI YÖNETİMİ</div>
+      <div class="sbn" data-p="network" onclick="go('network',this)"><span class="nav-ico-box" style="color:#00ffff;background:rgba(0,255,255,0.12);">📡</span><span>Ağ Keşfi &amp; IP Filosu</span></div>
+      <div class="sbn" data-p="dnsrepair" onclick="go('dnsrepair',this)"><span class="nav-ico-box" style="color:#ffd700;background:rgba(255,215,0,0.12);">🌐</span><span>DNS &amp; Ağ Onarımı</span></div>
+      <div class="sbn" data-p="netstat" onclick="go('netstat',this)"><span class="nav-ico-box" style="color:#ff007f;background:rgba(255,0,127,0.12);">🎛️</span><span>Bağlantılar &amp; Port İzleyici</span></div>
 
-      <div class="sbn" data-p="sysinfo" onclick="go('sysinfo',this)"><span class="nav-ico-box" style="color: #00ff88; background: rgba(0, 255, 136, 0.12);">📋</span><span>System Inventory</span></div>
+      <div class="sbsec">⚙️ BİLGİ İŞLEM SİSTEM ONARIMI</div>
+      <div class="sbn" data-p="swdiag" onclick="go('swdiag',this)"><span class="nav-ico-box" style="color:#00ff88;background:rgba(0,255,136,0.12);">🔍</span><span>Yazılım &amp; Sistem Tanılama</span></div>
+      <div class="sbn" data-p="services" onclick="go('services',this)"><span class="nav-ico-box" style="color:#9d00ff;background:rgba(157,0,255,0.12);">⚙️</span><span>Windows Servis Yönetimi</span></div>
+      <div class="sbn" data-p="regtweaks" onclick="go('regtweaks',this)"><span class="nav-ico-box" style="color:#ffd700;background:rgba(255,215,0,0.12);">🔧</span><span>Kayıt Defteri &amp; Ayarlar</span></div>
+      <div class="sbn" data-p="errorlog" onclick="go('errorlog',this)"><span class="nav-ico-box" style="color:#ff3b3b;background:rgba(255,59,59,0.12);">📝</span><span>Olay &amp; Hata Günlüğü</span></div>
 
-      <div class="sbn" data-p="alloptions" onclick="go('alloptions',this)"><span class="nav-ico-box" style="color: #ff6c00; background: rgba(255, 108, 0, 0.12);">⚙️</span><span>All Parsed Options</span></div>
+      <div class="sbsec">🛡️ GÜVENLİK &amp; SERTİFİKALAR</div>
+      <div class="sbn" data-p="firewall" onclick="go('firewall',this)"><span class="nav-ico-box" style="color:#0099ff;background:rgba(0,153,255,0.12);">🛡️</span><span>Güvenlik Duvarı</span></div>
+      <div class="sbn" data-p="secaudit" onclick="go('secaudit',this)"><span class="nav-ico-box" style="color:#00ff88;background:rgba(0,255,136,0.12);">🔐</span><span>Güvenlik &amp; Yetki Denetimi</span></div>
+      <div class="sbn" data-p="licensevault" onclick="go('licensevault',this)"><span class="nav-ico-box" style="color:#ff00bf;background:rgba(255,0,191,0.12);">🔑</span><span>Lisans &amp; Sertifika Kasası</span></div>
 
-      <div class="sbn" data-p="themes" onclick="go('themes',this)"><span class="nav-ico-box" style="color: #ce93d8; background: rgba(206, 147, 216, 0.12);">🎨</span><span>Tema Özelleştirme</span></div>
+      <div class="sbsec">💾 YEDEKLEME &amp; FELAKET KURTARMA</div>
+      <div class="sbn" data-p="userbackup" onclick="go('userbackup',this)"><span class="nav-ico-box" style="color:#ff007f;background:rgba(255,0,127,0.12);">💾</span><span>Kullanıcı Profili Yedekleme</span></div>
+      <div class="sbn" data-p="restore" onclick="go('restore',this)"><span class="nav-ico-box" style="color:#00ff88;background:rgba(0,255,136,0.12);">🔄</span><span>Sistem Geri Yükleme</span></div>
+      <div class="sbn" data-p="offlinerecovery" onclick="go('offlinerecovery',this)"><span class="nav-ico-box" style="color:#ff6c00;background:rgba(255,108,0,0.12);">🏥</span><span>Çevrimdışı Kurtarma</span></div>
+      <div class="sbn" data-p="bsod" onclick="go('bsod',this)"><span class="nav-ico-box" style="color:#00ffd0;background:rgba(0,255,208,0.12);">🖥️</span><span>Mavi Ekran (BSOD) Analizi</span></div>
 
-      <div class="sbsec">Modül 1: Yapay Zekâ Tanılama Motoru</div>
+      <div class="sbsec">🚀 PERFORMANS &amp; DONANIM</div>
+      <div class="sbn" data-p="hwdiag" onclick="go('hwdiag',this)"><span class="nav-ico-box" style="color:#ffd700;background:rgba(255,215,0,0.12);">💻</span><span>Donanım Tanılama</span></div>
+      <div class="sbn" data-p="tempmon" onclick="go('tempmon',this)"><span class="nav-ico-box" style="color:#ff007f;background:rgba(255,0,127,0.12);">🌡️</span><span>CPU / GPU Sıcaklık İzleme</span></div>
+      <div class="sbn" data-p="diskbench" onclick="go('diskbench',this)"><span class="nav-ico-box" style="color:#9d00ff;background:rgba(157,0,255,0.12);">💿</span><span>Disk Hız Testi (Benchmark)</span></div>
+      <div class="sbn" data-p="cleaner" onclick="go('cleaner',this)"><span class="nav-ico-box" style="color:#00ffd0;background:rgba(0,255,208,0.12);">🧹</span><span>Disk &amp; Sistem Temizleyici</span></div>
+      <div class="sbn" data-p="debloater" onclick="go('debloater',this)"><span class="nav-ico-box" style="color:#9d00ff;background:rgba(157,0,255,0.12);">🗑️</span><span>Windows Debloater</span></div>
+      <div class="sbn" data-p="startup" onclick="go('startup',this)"><span class="nav-ico-box" style="color:#0099ff;background:rgba(0,153,255,0.12);">🚀</span><span>Başlangıç Yöneticisi</span></div>
+      <div class="sbn" data-p="procmgr" onclick="go('procmgr',this)"><span class="nav-ico-box" style="color:#00ffd0;background:rgba(0,255,208,0.12);">📊</span><span>Gelişmiş Görev Yöneticisi</span></div>
+      <div class="sbn" data-p="tasks" onclick="go('tasks',this)"><span class="nav-ico-box" style="color:#ff6c00;background:rgba(255,108,0,0.12);">📅</span><span>Zamanlanmış Görevler</span></div>
+      <div class="sbn" data-p="cmd37" onclick="go('cmd37',this)"><span class="nav-ico-box" style="color:#ff007f;background:rgba(255,0,127,0.12);">🛠️</span><span>WinoxIT CMD Toolkit</span></div>
+      <div class="sbn" data-p="portable" onclick="go('portable',this)"><span class="nav-ico-box" style="color:#9575cd;background:rgba(149,117,205,0.12);">🔧</span><span>Taşınabilir Araçlar</span></div>
+      <div class="sbn" data-p="selfheal" onclick="go('selfheal',this)" style="position:relative"><span class="nav-ico-box" style="color:#00ff88;background:rgba(0,255,136,0.15);">🩹</span><span>Kendi Kendini Onaran Sistem</span><span id="shBadge" style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#ff3b3b;color:#fff;font-size:9px;font-family:var(--fhud);padding:1px 5px;border-radius:8px;font-weight:700">!</span></div>
 
-      <div class="sbn" data-p="nextgen" onclick="go('nextgen',this)"><span class="nav-ico-box" style="color: #ff007f; background: rgba(255, 0, 127, 0.12);">🌌</span><span>Yapay Zekâ ile Otomatik Onarım</span></div>
-
-      
-
-      <div class="sbn" data-p="aidiag" onclick="go('aidiag',this)"><span class="nav-ico-box" style="color: #ff00bf; background: rgba(255, 0, 191, 0.12);">🤖</span><span>AI Smart Diagnostics</span></div>
-
-      <div class="sbn" data-p="reports" onclick="go('reports',this)"><span class="nav-ico-box" style="color: #00ffff; background: rgba(0, 255, 255, 0.12);">📋</span><span>Report Center</span></div>
-
-      <div class="sbsec">Modül 2: Donanım Tanılaması</div>
-
-      <div class="sbn" data-p="hwdiag" onclick="go('hwdiag',this)"><span class="nav-ico-box" style="color: #ffd700; background: rgba(255, 215, 0, 0.12);">💻</span><span>Hardware Diagnostics</span></div>
-
-      <div class="sbn" data-p="tempmon" onclick="go('tempmon',this)"><span class="nav-ico-box" style="color: #ff007f; background: rgba(255, 0, 127, 0.12);">🌡️</span><span>CPU/GPU Temp Monitor</span></div>
-
-      <div class="sbn" data-p="diskbench" onclick="go('diskbench',this)"><span class="nav-ico-box" style="color: #9d00ff; background: rgba(157, 0, 255, 0.12);">💿</span><span>Disk Speed Benchmark</span></div>
-
-      <div class="sbsec">Modül 3: Windows Onarımı</div>
-
-      <div class="sbn" data-p="swdiag" onclick="go('swdiag',this)"><span class="nav-ico-box" style="color: #00ff88; background: rgba(0, 255, 136, 0.12);">🔍</span><span>Software Diagnostics</span></div>
-
-      <div class="sbn" data-p="errorlog" onclick="go('errorlog',this)"><span class="nav-ico-box" style="color: #00ff88; background: rgba(0, 255, 136, 0.12);">📝</span><span>Error Log Self-Repair</span></div>
-
-      <div class="sbn" data-p="services" onclick="go('services',this)"><span class="nav-ico-box" style="color: #9d00ff; background: rgba(157, 0, 255, 0.12);">⚙️</span><span>Services Control Panel</span></div>
-
-      <div class="sbn" data-p="regtweaks" onclick="go('regtweaks',this)"><span class="nav-ico-box" style="color: #ffd700; background: rgba(255, 215, 0, 0.12);">🔧</span><span>Registry Telemetry Tweaks</span></div>
-
-      <div class="sbsec">Modül 4: Ağ İşlemleri</div>
-
-      <div class="sbn" data-p="dnsrepair" onclick="go('dnsrepair',this)"><span class="nav-ico-box" style="color: #ffd700; background: rgba(255, 215, 0, 0.12);">🌐</span><span>DNS Flush &amp; Network Repair</span></div>
-
-      <div class="sbn" data-p="netstat" onclick="go('netstat',this)"><span class="nav-ico-box" style="color: #ff007f; background: rgba(255, 0, 127, 0.12);">🎛️</span><span>Netstat Connections</span></div>
-
-      <div class="sbn" data-p="network" onclick="go('network',this)"><span class="nav-ico-box" style="color: #ff9900; background: rgba(255, 153, 0, 0.12);">📡</span><span>Network Center</span></div>
-
-      <div class="sbsec">Modül 5: Güvenlik</div>
-
-      <div class="sbn" data-p="firewall" onclick="go('firewall',this)"><span class="nav-ico-box" style="color: #0099ff; background: rgba(0, 153, 255, 0.12);">🛡️</span><span>Firewall Manager</span></div>
-
-      <div class="sbn" data-p="secaudit" onclick="go('secaudit',this)"><span class="nav-ico-box" style="color: #00ff88; background: rgba(0, 255, 136, 0.12);">🔐</span><span>Security &amp; Privacy Audit</span></div>
-
-      <div class="sbn" data-p="licensevault" onclick="go('licensevault',this)"><span class="nav-ico-box" style="color: #ff00bf; background: rgba(255, 0, 191, 0.12);">🔑</span><span>License Vault</span></div>
-
-      <div class="sbsec">Modül 6: Yedekleme/Kurtarma</div>
-
-      <div class="sbn" data-p="userbackup" onclick="go('userbackup',this)"><span class="nav-ico-box" style="color: #ff007f; background: rgba(255, 0, 127, 0.12);">💾</span><span>1-Click Backup Migrate</span></div>
-
-      <div class="sbn" data-p="restore" onclick="go('restore',this)"><span class="nav-ico-box" style="color: #00ff88; background: rgba(0, 255, 136, 0.12);">🔄</span><span>System Restore Manager</span></div>
-
-      <div class="sbsec">Modül 7: Performans</div>
-
-      <div class="sbn" data-p="cleaner" onclick="go('cleaner',this)"><span class="nav-ico-box" style="color: #00ffd0; background: rgba(0, 255, 208, 0.12);">🧹</span><span>System Cleaner</span></div>
-
-      <div class="sbn" data-p="debloater" onclick="go('debloater',this)"><span class="nav-ico-box" style="color: #9d00ff; background: rgba(157, 0, 255, 0.12);">🗑️</span><span>Windows Debloater</span></div>
-
-      <div class="sbn" data-p="startup" onclick="go('startup',this)"><span class="nav-ico-box" style="color: #0099ff; background: rgba(0, 153, 255, 0.12);">🚀</span><span>Startup Optimizer</span></div>
-
-      <div class="sbsec">Modül 8: Acil Kurtarma</div>
-
-      <div class="sbn" data-p="offlinerecovery" onclick="go('offlinerecovery',this)"><span class="nav-ico-box" style="color: #ff6c00; background: rgba(255, 108, 0, 0.12);">🏥</span><span>Offline Recovery Center</span></div>
-
-      <div class="sbn" data-p="bsod" onclick="go('bsod',this)"><span class="nav-ico-box" style="color: #00ffd0; background: rgba(0, 255, 208, 0.12);">🖥️</span><span>BSOD Crash Analiz Etr</span></div>
-
-      <div class="sbsec">Modül 9: BT Yönetimi</div>
-
-      <div class="sbn" data-p="cmd37" onclick="go('cmd37',this)"><span class="nav-ico-box" style="color: #ff007f; background: rgba(255, 0, 127, 0.12);">🛠️</span><span>WinoxIT CMD Toolkit</span></div>
-
-      <div class="sbn" data-p="apps100" onclick="go('apps100',this)"><span class="nav-ico-box" style="color: #9d00ff; background: rgba(157, 0, 255, 0.12);">🎛️</span><span>100 Apps 1-Click Install</span></div>
-
-      <div class="sbn" data-p="bundler" onclick="go('bundler',this)"><span class="nav-ico-box" style="color: #ff00bf; background: rgba(255, 0, 191, 0.12);">📦</span><span>Custom Apps Bundler</span></div>
-
-      <div class="sbn" data-p="updater" onclick="go('updater',this)"><span class="nav-ico-box" style="color: #0099ff; background: rgba(0, 153, 255, 0.12);">🔄</span><span>Software Updater</span></div>
-
-      <div class="sbn" data-p="quickact" onclick="go('quickact',this)"><span class="nav-ico-box" style="color: #ffd700; background: rgba(255, 215, 0, 0.12);">⚡</span><span>One Click Actions</span></div>
-
-      <div class="sbn" data-p="portable" onclick="go('portable',this)"><span class="nav-ico-box" style="color: #9575cd; background: rgba(149, 117, 205, 0.12);">🔧</span><span>Portable Tools Menu</span></div>
-
-      <div class="sbn" data-p="tasks" onclick="go('tasks',this)"><span class="nav-ico-box" style="color: #ff6c00; background: rgba(255, 108, 0, 0.12);">📅</span><span>Scheduled Tasks Manager</span></div>
-
-      <div class="sbn" data-p="procmgr" onclick="go('procmgr',this)"><span class="nav-ico-box" style="color: #00ffd0; background: rgba(0, 255, 208, 0.12);">📊</span><span>Visual Process Manager</span></div>
-
-      <div class="sbn" data-p="selfheal" onclick="go('selfheal',this)" style="position:relative"><span class="nav-ico-box" style="color: #00ff88; background: rgba(0,255,136,0.15);">🩹</span><span>Self-Heal Monitor</span><span id="shBadge" style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#ff3b3b;color:#fff;font-size:9px;font-family:var(--fhud);padding:1px 5px;border-radius:8px;font-weight:700">!</span></div>
-
-      <div class="sbsec">Modül 10: Yapay Zekâ Bilgi Bankası</div>
-
-      <div class="sbn" data-p="aikb" onclick="go('aikb',this)"><span class="nav-ico-box" style="color: #00ffff; background: rgba(0, 255, 255, 0.12);">💡</span><span>AI Knowledge Base</span></div>
-
+      <div class="sbsec">🤖 YAPAY ZEKÂ &amp; BİLGİ BANKASI</div>
+      <div class="sbn" data-p="nextgen" onclick="go('nextgen',this)"><span class="nav-ico-box" style="color:#9d00ff;background:rgba(157,0,255,0.12);">⚡</span><span>WinoxIT AI Asistanı</span></div>
+      <div class="sbn" data-p="aidiag" onclick="go('aidiag',this)"><span class="nav-ico-box" style="color:#ff00bf;background:rgba(255,0,191,0.12);">🤖</span><span>Akıllı Arıza Teşhisi</span></div>
+      <div class="sbn" data-p="aikb" onclick="go('aikb',this)"><span class="nav-ico-box" style="color:#00ffff;background:rgba(0,255,255,0.12);">💡</span><span>IT Bilgi Bankası (KB)</span></div>
+      <div class="sbn" data-p="reports" onclick="go('reports',this)"><span class="nav-ico-box" style="color:#00ffff;background:rgba(0,255,255,0.12);">📋</span><span>Detaylı Rapor Merkezi</span></div>
     </nav>
             <div class="nd-sidebar-widget" id="netSidebarWidget" style="display: none;">
-              <div class="nd-sidebar-hdr">Quick Status</div>
+              <div class="nd-sidebar-hdr">Quick Durum</div>
               <div class="nd-sidebar-donut">
                 <canvas class="nd-sidebar-donut-canvas" id="netSidebarDonutCanvas"></canvas>
                 <div class="nd-sidebar-donut-val">
@@ -5196,24 +5232,6 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
       </div>
 
-    
-        <button id="btnToggleLang" title="Dili Değiştir / Switch Language (TR/EN)" onclick="toggleDashboardLanguage()" style="
-          margin-left:8px;
-          padding:4px 10px;
-          background:rgba(255,255,255,0.08);
-          border:1px solid rgba(255,255,255,0.2);
-          color:var(--text);
-          border-radius:6px;
-          font-size:11px;
-          font-weight:700;
-          cursor:pointer;
-          display:inline-flex;
-          align-items:center;
-          gap:4px;
-          transition:all 0.2s;
-        " onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">🌐 <span id="currentLangLabel">TR</span></button>
-
-      </div>
     </header>
 
     <!-- Pages -->
@@ -5930,7 +5948,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
                     <div class="module-option-info">
 
-                      <span class="module-option-name">Error Log Self-Repair</span>
+                      <span class="module-option-name">Hata Log Self-Repair</span>
 
                       <span class="module-option-desc">Olay kayıtlarını inceleme ve otomatik düzeltmeler</span>
 
@@ -6184,7 +6202,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
                     <div class="module-option-info">
 
-                      <span class="module-option-name">Startup Optimizer</span>
+                      <span class="module-option-name">Başlatup Optimizer</span>
 
                       <span class="module-option-desc">Arka plan başlangıç uygulamalarını ve gecikmelerini yönetme</span>
 
@@ -6310,7 +6328,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
                     <div class="module-option-info">
 
-                      <span class="module-option-name" style="font-size: 11px;">1-Click Actions</span>
+                      <span class="module-option-name" style="font-size: 11px;">1-Click Eylems</span>
 
                     </div>
 
@@ -6614,7 +6632,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
                       <div class="alert-body">
 
-                        <div class="alert-title">Startup Programs</div>
+                        <div class="alert-title">Başlatup Programs</div>
 
                         <div class="alert-desc">5 programs can be optimized</div>
 
@@ -6824,7 +6842,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
             </div>
 
-            <!-- System Info -->
+            <!-- System Bilgi -->
 
             <div class="db-side-widget">
 
@@ -6928,13 +6946,13 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
                   <span style="color: var(--green);">•</span>
 
-                  <span>Optimize Startup Programs</span>
+                  <span>Optimize Başlatup Programs</span>
 
                 </div>
 
               </div>
 
-              <button class="btn bg bsm" style="width: 100%; justify-content: center; font-weight: bold; background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,255,208,0.25));" onclick="runRecommendedActions()">✨ Önerilen İşlemleri Uygula</button>
+              <button class="btn bg bsm" style="width: 100%; justify-content: center; font-weight: bold; background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,255,208,0.25));" onclick="runRecommendedEylems()">✨ Önerilen İşlemleri Uygula</button>
 
             </div>
 
@@ -6990,7 +7008,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
           <div class="db-footer-sec">
 
-            <span style="color: var(--muted);">Internet Status:</span>
+            <span style="color: var(--muted);">Internet Durum:</span>
 
             <div class="db-footer-dot on"></div>
 
@@ -7000,7 +7018,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
           <div class="db-footer-sec">
 
-            <span style="color: var(--muted);">VPN Status:</span>
+            <span style="color: var(--muted);">VPN Durum:</span>
 
             <div class="db-footer-dot off"></div>
 
@@ -7100,7 +7118,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
           <div class="card glow" style="text-align: center; padding: 28px; background: linear-gradient(135deg, rgba(0,255,136,0.04), rgba(0,255,208,0.04));">
 
-            <div class="ch" style="justify-content: center;"><span>🔋 Battery Status</span></div>
+            <div class="ch" style="justify-content: center;"><span>🔋 Battery Durum</span></div>
 
             <div style="position: relative; width: 120px; height: 120px; margin: 16px auto;">
 
@@ -7576,7 +7594,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
             <div class="sa-status-info">
               <div class="sa-status-icon" style="background:rgba(0,180,255,0.08); color:var(--blue)">🔄</div>
               <div>
-                <div class="sa-status-title">Windows Update Status</div>
+                <div class="sa-status-title">Windows Update Durum</div>
                 <div class="sa-status-desc">Security patches and updates</div>
               </div>
             </div>
@@ -7674,7 +7692,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
             <div style="display:flex; align-items:center; gap:10px;">
               <span>🔑</span>
               <div>
-                <div style="font-weight:700; color:var(--text);">Product License Keys</div>
+                <div style="font-weight:700; color:var(--text);">Product Lisans Anahtarıs</div>
                 <div style="font-size:9.5px; color:var(--muted); margin-top:1px;">Retrieve Windows registry and BIOS product keys</div>
               </div>
             </div>
@@ -7718,7 +7736,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
             </div>
             <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:8px; padding:12px; text-align:center; cursor:pointer;" onclick="switchPage('licensevault')">
               <div style="font-size:20px; margin-bottom:4px;">🔑</div>
-              <div style="font-size:10px; font-weight:700; color:var(--text);">License Keys</div>
+              <div style="font-size:10px; font-weight:700; color:var(--text);">Lisans Anahtarıs</div>
             </div>
             <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:8px; padding:12px; text-align:center; cursor:pointer;" onclick="runPS('usb_history')">
               <div style="font-size:20px; margin-bottom:4px;">🔌</div>
@@ -7788,7 +7806,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
         </div>
 
-        <div id="sysinfoDiv"><div class="empty-state"><div class="es-ico">🖥️</div><div class="es-title">System Inventory Offline</div><div class="es-sub">Tam donanım ve yazılım profilinizi anlık olarak tarayıp görüntülemek için "Tüm Bilgileri Yükle" düğmesine tıklayın.</div><button class="es-btn" onclick="loadSysInfo()">🔍 Load System Info</button></div></div>
+        <div id="sysinfoDiv"><div class="empty-state"><div class="es-ico">🖥️</div><div class="es-title">System Inventory Offline</div><div class="es-sub">Tam donanım ve yazılım profilinizi anlık olarak tarayıp görüntülemek için "Tüm Bilgileri Yükle" düğmesine tıklayın.</div><button class="es-btn" onclick="loadSysInfo()">🔍 Load System Bilgi</button></div></div>
 
       </section>
 
@@ -7990,7 +8008,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
           .svc-overview-dot.dis { background:var(--muted); }
           .svc-overview-val-num { font-weight:700; color:#fff; }
 
-          /* Quick Actions buttons */
+          /* Quick Eylems buttons */
           .svc-actions-list { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
           .svc-action-sidebar-btn {
             background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.06);
@@ -8192,7 +8210,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                       </div>
                       <div class="svc-detail-item" style="grid-column:span 2">
                         <span class="svc-detail-lbl">Görünen Ad</span>
-                        <span class="svc-detail-val" id="detDispName">Application Info</span>
+                        <span class="svc-detail-val" id="detDispName">Application Bilgi</span>
                       </div>
                       
                       <div class="svc-detail-item">
@@ -8268,9 +8286,9 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                   </div>
                 </div>
 
-                <!-- Quick Actions -->
+                <!-- Quick Eylems -->
                 <div class="svc-panel">
-                  <div class="svc-sec-header">⚡ Quick Actions</div>
+                  <div class="svc-sec-header">⚡ Quick Eylems</div>
                   <div class="svc-actions-list">
                     <button class="svc-action-sidebar-btn start" onclick="_svcBatchControl('start')">
                       <span class="svc-action-sidebar-btn-ico">▶️</span>
@@ -8346,7 +8364,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                     </div>
                     <div class="svc-activity-item">
                       <div class="svc-activity-top"><span>01:30:30 AM</span><span>Appinfo</span></div>
-                      <div class="svc-activity-name">Application Info</div>
+                      <div class="svc-activity-name">Application Bilgi</div>
                       <div class="svc-activity-msg started">Service started</div>
                     </div>
                   </div>
@@ -8383,7 +8401,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
         <div class="ph">
           <div class="ph-welcome">
-            <div class="pt">🚀 Startup <span class="hl">Manager</span></div>
+            <div class="pt">🚀 Başlatup <span class="hl">Manager</span></div>
             <div class="ps">All startup entries from registry — view and manage</div>
           </div>
           <div class="db-uptime-card" style="display: flex; align-items: center; gap: 8px;">
@@ -8394,21 +8412,21 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
         <div class="pbar">
 
-          <button class="btn bp" onclick="loadStartup()">🔍 Başlangıç Öğelerini Yükle</button>
+          <button class="btn bp" onclick="loadBaşlatup()">🔍 Başlangıç Öğelerini Yükle</button>
 
           <button class="btn bs" onclick="launch('msconfig')">MSConfig</button>
 
-          <button class="btn bs" onclick="launch('settings_startup')">Startup Settings</button>
+          <button class="btn bs" onclick="launch('settings_startup')">Başlatup Settings</button>
 
-          <button class="btn bs" onclick="configureStartupDelay()" style="border-color:var(--pink); color:var(--pink)">⏳ Configure Startup Delay</button>
+          <button class="btn bs" onclick="configureBaşlatupDelay()" style="border-color:var(--pink); color:var(--pink)">⏳ Configure Başlatup Delay</button>
 
-          <button class="btn bs" onclick="showStartupImpact()" style="border-color:var(--gold); color:var(--gold)">📊 Identify Heavy Impact Items</button>
+          <button class="btn bs" onclick="showBaşlatupImpact()" style="border-color:var(--gold); color:var(--gold)">📊 Identify Heavy Impact Items</button>
 
           <button class="btn bs" onclick="runRecovery('clean_invalid_context_extensions')" style="border-color:var(--cyan); color:var(--cyan)">🧹 Clean Context Menu Extensions</button>
 
         </div>
 
-        <div id="startupDiv"><div class="empty-state"><div class="es-ico">🚀</div><div class="es-title">Startup Items Not Scanned</div><div class="es-sub">Windows Kayıt Defterindeki tüm başlangıç öğelerini görüntülemek ve yönetmek için "Başlangıç Öğelerini Yükle" düğmesine tıklayın.</div><button class="es-btn" onclick="loadStartup()">🔍 Başlangıç Öğelerini Yükle</button></div></div>
+        <div id="startupDiv"><div class="empty-state"><div class="es-ico">🚀</div><div class="es-title">Başlatup Items Not Scanned</div><div class="es-sub">Windows Kayıt Defterindeki tüm başlangıç öğelerini görüntülemek ve yönetmek için "Başlangıç Öğelerini Yükle" düğmesine tıklayın.</div><button class="es-btn" onclick="loadBaşlatup()">🔍 Başlangıç Öğelerini Yükle</button></div></div>
 
       </section>
 
@@ -8437,7 +8455,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
 </div>
 
-<div id="disksDiv"><div class="empty-state"><div class="es-ico">💿</div><div class="es-title">Disk Info Not Loaded</div><div class="es-sub">Bağlı tüm sürücülerin sağlık durumunu, SMART verilerini ve kullanım istatistiklerini almak için "Disk Bilgilerini Yükle" düğmesine tıklayın.</div><button class="es-btn" onclick="loadDisks()">🔍 Disk Bilgilerini Yükle</button></div></div>
+<div id="disksDiv"><div class="empty-state"><div class="es-ico">💿</div><div class="es-title">Disk Bilgi Not Loaded</div><div class="es-sub">Bağlı tüm sürücülerin sağlık durumunu, SMART verilerini ve kullanım istatistiklerini almak için "Disk Bilgilerini Yükle" düğmesine tıklayın.</div><button class="es-btn" onclick="loadDisks()">🔍 Disk Bilgilerini Yükle</button></div></div>
 
 </section>
 
@@ -8570,9 +8588,9 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
         </div>
       </div>
 
-      <!-- Network Info Card -->
+      <!-- Network Bilgi Card -->
       <div class="card">
-        <div class="ch"><span>⚙️ Network Info</span></div>
+        <div class="ch"><span>⚙️ Network Bilgi</span></div>
         <div class="info-grid" style="margin-top: 12px; display: grid; gap: 8px;">
           <div style="display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">
             <span style="color: var(--muted);">Adapter</span>
@@ -8697,9 +8715,9 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
         </div>
       </div>
 
-      <!-- Tools & Actions Panel -->
+      <!-- Tools & Eylems Panel -->
       <div class="card">
-        <div class="ch"><span>🛠️ Tools &amp; Actions</span></div>
+        <div class="ch"><span>🛠️ Tools &amp; Eylems</span></div>
         <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 12px;">
           <button class="btn bs" onclick="doOp('flush_dns')" style="width: 100%; justify-content: flex-start; padding: 10px 14px;">
             🧹 Flush DNS Cache
@@ -8921,7 +8939,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
         <div class="ph">
           <div class="ph-welcome">
-            <div class="pt">🚀 Quick <span class="hl">Actions</span></div>
+            <div class="pt">🚀 Quick <span class="hl">Eylems</span></div>
             <div class="ps">All one-click system operations — everything executes REAL on your PC</div>
           </div>
           <div class="db-uptime-card" style="display: flex; align-items: center; gap: 8px;">
@@ -9024,7 +9042,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
             </div>
 
-            <div class="term-title">WINOXIT TERMINAL · <span id="termMode">ÇEVRİMDISI</span></div>
+            <div class="term-title">SYSFORGE STUDIO TERMINAL · <span id="termMode">ÇEVRİMDISI</span></div>
 
             <div style="display:flex;gap:8px">
 
@@ -9109,7 +9127,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
                 <div style="display:flex; gap:8px;">
 
-                  <input id="customBgInput" class="binp" placeholder="e.g. C:\Users\Public\Pictures\wallpaper.png" style="flex:1">
+                  <input id="customBgInput" class="binp" placeholder="e.g. C:\Users\Ansh\Desktop\fresh\Assets\superhero_cyber_wallpaper.png" style="flex:1">
 
                   <button class="btn bp bsm" onclick="applyCustomWallpaper()">Uygula</button>
 
@@ -9787,7 +9805,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
           <div class="rc-rcard-ico">🔧</div>
 
-          <div class="rc-rcard-name">Driver Status</div>
+          <div class="rc-rcard-name">Driver Durum</div>
 
           <div class="rc-rcard-desc">All installed drivers, signature check, unsigned list</div>
 
@@ -9903,7 +9921,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
           <div class="rc-hist-ico" style="background:rgba(255,179,0,0.08)">🔧</div>
 
-          <div><div class="rc-hist-name">Driver Status</div><div class="rc-hist-date">29 May 2026 · 14:45</div></div>
+          <div><div class="rc-hist-name">Driver Durum</div><div class="rc-hist-date">29 May 2026 · 14:45</div></div>
 
           <span class="rc-hist-badge" onclick="openLatestReport()">HTML ›</span>
 
@@ -10359,7 +10377,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
           
 
-          <!-- Row 1: Sağlık, Risks, Quick Actions -->
+          <!-- Row 1: Sağlık, Risks, Quick Eylems -->
 
           <div class="ng-grid-3">
 
@@ -10393,7 +10411,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
                   <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom:2px;">
 
-                    <span style="color:var(--muted)">Overall Status</span>
+                    <span style="color:var(--muted)">Overall Durum</span>
 
                     <strong style="color:var(--green)">SAĞLIKLI</strong>
 
@@ -10565,11 +10583,11 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
             
 
-            <!-- Card 3: AI Quick Actions -->
+            <!-- Card 3: AI Quick Eylems -->
 
             <div class="ng-panel-card ng-card-gold">
 
-              <div class="ng-card-header" style="color:var(--gold)">⚡ AI Quick Actions</div>
+              <div class="ng-card-header" style="color:var(--gold)">⚡ AI Quick Eylems</div>
 
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; flex:1; align-content:center;">
 
@@ -10649,7 +10667,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
                   <div style="text-align:left;">
 
-                    <div style="font-size:9px; font-weight:800; color:var(--text); white-space:nowrap;">Optimize Startup</div>
+                    <div style="font-size:9px; font-weight:800; color:var(--text); white-space:nowrap;">Optimize Başlatup</div>
 
                     <div style="font-size:7px; color:var(--muted);">Faster boot speeds</div>
 
@@ -11602,7 +11620,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
               <button class="btn bs" onclick="runRecovery('optimize_boot_trace')" style="border-color:var(--green); color:var(--green); justify-content:flex-start">🚀 Optimize Boot Trace</button>
 
-              <button class="btn bd" onclick="runRecovery('startup_repair_reboot')" style="justify-content:flex-start">🔄 Boot to Startup Repair</button>
+              <button class="btn bd" onclick="runRecovery('startup_repair_reboot')" style="justify-content:flex-start">🔄 Boot to Başlatup Repair</button>
 
             </div>
 
@@ -11647,7 +11665,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
         <div class="pbar">
 
-          <button class="btn bp" onclick="loadLicenses()">🔑 Retrieve License Keys</button>
+          <button class="btn bp" onclick="loadLicenses()">🔑 Retrieve Lisans Anahtarıs</button>
 
           <button class="btn bg" id="btnExportLicense" onclick="backupProductKey()" style="display:none; border-color:var(--green); color:var(--green)">💾 Backup Decrypted Keys</button>
 
@@ -11677,7 +11695,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
             <div style="font-size:12px; color:var(--muted); max-width:460px; margin:0 auto; line-height:1.6;">
 
-              Click the "Retrieve License Keys" button above to decrypt system product keys from the Windows Registry, SLMGR license records, and Microsoft Office software protection logs.
+              Click the "Retrieve Lisans Anahtarıs" button above to decrypt system product keys from the Windows Registry, SLMGR license records, and Microsoft Office software protection logs.
 
             </div>
 
@@ -12185,7 +12203,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                   <div class="db-smart-row"><span class="db-smart-left"><span class="db-smart-id">05</span><span class="db-smart-name">Reallocated Sectors</span></span><span class="db-smart-val" style="color:#00ff88">0</span></div>
                   <div class="db-smart-row"><span class="db-smart-left"><span class="db-smart-id">09</span><span class="db-smart-name">Power Cycle Count</span></span><span class="db-smart-val" id="dbSmartCycles">652</span></div>
                   <div class="db-smart-row"><span class="db-smart-left"><span class="db-smart-id">C5</span><span class="db-smart-name">Current Pending Sectors</span></span><span class="db-smart-val" style="color:#00ff88">0</span></div>
-                  <div class="db-smart-row"><span class="db-smart-left"><span class="db-smart-id">C7</span><span class="db-smart-name">UltraDMA CRC Errors</span></span><span class="db-smart-val" style="color:#00ff88">0</span></div>
+                  <div class="db-smart-row"><span class="db-smart-left"><span class="db-smart-id">C7</span><span class="db-smart-name">UltraDMA CRC Hatas</span></span><span class="db-smart-val" style="color:#00ff88">0</span></div>
                   <div class="db-smart-row"><span class="db-smart-left"><span class="db-smart-id">E1</span><span class="db-smart-name">Total Bytes Written</span></span><span class="db-smart-val" id="dbSmartTBW">18.42 TB</span></div>
                 </div>
               </div>
@@ -12366,7 +12384,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
           .nd-diag-desc { font-size:9px; color:var(--muted); margin-top:2px; }
           .nd-diag-btn { font-size:10px; color:var(--muted); }
 
-          /* Quick Actions */
+          /* Quick Eylems */
           .nd-actions-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
           .nd-action-tile {
             background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06);
@@ -12512,9 +12530,9 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
               <!-- RIGHT AREA -->
               <div class="nd-right-col">
-                <!-- Network Info -->
+                <!-- Network Bilgi -->
                 <div class="nd-panel-side">
-                  <div class="nd-side-hdr">🌐 Network Info</div>
+                  <div class="nd-side-hdr">🌐 Network Bilgi</div>
                   <div class="nd-info-grid">
                     <div class="nd-info-row"><span class="nd-info-label">IP Adresi</span><span class="nd-info-val" id="ndInfoIp">192.168.1.100</span></div>
                     <div class="nd-info-row"><span class="nd-info-label">Alt Ağ Maskesi</span><span class="nd-info-val" id="ndInfoSubnet">255.255.255.0</span></div>
@@ -12595,9 +12613,9 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                 </div>
               </div>
 
-              <!-- Quick Actions -->
+              <!-- Quick Eylems -->
               <div class="nd-panel-side">
-                <div class="nd-side-hdr">⚡ Quick Actions</div>
+                <div class="nd-side-hdr">⚡ Quick Eylems</div>
                 <div class="nd-actions-grid" style="margin-top:6px;">
                   <div class="nd-action-tile" onclick="ndRunRepair('full_net_repair','Reset Network Settings')">
                     <span class="nd-action-tile-lbl">Reset Network Settings</span>
@@ -12799,6 +12817,14 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
         </div>
 
         <!-- Quick selection preset bundles -->
+            <div class="card" style="padding: 10px; background: rgba(0,255,200,0.04); border: 1px solid rgba(0,255,200,0.25); display: flex; flex-direction: column; justify-content: space-between; border-radius: 8px;">
+              <div>
+                <div style="font-weight:700; font-size:12px; color:var(--a); display:flex; align-items:center; gap:6px;">🏛️ Kamu &amp; E-İmza Paketi</div>
+                <div style="font-size:10px; color:var(--muted); margin-top:4px;">AKİS, IBSigner, ArkSigner, Java JRE, UYAP Editör</div>
+              </div>
+              <button class="btn bp bsm" onclick="toggleBulkPreset100('kamu')" style="margin-top:8px; width:100%;">Tümünü Seç / Kaldır</button>
+            </div>
+
 
         <div class="card" style="margin-top: 12px; padding: 14px; border-left: 3px solid var(--a); border-radius:10px;">
 
@@ -13091,7 +13117,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
             <button class="hwd-abtn" onclick="runPS('sfc')">⚙️ Run SFC</button>
             <button class="hwd-abtn" onclick="runPS('dism')">🔧 DISM Repair</button>
             <button class="hwd-abtn" onclick="checkBatteryWear()">🔋 Battery Wear Check</button>
-            <button class="hwd-abtn" onclick="checkDiskSmart()">💿 Disk SMART Status</button>
+            <button class="hwd-abtn" onclick="checkDiskSmart()">💿 Disk SMART Durum</button>
             <button class="hwd-abtn" onclick="launch('mdsched')">🧮 RAM Diagnostic</button>
             <button class="hwd-abtn gold" onclick="runCpuStress()">🔥 CPU Stress Test</button>
             <button class="hwd-abtn pink" onclick="startDeadPixelCheck()">📺 Display Test</button>
@@ -13457,7 +13483,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
           @media(max-width:1100px) { .sd-main-grid { grid-template-columns:1.2fr 1fr; } }
           @media(max-width:800px) { .sd-main-grid { grid-template-columns:1fr; } }
 
-          /* Quick Repair Actions */
+          /* Quick Repair Eylems */
           .sd-actions-list { display:flex; flex-direction:column; gap:8px; }
           .sd-action-row {
             background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.04);
@@ -13627,9 +13653,9 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
             <!-- MAIN THREE COLUMNS GRID -->
             <div class="sd-main-grid">
-              <!-- COL 1: Quick Repair Actions -->
+              <!-- COL 1: Quick Repair Eylems -->
               <div class="sd-panel">
-                <div class="sd-sec-header">⚡ Quick Repair Actions</div>
+                <div class="sd-sec-header">⚡ Quick Repair Eylems</div>
                 <div class="sd-actions-list">
                   <div class="sd-action-row" onclick="runRecovery('repair_wmi')">
                     <div class="sd-action-left">
@@ -13749,7 +13775,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                       <span class="sd-tool-arr">›</span>
                     </div>
                     <div class="sd-tool-row" onclick="launch('msinfo32')">
-                      <span class="sd-tool-left"><span class="sd-tool-ico">📋</span><span class="sd-tool-name">System Info</span></span>
+                      <span class="sd-tool-left"><span class="sd-tool-ico">📋</span><span class="sd-tool-name">System Bilgi</span></span>
                       <span class="sd-tool-arr">›</span>
                     </div>
                     <div class="sd-tool-row" onclick="launch('eventvwr')">
@@ -14149,7 +14175,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
           .tm-sum-name { color:var(--muted); display:flex; align-items:center; gap:6px; }
           .tm-sum-val { font-weight:700; color:var(--sub); font-family:var(--fhud); }
 
-          /* Quick Actions */
+          /* Quick Eylems */
           .tm-act-grid { display:grid; grid-template-columns:1fr; gap:6px; }
           .tm-act-btn {
             background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.06);
@@ -14355,9 +14381,9 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                 </div>
               </div>
 
-              <!-- Quick Actions -->
+              <!-- Quick Eylems -->
               <div class="tm-panel">
-                <div class="tm-sec-header">⚡ Quick Actions</div>
+                <div class="tm-sec-header">⚡ Quick Eylems</div>
                 <div class="tm-act-grid">
                   <button class="tm-act-btn" onclick="boostTmFans()"><span class="tm-act-btn-icon">🌀</span> Increase Fan Speed</button>
                   <button class="tm-act-btn" onclick="runTmStressTest()"><span class="tm-act-btn-icon">🔥</span> Run Stress Test</button>
@@ -15230,9 +15256,9 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
             </div>
           </div>
           
-          <!-- Firewall Quick Actions -->
+          <!-- Firewall Quick Eylems -->
           <div class="fw-mini-card" style="border-left: 2.5px solid var(--gold);">
-            <div class="fw-mini-title">⚡ Firewall Quick Actions</div>
+            <div class="fw-mini-title">⚡ Firewall Quick Eylems</div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:8px;">
               <button class="btn bs bsm" onclick="runRecovery('block_telemetry_fw')" style="font-size:9px; justify-content:center; padding:6px 2px;">🚫 Block Telemetry</button>
               <button class="btn bs bsm" onclick="runRecovery('block_updates_fw')" style="font-size:9px; justify-content:center; padding:6px 2px;">🌐 Block Updates</button>
@@ -15429,7 +15455,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
           .rt-sysinfo-label { color:var(--muted); }
           .rt-sysinfo-val { color:#fff; font-weight:600; }
 
-          /* Quick Actions Panel */
+          /* Quick Eylems Panel */
           .rt-actions-card {
             background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.06);
             border-radius:12px; padding:16px 20px; display:flex; flex-direction:column; gap:10px;
@@ -15596,7 +15622,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                 <button class="rt-btn primary" id="btnRtBackupCard" onclick="rtBackupRegistry()" style="width:100%; margin-top:auto; justify-content:center">🔄 Backup Now</button>
               </div>
 
-              <!-- System Info -->
+              <!-- System Bilgi -->
               <div class="rt-sysinfo-card">
                 <div class="rt-sysinfo-hdr">
                   <span style="font-size:14px;">💻</span> SYSTEM INFORMATION
@@ -15625,7 +15651,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
                 </div>
               </div>
 
-              <!-- Quick Actions -->
+              <!-- Quick Eylems -->
               <div class="rt-actions-card">
                 <div class="rt-actions-hdr">
                   <span style="font-size:14px; color:#ff9900;">⚡</span> QUICK ACTIONS
@@ -15858,11 +15884,11 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
             <!-- TOP BAR -->
             <div class="el-topbar">
               <div class="el-topbar-left">
-                <h2>📠 Error Log <span>Self-Repair</span></h2>
-                <div class="el-sub">Scan Windows Event Logs - Detect Critical Errors - Auto-repair &amp; Apply fixes.</div>
+                <h2>📠 Hata Log <span>Self-Repair</span></h2>
+                <div class="el-sub">Scan Windows Event Logs - Detect Critical Hatas - Auto-repair &amp; Uygula fixes.</div>
               </div>
               <div class="el-topbar-right">
-                <button class="el-btn primary" id="btnElScan" onclick="runHataLogScan()">🔍 Scan Error Logs</button>
+                <button class="el-btn primary" id="btnElScan" onclick="runHataLogScan()">🔍 Scan Hata Logs</button>
                 <button class="el-btn" onclick="launch('eventvwr')">📋 Event Viewer</button>
                 <button class="el-btn pink" onclick="exportHataLogReport()">📥 Raporu Dışa Aktar</button>
               </div>
@@ -15872,7 +15898,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
             <div class="el-stats-row">
               <div class="el-stat-card" style="border-color:rgba(255,60,60,0.15)">
                 <div class="el-stat-card-left">
-                  <span class="el-stat-card-label">🚫 Critical Errors</span>
+                  <span class="el-stat-card-label">🚫 Critical Hatas</span>
                   <span class="el-stat-card-val crit" id="elStatCrit">0</span>
                   <span class="el-stat-card-desc" id="elStatCritDesc">No critical issues found</span>
                 </div>
@@ -16330,7 +16356,7 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
       <div style="font-size: 36px; filter: drop-shadow(0 0 10px rgba(0,229,255,0.3));">🔄</div>
     </div>
     
-    <!-- Actions Toolbar -->
+    <!-- Eylems Toolbar -->
     <div class="res-toolbar">
       <button class="btn bp bsm" onclick="loadRestorePoints()"><span style="margin-right:4px;">📥</span> Load Restore Point</button>
       <button class="btn bs bsm" onclick="document.getElementById('restorePointNameInput').focus()"><span style="margin-right:4px;">➕</span> Yeni Geri Yükleme Noktası Oluştur</button>
@@ -17835,11 +17861,11 @@ html[data-color-mode="light"] #sb, html[data-color-mode="light"] .sb { backgroun
 
             
 
-            <!-- Card 9: Quick Actions -->
+            <!-- Card 9: Quick Eylems -->
 
             <div class="ng-panel-card ng-card-gold">
 
-              <div class="ng-card-header" style="color:var(--gold)">⚡ Quick Actions</div>
+              <div class="ng-card-header" style="color:var(--gold)">⚡ Quick Eylems</div>
 
               <div class="quick-act-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px; flex:1; align-content:center;">
 
@@ -21595,15 +21621,17 @@ async function scanOutdatedApps() {
 
   
 
-  if (badge) {
-    badge.textContent = 'SCANNING...';
-    badge.style.color = 'var(--muted)';
-    badge.style.borderColor = 'rgba(255,255,255,0.05)';
-  }
-  if (btnScan) {
-    btnScan.disabled = true;
-    btnScan.innerHTML = '<span class="spin" style="display:inline-block">↻</span> Scanning';
-  }
+  badge.textContent = 'SCANNING...';
+
+  badge.style.color = 'var(--muted)';
+
+  badge.style.borderColor = 'rgba(255,255,255,0.05)';
+
+  
+
+  btnScan.disabled = true;
+
+  btnScan.innerHTML = '<span class="spin" style="display:inline-block">↻</span> Scanning';
 
   
 
@@ -22161,266 +22189,89 @@ async function upgradeAllOutdatedApps() {
 //  WINXOXIT 3D THREE.JS AMBIENT HARDWARE & NETWORK ENGINE
 //  (Three.js 3D Geometry, Particle Cloud, Raycast Pointer Tracking)
 // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  WINXOXIT ENTERPRISE IT AMBIENT BACKGROUND
+//  (Calm, professional, zero mouse movement, subtle dark network nodes)
+// ═══════════════════════════════════════════════════════════
 function initBgParticles() {
   const canvas = document.getElementById('bgc');
   if (!canvas) return;
 
-  // Graceful fallback to 2D canvas if Three.js is not loaded
-  if (typeof THREE === 'undefined') {
-    initFallback2DCanvas(canvas);
-    return;
-  }
-
-  try {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 85;
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      alpha: true,
-      antialias: true,
-      powerPreference: 'high-performance'
-    });
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    renderer.setPixelRatio(dpr);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    function getThemeHex() {
-      const col = window._cachedColors ? window._cachedColors.a : '#00ffff';
-      try { return new THREE.Color(col); } catch (e) { return new THREE.Color(0x00ffff); }
-    }
-    function getThemeAccent2Hex() {
-      const col = window._cachedColors ? window._cachedColors.a2 : '#9d00ff';
-      try { return new THREE.Color(col); } catch (e) { return new THREE.Color(0x9d00ff); }
-    }
-
-    // 1. Central Cybernetic 3D Geometric Node (Icosahedron + Octahedron wireframe core)
-    const coreGroup = new THREE.Group();
-    scene.add(coreGroup);
-
-    const icoGeo = new THREE.IcosahedronGeometry(22, 1);
-    const icoMat = new THREE.MeshBasicMaterial({
-      color: getThemeHex(),
-      wireframe: true,
-      transparent: true,
-      opacity: 0.15
-    });
-    const icoMesh = new THREE.Mesh(icoGeo, icoMat);
-    coreGroup.add(icoMesh);
-
-    const innerGeo = new THREE.OctahedronGeometry(13, 0);
-    const innerMat = new THREE.MeshBasicMaterial({
-      color: getThemeAccent2Hex(),
-      wireframe: true,
-      transparent: true,
-      opacity: 0.25
-    });
-    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-    coreGroup.add(innerMesh);
-
-    // 2. Interconnected Network Particle System (Geometry & Points)
-    const particleCount = 130;
-    const posArray = new Float32Array(particleCount * 3);
-    const velArray = new Float32Array(particleCount * 3);
-
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      posArray[i] = (Math.random() - 0.5) * 160;
-      posArray[i + 1] = (Math.random() - 0.5) * 120;
-      posArray[i + 2] = (Math.random() - 0.5) * 80;
-
-      velArray[i] = (Math.random() - 0.5) * 0.08;
-      velArray[i + 1] = (Math.random() - 0.5) * 0.08;
-      velArray[i + 2] = (Math.random() - 0.5) * 0.08;
-    }
-
-    const particlesGeo = new THREE.BufferGeometry();
-    particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-
-    // Dynamic procedural glow texture
-    const pCanvas = document.createElement('canvas');
-    pCanvas.width = 64; pCanvas.height = 64;
-    const pCtx = pCanvas.getContext('2d');
-    const grad = pCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    grad.addColorStop(0, 'rgba(255,255,255,1)');
-    grad.addColorStop(0.25, 'rgba(0,255,255,0.8)');
-    grad.addColorStop(0.6, 'rgba(0,255,255,0.2)');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    pCtx.fillStyle = grad;
-    pCtx.fillRect(0, 0, 64, 64);
-    const pTexture = new THREE.CanvasTexture(pCanvas);
-
-    const particlesMat = new THREE.PointsMaterial({
-      size: 4.2,
-      map: pTexture,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      color: getThemeHex()
-    });
-    const particleSystem = new THREE.Points(particlesGeo, particlesMat);
-    scene.add(particleSystem);
-
-    // Dynamic Connecting Lines (Network Topology)
-    const lineMat = new THREE.LineBasicMaterial({
-      color: getThemeHex(),
-      transparent: true,
-      opacity: 0.12,
-      blending: THREE.AdditiveBlending
-    });
-    const maxLineSegments = particleCount * 5;
-    const linePositions = new Float32Array(maxLineSegments * 6);
-    const lineGeo = new THREE.BufferGeometry();
-    lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
-    const linesMesh = new THREE.LineSegments(lineGeo, lineMat);
-    scene.add(linesMesh);
-
-    // 3. Interactive Mouse / Pointer Tracking
-    let mouseX = 0, mouseY = 0;
-    let targetX = 0, targetY = 0;
-
-    window.addEventListener('mousemove', (e) => {
-      const halfW = window.innerWidth / 2;
-      const halfH = window.innerHeight / 2;
-      targetX = (e.clientX - halfW) * 0.035;
-      targetY = (e.clientY - halfH) * 0.035;
-    }, { passive: true });
-
-    // 4. Theme Reactive Dynamic Color Switching
-    window.addEventListener('themeChanged', () => {
-      const newHex = getThemeHex();
-      const newA2 = getThemeAccent2Hex();
-      icoMat.color.copy(newHex);
-      innerMat.color.copy(newA2);
-      particlesMat.color.copy(newHex);
-      lineMat.color.copy(newHex);
-    });
-
-    // 5. Animation Loop
-    let clock = new THREE.Clock();
-
-    function animate() {
-      requestAnimationFrame(animate);
-      if (document.hidden) return;
-
-      const elapsed = clock.getElapsedTime();
-
-      // Smooth camera parallax lerp
-      mouseX += (targetX - mouseX) * 0.05;
-      mouseY += (targetY - mouseY) * 0.05;
-      camera.position.x = mouseX;
-      camera.position.y = -mouseY;
-      camera.lookAt(scene.position);
-
-      // Core rotation
-      coreGroup.rotation.x = elapsed * 0.12;
-      coreGroup.rotation.y = elapsed * 0.16;
-      innerMesh.rotation.z = -elapsed * 0.22;
-
-      // Particles movement & pointer interaction
-      const positions = particlesGeo.attributes.position.array;
-      let lineIdx = 0;
-
-      for (let i = 0; i < particleCount * 3; i += 3) {
-        positions[i] += velArray[i];
-        positions[i + 1] += velArray[i + 1];
-        positions[i + 2] += velArray[i + 2];
-
-        if (positions[i] > 80) positions[i] = -80;
-        else if (positions[i] < -80) positions[i] = 80;
-
-        if (positions[i + 1] > 60) positions[i + 1] = -60;
-        else if (positions[i + 1] < -60) positions[i + 1] = 60;
-
-        if (positions[i + 2] > 40) positions[i + 2] = -40;
-        else if (positions[i + 2] < -40) positions[i + 2] = 40;
-
-        // Pointer proximity reaction
-        const dx = positions[i] - mouseX * 2;
-        const dy = positions[i + 1] + mouseY * 2;
-        const distSq = dx * dx + dy * dy;
-        if (distSq < 360 && distSq > 0.01) {
-          const force = (1 - Math.sqrt(distSq) / 19) * 0.35;
-          positions[i] += (dx / Math.sqrt(distSq)) * force;
-          positions[i + 1] += (dy / Math.sqrt(distSq)) * force;
-        }
-      }
-      particlesGeo.attributes.position.needsUpdate = true;
-
-      // Update lines between nearby nodes
-      const linePositionsArr = lineGeo.attributes.position.array;
-      const connectThresholdSq = 320;
-
-      for (let i = 0; i < particleCount; i++) {
-        const i3 = i * 3;
-        for (let j = i + 1; j < particleCount; j++) {
-          const j3 = j * 3;
-          const dX = positions[i3] - positions[j3];
-          const dY = positions[i3 + 1] - positions[j3 + 1];
-          const dZ = positions[i3 + 2] - positions[j3 + 2];
-          const dSq = dX * dX + dY * dY + dZ * dZ;
-
-          if (dSq < connectThresholdSq && lineIdx < maxLineSegments * 6 - 6) {
-            linePositionsArr[lineIdx++] = positions[i3];
-            linePositionsArr[lineIdx++] = positions[i3 + 1];
-            linePositionsArr[lineIdx++] = positions[i3 + 2];
-
-            linePositionsArr[lineIdx++] = positions[j3];
-            linePositionsArr[lineIdx++] = positions[j3 + 1];
-            linePositionsArr[lineIdx++] = positions[j3 + 2];
-          }
-        }
-      }
-      lineGeo.setDrawRange(0, lineIdx / 3);
-      lineGeo.attributes.position.needsUpdate = true;
-
-      renderer.render(scene, camera);
-    }
-
-    animate();
-
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }, 100);
-    });
-
-  } catch (err) {
-    console.warn('Three.js failed, using 2D fallback:', err);
-    initFallback2DCanvas(canvas);
-  }
-}
-
-function initFallback2DCanvas(canvas) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
-  let W = canvas.width = window.innerWidth;
-  let H = canvas.height = window.innerHeight;
-  const count = 35;
-  const pts = Array.from({ length: count }, () => ({
-    x: Math.random() * W, y: Math.random() * H,
-    vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
-    r: Math.random() * 2 + 1
-  }));
-  function tick() {
-    ctx.clearRect(0, 0, W, H);
-    const col = window._cachedColors ? window._cachedColors.a : '#00ffff';
-    ctx.fillStyle = col;
-    pts.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
-      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    requestAnimationFrame(tick);
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
-  requestAnimationFrame(tick);
+  resize();
+
+  // Subtle stationary grid nodes representing enterprise network topology
+  const nodes = [];
+  const spacing = 140;
+  const cols = Math.ceil(window.innerWidth / spacing) + 1;
+  const rows = Math.ceil(window.innerHeight / spacing) + 1;
+
+  for (let c = 0; c < cols; c++) {
+    for (let r = 0; r < rows; r++) {
+      nodes.push({
+        x: c * spacing + (r % 2 === 0 ? 0 : spacing * 0.5),
+        y: r * spacing,
+        baseAlpha: 0.04 + Math.random() * 0.04,
+        pulseSpeed: 0.5 + Math.random() * 0.8,
+        pulseOffset: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  let startTime = Date.now();
+
+  function draw() {
+    if (document.hidden) {
+      requestAnimationFrame(draw);
+      return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const elapsed = (Date.now() - startTime) / 1000;
+
+    // Deep calm enterprise tech background
+    const primaryCol = window._cachedColors ? window._cachedColors.a : '#00ffff';
+
+    // Draw subtle connecting lines
+    ctx.strokeStyle = primaryCol;
+    ctx.lineWidth = 0.5;
+
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      const alpha = n.baseAlpha + Math.sin(elapsed * n.pulseSpeed + n.pulseOffset) * 0.025;
+
+      // Draw faint dot
+      ctx.fillStyle = primaryCol;
+      ctx.globalAlpha = Math.max(0.02, alpha * 1.5);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Horizontal faint link
+      if (i + 1 < nodes.length && Math.abs(nodes[i + 1].y - n.y) < 10) {
+        ctx.globalAlpha = alpha * 0.4;
+        ctx.beginPath();
+        ctx.moveTo(n.x, n.y);
+        ctx.lineTo(nodes[i + 1].x, nodes[i + 1].y);
+        ctx.stroke();
+      }
+    }
+
+    ctx.globalAlpha = 1.0;
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => {
+    resize();
+  });
+
+  requestAnimationFrame(draw);
 }
 
 setTimeout(initBgParticles, 500);
@@ -23631,7 +23482,7 @@ function showOpts(modLabel,subIdx,cid){
 
           <div class="diagnostic-meta">
 
-            <div class="meta-item"><span>AVAILABLE OPTIONS</span><span>${totalOpts} Actions</span></div>
+            <div class="meta-item"><span>AVAILABLE OPTIONS</span><span>${totalOpts} Eylems</span></div>
 
             <div class="meta-item"><span>SUBSET LABEL</span><span><code>${sub.lbl || m.l}</code></span></div>
 
@@ -24505,7 +24356,7 @@ async function loadSysInfo(){
 
     <div>
 
-      <h1 class="sysinfo-h-title">System Info</h1>
+      <h1 class="sysinfo-h-title">System Bilgi</h1>
 
       <p class="sysinfo-h-sub">Complete real-time hardware & software profile of your PC</p>
 
@@ -24839,11 +24690,11 @@ async function loadSysInfo(){
 
     
 
-    <!-- Card 6: Network Info -->
+    <!-- Card 6: Network Bilgi -->
 
     <div class="sysinfo-panel-card sys-card-net">
 
-      <div class="sys-card-header" style="color:var(--cyan);">🌐 Network Info</div>
+      <div class="sys-card-header" style="color:var(--cyan);">🌐 Network Bilgi</div>
 
       <div class="sys-data-row"><span class="sys-data-label">Connection Type</span><span class="sys-data-val">${connType}</span></div>
 
@@ -24967,7 +24818,7 @@ async function loadSysInfo(){
 
   
 
-  <!-- Row 4: Lists (Running Processes, Installed Software, Events log, Quick Actions) -->
+  <!-- Row 4: Lists (Running Processes, Installed Software, Events log, Quick Eylems) -->
 
   <div class="sysinfo-lists-grid">
 
@@ -25173,11 +25024,11 @@ async function loadSysInfo(){
 
     
 
-    <!-- Quick Actions -->
+    <!-- Quick Eylems -->
 
     <div class="sysinfo-panel-card" style="border-left: 2.5px solid var(--a);">
 
-      <div class="sys-card-header" style="color:var(--a); margin-bottom:8px;">⚡ Quick Actions</div>
+      <div class="sys-card-header" style="color:var(--a); margin-bottom:8px;">⚡ Quick Eylems</div>
 
       <div class="quick-act-grid" style="margin-top:8px;">
 
@@ -25227,7 +25078,7 @@ function copyAllSysInfo() {
 
   const text = `===================================================================
 
-WINOXIT — SYSTEM INVENTORY & SPECIFICATIONS REPORT
+SYSFORGE STUDIO — SYSTEM INVENTORY & SPECIFICATIONS REPORT
 
 ===================================================================
 
@@ -28550,6 +28401,16 @@ async function loadWifi(){
 // ═══════════════════════════════════════════════════
 
 const appCatalog=[
+  {cat:'🏛️ Kamu & E-İmza (Official)', apps:[
+    {n:'AKİS Akıllı Kart (TÜBİTAK UEKAE)', id:'Tubitak.Akis', desc:'KamuSM Akıllı Kart Sürücüsü & Kart İzleme Aracı'},
+    {n:'IBSigner (İçişleri E-İmza)', id:'Icerik.IBSigner', desc:'e-İçişleri, Nüfus, Valilik & Kaymakamlık E-İmza İstemcisi'},
+    {n:'ArkSigner E-İmza Uygulaması', id:'ArkSigner.ArkSigner', desc:'Kamu, Sağlık & Bankacılık E-İmza ve Belge İmzalama'},
+    {n:'Java Runtime (Oracle JRE 8 / OpenJDK)', id:'Oracle.JavaRuntimeEnvironment', desc:'Kamu Web Portalları & DYS Uyumlu Java'},
+    {n:'UYAP Doküman Editörü (Adalet Bakanlığı)', id:'AdaletBakanligi.UyapEditor', desc:'Ulusal Yargı Ağı Bilişim Sistemi Doküman Editörü'},
+    {n:'TÜBİTAK KamuSM Kök Sertifikaları', id:'Tubitak.KamuSM.Certificates', desc:'Kamu Kök ve Alt Kök SSL/TLS Güvenlik Sertifikaları'},
+    {n:'LibreOffice Kamu Sürümü', id:'TheDocumentFoundation.LibreOffice', desc:'Açık Kaynak Standart Kamu Doküman ve Ofis Paketi'}
+  ]},
+
 
   {cat:'🌐 Browsers',apps:[
 
@@ -29976,7 +29837,7 @@ function simulateOfflineTask(taskName) {
 
       { c: 't-info', t: '► STEP 6: Compiling final system diagnostics report...' },
 
-      { c: 't-ok', t: '  [SUCCESS] Report compiled: C:\\Users\\Public\\Documents\\WinoxIT\\Docs\\HealthReport.html' }
+      { c: 't-ok', t: '  [SUCCESS] Report compiled: C:\\Users\\Ansh\\Desktop\\fresh\\Docs\\HealthReport.html' }
 
     ];
 
@@ -30368,7 +30229,7 @@ function renderThemes(){
 function setColorMode(mode) {
   const selected = mode === 'light' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-color-mode', selected);
-  try { localStorage.setItem('winoxit-color-mode', selected); } catch (_) {}
+  try { localStorage.setItem('sysforge-color-mode', selected); } catch (_) {}
   const button = document.getElementById('colorModeToggle');
   if (!button) return;
   const nextMode = selected === 'dark' ? 'light' : 'dark';
@@ -30381,7 +30242,7 @@ function setColorMode(mode) {
 function toggleColorMode() {
   setColorMode(document.documentElement.getAttribute('data-color-mode') === 'light' ? 'dark' : 'light');
 }
-try { setColorMode(localStorage.getItem('winoxit-color-mode') || 'dark'); } catch (_) { setColorMode('dark'); }
+try { setColorMode(localStorage.getItem('sysforge-color-mode') || 'dark'); } catch (_) { setColorMode('dark'); }
 
 function setTheme(id){
 
@@ -35740,7 +35601,7 @@ async function runHataLogScan() {
     _elDrawDonut('elHealthDonutCanvas', 100, '#00ff88', '#00b0ff');
     hwdSetText('elHealthDonutNum', '100%');
 
-    if (scanBtn) { scanBtn.disabled = false; scanBtn.textContent = '🔍 Scan Error Logs'; }
+    if (scanBtn) { scanBtn.disabled = false; scanBtn.textContent = '🔍 Scan Hata Logs'; }
     _elIsScanning = false;
 
     toast('Scan Complete', 'Audited 52 active events. System integrity protected!', 'success');
@@ -36582,7 +36443,7 @@ async function hwdRunFullScan() {
 
   const timeline = document.getElementById('hwdTimeline');
   const steps = [
-    'System Info Gathered',
+    'System Bilgi Gathered',
     'CPU Scan Completed',
     'RAM Scan Completed',
     'SSD SMART Check Completed',
@@ -37903,7 +37764,7 @@ function renderLibApps() {
 
   if (!grid) return;
 
-  const categories = ['All', 'Browsers', 'Communication', 'Development', 'Media & Design', 'Utilities & Office', 'Security & Privacy', 'File & Transfer Tools', 'Gaming & Fun'];
+  const categories = ['All', 'Kamu & E-İmza', 'Browsers', 'Communication', 'Development', 'Media & Design', 'Utilities & Office', 'Security & Privacy', 'File & Transfer Tools', 'Gaming & Fun'];
 
   if (catsEl && catsEl.children.length === 0) {
 
@@ -38099,6 +37960,7 @@ function taskHata(msg) {
 }
 
 const bulkBundles = {
+  kamu: ['Tubitak.Akis', 'Icerik.IBSigner', 'ArkSigner.ArkSigner', 'Oracle.JavaRuntimeEnvironment', 'AdaletBakanligi.UyapEditor'],
 
   browsers: ['Google.Chrome', 'Mozilla.Firefox', 'Brave.Brave', 'Opera.Opera', 'Microsoft.Edge'],
 
@@ -45345,7 +45207,7 @@ function blockAppFirewall(block) {
 function browseAndSetAppPath() {
   const paths = [
     "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    "C:\\Program Files\\Discord\\Discord.exe",
+    "C:\\Users\\Ansh\\AppData\\Local\\Discord\\app-1.0.9001\\Discord.exe",
     "C:\\Program Files (x86)\\Steam\\steam.exe",
     "C:\\Windows\\System32\\cmd.exe"
   ];
@@ -46302,7 +46164,7 @@ ${svcDesc}`;
   }
 }
 
-// ─── Error Log: Export Report ─────────────────────────────────────────────────
+// ─── Hata Log: Export Report ─────────────────────────────────────────────────
 function exportHataLogReport() {
   try { synthSound('click'); } catch(e){}
   const ts = new Date().toISOString().replace(/[:.]/g, '-');
@@ -46322,14 +46184,14 @@ function exportHataLogReport() {
     '',
     'SUMMARY',
     '─'.repeat(30),
-    `Critical Errors  : ${critCount}`,
+    `Critical Hatas  : ${critCount}`,
     `Uyarıs         : ${warnCount}`,
     `Info Events      : ${infoCount}`,
     `Repairs Applied  : ${repCount}`,
     '',
     'SYSTEM HEALTH',
     '─'.repeat(30),
-    `Overall Status   : ${parseInt(critCount) > 0 ? 'ISSUES DETECTED' : 'Healthy'}`,
+    `Overall Durum   : ${parseInt(critCount) > 0 ? 'ISSUES DETECTED' : 'Healthy'}`,
     '',
     'Generated by Fresh System Dashboard',
   ].join('\n');
@@ -46347,7 +46209,7 @@ function exportHataLogReport() {
   try { synthSound('success'); } catch(e){}
 }
 
-// ─── Error Log: View Full Scan Report ────────────────────────────────────────
+// ─── Hata Log: View Full Scan Report ────────────────────────────────────────
 function viewFullScanReport() {
   try { synthSound('click'); } catch(e){}
   const critCount = document.getElementById('elStatCrit')?.textContent || '0';
@@ -46357,7 +46219,7 @@ function viewFullScanReport() {
   const scanTime  = document.getElementById('elScanLastTime')?.textContent || 'Not yet scanned';
 
   const reportHtml = `<!DOCTYPE html>
-<html><head><title>Error Log Full Report</title>
+<html><head><title>Hata Log Full Report</title>
 <style>
 body { background: #0a0f1e; color: #e0e6f8; font-family: 'Segoe UI', sans-serif; padding: 30px; }
 h1 { color: #00e5ff; font-size: 20px; margin-bottom: 4px; }
@@ -46373,10 +46235,10 @@ h1 { color: #00e5ff; font-size: 20px; margin-bottom: 4px; }
 .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; }
 </style></head>
 <body>
-<h1>📠 Full Error Log Diagnostic Report</h1>
+<h1>📠 Full Hata Log Diagnostic Report</h1>
 <div class="sub">Scan Time: ${scanTime} &nbsp;|&nbsp; Generated: ${new Date().toLocaleString()}</div>
 <div class="grid">
-  <div class="card"><div class="num crit">${critCount}</div><div class="lbl">Critical Errors</div></div>
+  <div class="card"><div class="num crit">${critCount}</div><div class="lbl">Critical Hatas</div></div>
   <div class="card"><div class="num warn">${warnCount}</div><div class="lbl">Uyarıs</div></div>
   <div class="card"><div class="num info">${infoCount}</div><div class="lbl">Info Events</div></div>
   <div class="card"><div class="num rep">${repCount}</div><div class="lbl">Repairs Applied</div></div>
@@ -46394,7 +46256,7 @@ h1 { color: #00e5ff; font-size: 20px; margin-bottom: 4px; }
   toast('Full Report', 'Complete event diagnostic report opened in a new window.', 'info');
 }
 
-// ─── Error Log: View Repair History ──────────────────────────────────────────
+// ─── Hata Log: View Repair History ──────────────────────────────────────────
 function viewRepairHistory() {
   try { synthSound('click'); } catch(e){}
   const repCount = parseInt(document.getElementById('elStatRep')?.textContent || '0');
@@ -47434,35 +47296,10 @@ window.setTimeout(() => {
   }
 }, 15000);
 
-// === WinoxIT Dynamic TR / EN Localization Engine ===
-window.winoxitCurrentLang = localStorage.getItem('winoxit_lang') || 'tr';
-
-function updateLangButtonDisplay() {
-  const lbl = document.getElementById('currentLangLabel');
-  if (lbl) {
-    lbl.textContent = window.winoxitCurrentLang.toUpperCase();
-  }
-}
-
-window.toggleDashboardLanguage = function() {
-  const nextLang = window.winoxitCurrentLang === 'tr' ? 'en' : 'tr';
-  localStorage.setItem('winoxit_lang', nextLang);
-  window.winoxitCurrentLang = nextLang;
-  updateLangButtonDisplay();
-  if (typeof toast === 'function') {
-    toast('Language Changed', nextLang === 'tr' ? 'Dil Türkçe olarak ayarlandı.' : 'Language switched to English.', 'info', 2500);
-  }
-  setTimeout(() => window.location.reload(), 300);
-};
-
-document.addEventListener('DOMContentLoaded', updateLangButtonDisplay);
-updateLangButtonDisplay();
-
 // Turkish UI pass for static and lazily-rendered dashboard labels.
 (function applyTurkishDashboardLabels(){
-  if (window.winoxitCurrentLang !== "tr") { return; }
   const labels = {
-    'SYSTEM INFO':'SİSTEM BİLGİSİ','Home':'Ana Sayfa','System Inventory':'Sistem Envanteri','All Parsed Options':'Ayıklanan Tüm Seçenekler','AI Self-Healing Platform':'Yapay Zekâ ile Otomatik Onarım','AI Smart Diagnostics':'Akıllı Yapay Zekâ Tanılaması','Report Center':'Rapor Merkezi','Hardware Diagnostics':'Donanım Tanılaması','CPU/GPU Temp Monitor':'İşlemci/Grafik İşlemci Sıcaklığı','Disk Speed Benchmark':'Disk Hız Sınaması','Software Diagnostics':'Yazılım Tanılaması','Error Log Self-Repair':'Hata Günlüğü Onarımı','Services Control Panel':'Hizmet Yönetimi','Registry Telemetry Tweaks':'Kayıt Defteri ve Telemetri Ayarları','DNS Flush & Network Repair':'DNS Önbelleği ve Ağ Onarımı','Netstat Connections':'Ağ Bağlantıları','Network Center':'Ağ Merkezi','Firewall Manager':'Güvenlik Duvarı Yönetimi','Security & Privacy Audit':'Güvenlik ve Gizlilik Denetimi','License Vault':'Lisans Kasası','1-Click Backup Migrate':'Tek Tıkla Yedekle ve Taşı','System Restore Manager':'Sistem Geri Yükleme Yönetimi','System Cleaner':'Sistem Temizleyici','Windows Debloater':'Windows Gereksiz Bileşen Temizliği','Startup Optimizer':'Başlangıç İyileştirici','Offline Recovery Center':'Çevrimdışı Kurtarma Merkezi','BSOD Crash Analyzer':'Mavi Ekran Çözümleyici','WinoxIT CMD Toolkit':'WinoxIT Komut Satırı Araçları','100 Apps 1-Click Install':'100 Uygulamayı Tek Tıkla Kur','Custom Apps Bundler':'Özel Uygulama Paketi Oluşturucu','Software Updater':'Yazılım Güncelleyici','One Click Actions':'Tek Tıkla İşlemler','Portable Tools Menu':'Taşınabilir Araçlar','Scheduled Tasks Manager':'Zamanlanmış Görevler','Visual Process Manager':'Görsel İşlem Yöneticisi','Self-Heal Monitor':'Otomatik Onarım İzleyicisi','AI Knowledge Base':'Yapay Zekâ Bilgi Bankası','Themes Customizer':'Tema Özelleştirme','Dashboard Home':'Ana Sayfa','Quick Status':'Hızlı Durum','Network Health Excellent':'Ağ Durumu Çok İyi','Last Scan: Today, 01:35 AM':'Son tarama: Bugün, 01:35','Run Full Diagnostics':'Tüm Tanılamaları Çalıştır','SYSTEM STATUS':'SİSTEM DURUMU','System Protected':'Sistem Korunuyor','Dashboard':'Gösterge Paneli','Search anything...':'Her yerde ara...','Open Native GUI Application':'Masaüstü Uygulamasını Aç','Welcome back, Technician! 👋':'Tekrar hoş geldiniz! 👋','System Uptime:':'Sistemin çalışma süresi:','Loading...':'Yükleniyor...','System Health':'Sistem Durumu','System Overview':'Sistem Özeti','View Details >':'Ayrıntıları Görüntüle >','Cyber Control Center — 10 Modules':'Siber Kontrol Merkezi — 10 Modül','Diagnostic logs and HTML reports export':'Tanılama günlüklerini ve HTML raporlarını dışa aktar','WMI probes, SMART status, CPU stress test':'Donanım sorguları, disk durumu ve işlemci yük testi','System file scans & component store repair':'Sistem dosyalarını tara ve bileşen deposunu onar','Manage, start & stop Windows services':'Windows hizmetlerini yönet, başlat ve durdur','Monitor active IP ports & network endpoints':'Etkin IP bağlantı noktalarını ve ağ uçlarını izle','Adapter configurations & signal status':'Bağdaştırıcı ayarları ve sinyal durumu','Control active ports, firewall policies':'Etkin bağlantı noktalarını ve güvenlik duvarı kurallarını yönet','Defender verification, security policies':'Defender doğrulaması ve güvenlik ilkeleri','Check Windows activation & license keys':'Windows etkinleştirmesini ve lisans anahtarlarını denetle','Rollback, create and delete restore points':'Geri yükleme noktalarını yönet','Clear temp folders, junk logs & prefetch':'Geçici dosyaları, gereksiz günlükleri ve ön getirme verilerini temizle','Control background startup apps & delay':'Başlangıç uygulamalarını ve gecikmelerini yönet','Reboot to Advanced Startup, repair WinRE':'Gelişmiş başlangıç seçeneklerini aç ve kurtarma ortamını onar','1-Click Actions':'Tek Tıkla İşlemler','Portable Tools':'Taşınabilir Araçlar','Process Mgr':'İşlem Yöneticisi','Winget Package Manager':'Winget Paket Yöneticisi','Scan':'Tara','Update All':'Tümünü Güncelle','Quick Scan Completed':'Hızlı tarama tamamlandı','Windows Update Repair':'Windows Update Onarımı','Driver Backup Created':'Sürücü yedeği oluşturuldu','System Optimized':'Sistem iyileştirildi','System Alerts':'Sistem Uyarıları','Windows Update Available':'Windows güncellemesi mevcut','Consider taking a backup':'Yedek almanız önerilir','Weekly Health Report':'Haftalık Sistem Durumu Raporu','System report generated':'Sistem raporu oluşturuldu','Task Manager':'Görev Yöneticisi','Disk Cleanup':'Disk Temizleme','System Info':'Sistem Bilgisi','SYSTEM INFORMATION':'SİSTEM BİLGİLERİ','Operating System':'İşletim Sistemi','Enabled ✓':'Etkin ✓','Enabled':'Etkin','Disabled':'Devre Dışı','Update Intel WiFi Driver':'Intel Wi-Fi sürücüsünü güncelle','Run Disk Health Check':'Disk Durumunu Denetle','Run Recommended Actions':'Önerilen İşlemleri Uygula','Auto Backup:':'Otomatik yedekleme:','Last Backup:':'Son yedekleme:','Next Schedule:':'Sonraki zamanlama:','Internet Status:':'İnternet durumu:','VPN Status:':'VPN durumu:','Health Center':'Sistem Durumu Merkezi','Generate Battery Report':'Pil Raporu Oluştur','Battery Status':'Pil Durumu','Gaming Tools':'Oyun Araçları','OPEN GAMING UTILITIES':'OYUN ARAÇLARINI AÇ','Task Manager (Close background apps)':'Görev Yöneticisi (Arka plan uygulamalarını kapat)','Device Manager (Update GPU driver)':'Aygıt Yöneticisi (Grafik işlemci sürücüsünü güncelle)','Display Settings (Set refresh rate)':'Ekran Ayarları (Yenileme hızını ayarla)','Sound Settings (Set output device)':'Ses Ayarları (Çıkış aygıtını seç)','Security & Privacy':'Güvenlik ve Gizlilik','Run Full Security Audit':'Tam Güvenlik Denetimini Çalıştır','Security Durum':'Güvenlik Durumu','Real-time protection status':'Gerçek zamanlı koruma durumu','Windows Firewall':'Windows Güvenlik Duvarı','Network traffic protection':'Ağ trafiği koruması','Windows Update Status':'Windows Update Durumu','Security patches and updates':'Güvenlik düzeltmeleri ve güncellemeler','User Account Control status':'Kullanıcı Hesabı Denetimi durumu','Security Audit Results':'Güvenlik Denetimi Sonuçları','Security Score':'Güvenlik Puanı','Excellent Health':'Çok İyi','System is secure':'Sistem güvenli','Privacy Toolkit':'Gizlilik Araçları','Show all saved wireless network passwords':'Kayıtlı tüm kablosuz ağ parolalarını göster','Product License Keys':'Ürün Lisans Anahtarları','USB Connection History':'USB Bağlantı Geçmişi','Quick Privacy Tools':'Hızlı Gizlilik Araçları','License Keys':'Lisans Anahtarları','USB History':'USB Geçmişi','Auto Scan':'Otomatik Tarama','Bilgi':'Bilgiler','Export Inventory Report':'Envanter Raporunu Dışa Aktar','Export Specs JSON':'Özellikleri JSON Olarak Dışa Aktar','System Info GUI':'Sistem Bilgisi Arayüzü','Network MAC/IP Map':'Ağ MAC/IP Haritası','Motherboard Details':'Anakart Ayrıntıları','System Inventory Offline':'Sistem Envanteri Çevrimdışı','Load Full Info':'Tüm Bilgileri Yükle','Load System Info':'Sistem Bilgilerini Yükle','Process Manager':'İşlem Yöneticisi','Filter process...':'İşlemleri süz...','Refresh':'Yenile','Process List Empty':'İşlem listesi boş','Click Refresh to load all running processes sorted by RAM usage.':'Bellek kullanımına göre sıralanmış çalışan işlemleri yüklemek için Yenile’ye tıklayın.','Control Panel':'Denetim Masası','Refresh Services':'Hizmetleri Yenile','All Service Types':'Tüm Hizmet Türleri','Filter services name or display name...':'Hizmet adı veya görünen adına göre süz...','Hizmet Adı':'Hizmet Adı','Görünen Ad':'Görünen Ad','Durum':'Durum','Start Type':'Başlangıç Türü','Selected Service Details':'Seçili Hizmet Ayrıntıları','Application Info':'Uygulama Bilgileri','Service Type':'Hizmet Türü','Win32 Own Process':'Win32 Bağımsız İşlem','Open in Services.msc':'Hizmetler’i Aç','Service Properties':'Hizmet Özellikleri','System Overview':'Sistem Özeti','Quick Actions':'Hızlı İşlemler','Start All':'Tümünü Başlat','Stop All':'Tümünü Durdur','Clear Service Cache':'Hizmet Önbelleğini Temizle','Export Services List':'Hizmet Listesini Dışa Aktar','Service Health':'Hizmet Durumu','System Stability':'Sistem Kararlılığı','Service started':'Hizmet başlatıldı','Service restarted':'Hizmet yeniden başlatıldı','Service stopped':'Hizmet durduruldu','System Durum:':'Sistem durumu:','Last Refresh: --':'Son yenileme: --','Auto Refresh:':'Otomatik yenileme:','Startup Settings':'Başlangıç Ayarları','Disk Info':'Disk Bilgileri','Drive health, SMART data, usage statistics':'Sürücü durumu, SMART verileri ve kullanım istatistikleri','Load Disk Info':'Disk Bilgilerini Yükle','Disk Info Not Loaded':'Disk bilgileri yüklenmedi','Click "Load Disk Info" to retrieve drive health, SMART data, and usage statistics for all connected drives.':'Bağlı sürücülerin durumunu ve kullanım istatistiklerini görmek için Disk Bilgilerini Yükle’ye tıklayın.','Network Info':'Ağ Bilgileri','Load Network Info':'Ağ Bilgilerini Yükle','Network Connections':'Ağ Bağlantıları','Start Ping':'Ping’i Başlat','Network Durum':'Ağ Durumu','DNS Durum':'DNS Durumu','Checking network...':'Ağ denetleniyor...','Network Speed':'Ağ Hızı','Tools & Actions':'Araçlar ve İşlemler','Refresh Interval:':'Yenileme Aralığı:','Install 100+ popular apps via Winget — one click installation':'Winget ile 100’den fazla popüler uygulamayı tek tıkla kurun','Search apps...':'Uygulamalarda ara...','Open in CMD':'Komut İsteminde Aç','Custom Winget Search & Install':'Winget ile Uygulama Ara ve Kur','Search':'Ara','MATCHING WINGET REPOSITORY RESULTS:':'EŞLEŞEN WINGET DEPO SONUÇLARI:','Apps Settings':'Uygulama Ayarları','Click "Load Apps" to scan the Windows Registry and list all installed programs with their version and publisher info.':'Yüklü programları listelemek için Uygulamaları Yükle’ye tıklayın.','Windows System event viewer — errors, warnings, info':'Windows sistem olayları — hatalar, uyarılar ve bilgiler','Run SFC Scan':'SFC Taramasını Çalıştır','Click "Load Events" to retrieve recent Windows system events — errors, warnings, and critical alerts.':'Son sistem olaylarını almak için Olayları Yükle’ye tıklayın.','Quick Actions':'Hızlı İşlemler','All one-click system operations — everything executes REAL on your PC':'Tek tıkla sistem işlemleri — tümü bilgisayarınızda uygulanır','Tools':'Araçlar','Open common registry paths, Windows 11 HUD customizer, NTFS cache optimizer and more':'Sık kullanılan kayıt defteri konumlarını ve sistem araçlarını açın','Open Regedit':'Kayıt Defteri Düzenleyicisini Aç','Open Custom Registry Path':'Özel Kayıt Defteri Konumunu Aç','Open in Regedit':'Kayıt Defteri Düzenleyicisinde Aç','Execute commands · Launch toolkit modules · Open system apps':'Komutları çalıştırın, araçları ve sistem uygulamalarını açın','Clear':'Temizle','Close':'Kapat','Theme & Style':'Tema ve Görünüm','Select Primary Theme Base':'Ana Tema Rengini Seç','Dashboard Background & Wallpaper HUD':'Gösterge Paneli Arka Planı ve Duvar Kâğıdı','SELECT BACKGROUND STYLE PRESET':'ARKA PLAN BİÇİMİNİ SEÇİN','SELECT INTERFACE FONT FAMILY':'ARAYÜZ YAZI TİPİNİ SEÇİN','SELECT TECH GRID OVERLAY STYLE':'TEKNİK IZGARA BİÇİMİNİ SEÇİN','Scan for Updates':'Güncellemeleri Tara','Scan and update Windows software (Winget) and hardware drivers (Windows Update agent)':'Windows yazılımlarını ve donanım sürücülerini tarayıp güncelleyin','Search pending updates...':'Bekleyen güncellemelerde ara...','Update Selected (':'Seçilileri Güncelle (','Install All Drivers':'Tüm Sürücüleri Yükle','Click "Scan for Updates" to start scanning your system.':'Sistem taramasını başlatmak için Güncellemeleri Tara’ya tıklayın.','Update GUID':'Güncelleme GUID’si','Run Diagnostics Scan':'Tanılama Taramasını Çalıştır','Auto-Fix System Issues':'Sistem Sorunlarını Otomatik Onar','System Health Score':'Sistem Durumu Puanı','Your PC is running perfectly optimized with zero detected system issues!':'Bilgisayarınız iyileştirilmiş durumda; herhangi bir sistem sorunu bulunmadı.','System Optimizations & Issues Detected':'Sistem İyileştirmeleri ve Sorunlar Algılandı','Resolve & Optimize System Now':'Sorunları Gider ve Sistemi İyileştir','Hardware Health':'Donanım Durumu','Physical Memory Slots':'Fiziksel Bellek Yuvaları','Report':'Rapor','Generate premium diagnostic reports · Exact file & line analysis · Export HTML':'Ayrıntılı tanılama raporları oluşturun ve HTML olarak dışa aktarın','Settings':'Ayarlar','ONE-CLICK PREMIUM SYSTEM REPORT':'TEK TIKLA SİSTEM RAPORU','Generate Full System Report':'Tam Sistem Raporu Oluştur','SELECT REPORT TYPE':'RAPOR TÜRÜNÜ SEÇİN','Network Diagnostics':'Ağ Tanılaması','Security Audit':'Güvenlik Denetimi','Performance Report':'Performans Raporu','Driver Status':'Sürücü Durumu','Issue Report':'Sorun Raporu','Battery Report':'Pil Raporu','QUICK ACTIONS':'HIZLI İŞLEMLER','Open Latest Report':'Son Raporu Aç','Export All Reports':'Tüm Raporları Dışa Aktar','Weekly System Report':'Haftalık Sistem Raporu','Daily Security Scan':'Günlük Güvenlik Taraması','AI-powered system health analysis & intelligent repair recommendations':'Yapay zekâ destekli sistem analizi ve akıllı onarım önerileri','Scan Engine':'Tarama Motoru','AI System Analysis':'Yapay Zekâ Sistem Analizi','AI Settings':'Yapay Zekâ Ayarları','Scan History':'Tarama Geçmişi','AI Assistant & Diagnostics Provider Settings':'Yapay Zekâ Asistanı ve Tanılama Sağlayıcısı Ayarları','MODEL NAME':'MODEL ADI','Save Settings':'Ayarları Kaydet','Overall Status':'Genel Durum','Run AI System Analysis':'Yapay Zekâ Sistem Analizini Çalıştır','CPU Temperature High':'İşlemci Sıcaklığı Yüksek','Battery Health Degrading':'Pil Durumu Kötüleşiyor','Windows Update Pending':'Windows Güncellemesi Bekliyor','AI Quick Actions':'Hızlı Yapay Zekâ İşlemleri','Repair system files':'Sistem dosyalarını onar','Repair system image':'Sistem görüntüsünü onar','Free up disk space':'Disk alanı aç','Improve memory load':'Bellek kullanımını iyileştir','Run All Recommended Actions':'Önerilen Tüm İşlemleri Uygula','AI Health Analysis Report':'Yapay Zekâ Durum Analiz Raporu','Your system is in good health. No critical issues found.':'Sisteminiz iyi durumda. Kritik bir sorun bulunmadı.','Export Full Report (PDF)':'Tam Raporu Dışa Aktar (PDF)','Save Report (JSON)':'Raporu Kaydet (JSON)','Share Report':'Raporu Paylaş','System Slow':'Sistem Yavaş','High CPU Usage':'Yüksek İşlemci Kullanımı','Network Problems':'Ağ Sorunları','Live System Monitor':'Canlı Sistem İzleyicisi','Recent Scan History':'Son Tarama Geçmişi','Deep Diagnostics History Logs':'Ayrıntılı Tanılama Geçmişi','Scan Timestamp':'Tarama Zamanı','Scan Type':'Tarama Türü','Full Core System Scan':'Tam Sistem Taraması','Quick Probe Scan':'Hızlı Sorgulama Taraması','Smart Diagnostics Scan':'Akıllı Tanılama Taraması','Control Center':'Denetim Merkezi','Toggle system-level Windows customizations instantly with real-time registry tweaks and explorer auto-restart':'Windows ayarlarını ve kayıt defteri değişikliklerini yönetin','Toggle system-wide dark theme':'Sistem genelinde koyu temayı aç veya kapat','Reveal system hidden files':'Gizli sistem dosyalarını göster','Windows Services Quick Toggle':'Windows Hizmetleri Hızlı Yönetimi','Windows Update':'Windows Update','Start':'Başlat','Stop':'Durdur','Display Settings':'Ekran Ayarları','Bundle Manager':'Paket Yöneticisi','Clear All':'Tümünü Temizle','Install Bundle':'Paketi Yükle','Save Profile':'Profili Kaydet','Import / Export Package List':'Paket Listesini İçe veya Dışa Aktar','Import List':'Listeyi İçe Aktar','Export List':'Listeyi Dışa Aktar','Advanced OS repair tools — SFC, DISM, CHKDSK, Bootrec, and BCD operations with real-time console output':'SFC, DISM, CHKDSK ve önyükleme onarım araçları','OS Repair Tools':'İşletim Sistemi Onarım Araçları','System Recovery Options':'Sistem Kurtarma Seçenekleri','Open System Restore':'Sistem Geri Yüklemeyi Aç','Reset Network Stack':'Ağ Yığınını Sıfırla','Clear Event Logs':'Olay Günlüklerini Temizle','Reset Firewall Rules':'Güvenlik Duvarı Kurallarını Sıfırla','Reset System Hosts File':'Sistem Hosts Dosyasını Sıfırla','Purge Update Cache':'Güncelleme Önbelleğini Temizle','License':'Lisans','Windows product keys, Office activation status, and digital license information retrieval':'Windows ürün anahtarlarını ve etkinleştirme durumunu görüntüleyin','Retrieve License Keys':'Lisans Anahtarlarını Al','Backup Decrypted Keys':'Çözülmüş Anahtarları Yedekle','Activation Settings':'Etkinleştirme Ayarları','Show License Info (slmgr)':'Lisans Bilgisini Göster (slmgr)','CMD License Vault':'Komut Satırı Lisans Kasası','Backup WiFi Passwords':'Wi-Fi Parolalarını Yedekle','WiFi Security Audit':'Wi-Fi Güvenlik Denetimi','Hız Testini Başlat':'Hız Sınamasını Başlat','Disk Management':'Disk Yönetimi','Drive Health':'Sürücü Durumu','Disk Usage':'Disk Kullanımı','SSD Health Analyzer':'SSD Durum Çözümleyicisi','SMART Status':'SMART Durumu','Quick Tools':'Hızlı Araçlar','Quick Benchmark':'Hızlı Sınama','Surface Scan':'Yüzey Taraması','Bad Sector Scan':'Bozuk Bölüm Taraması','SMART Refresh':'SMART Verilerini Yenile','Report Export':'Raporu Dışa Aktar','Export CSV':'CSV Olarak Dışa Aktar','Export JSON':'JSON Olarak Dışa Aktar','Email Report':'Raporu E-postayla Gönder','Print Report':'Raporu Yazdır','Network Repair':'Ağ Onarımı','Fix internet connection issues – DNS flush, Winsock reset, IP renewal, and network stack repair':'İnternet bağlantısı sorunlarını giderin: DNS, Winsock ve IP ayarlarını onarın','Run Now':'Şimdi Çalıştır','Reset TCP/IP stack to restore network settings.':'Ağ ayarlarını geri yüklemek için TCP/IP yığınını sıfırlayın.','Network Troubleshooter':'Ağ Sorun Gidericisi','Reset Network Settings':'Ağ Ayarlarını Sıfırla','Clear ARP Cache':'ARP Önbelleğini Temizle','Restore Default Settings':'Varsayılan Ayarları Geri Yükle','Network Adapter:':'Ağ Bağdaştırıcısı:','Create a restore point first!':'Önce bir geri yükleme noktası oluşturun!','Create Restore Point First':'Önce Geri Yükleme Noktası Oluştur','Advanced Debloat & Services Tweaks':'Gelişmiş Bileşen ve Hizmet Ayarları','Disable Cortana & Bing Web Search':'Cortana ve Bing Web Aramasını Kapat','Telemetry & Privacy':'Telemetri ve Gizlilik','Stop DiagTrack Telemetry':'DiagTrack Telemetrisini Durdur','Stop WAP Push Service':'WAP Anında İletim Hizmetini Durdur','Disable Cortana Search':'Cortana Aramasını Kapat','1-Click Install':'Tek Tıkla Kurulum','Install Selected Apps':'Seçili Uygulamaları Yükle','Select All':'Tümünü Seç','BULK INSTALL QUEUE ACTIVE':'TOPLU KURULUM SIRASI ETKİN','Quick Selection Preset Packs':'Hazır Hızlı Seçim Paketleri','Run Hardware Scan':'Donanım Taramasını Çalıştır','Run SFC':'SFC’yi Çalıştır','Disk SMART Status':'Disk SMART Durumu','CPU Stress Test':'İşlemci Yük Testi','More Tools':'Diğer Araçlar','System Temp':'Sistem Sıcaklığı','CPU Usage':'İşlemci Kullanımı','Disk Activity':'Disk Etkinliği','Network I/O':'Ağ Giriş/Çıkışı','GPU Usage':'Grafik İşlemci Kullanımı','CPU: Healthy':'İşlemci: Sağlıklı','GPU: Healthy':'Grafik İşlemci: Sağlıklı','Run a full hardware scan to get AI-powered diagnostics and personalized recommendations.':'Yapay zekâ destekli tanılama ve öneriler için tam donanım taraması yapın.','Full AI Report':'Tam Yapay Zekâ Raporu','CPU Temperature':'İşlemci Sıcaklığı','GPU Temperature':'Grafik İşlemci Sıcaklığı','System Temperature':'Sistem Sıcaklığı','CPU Benchmark':'İşlemci Sınaması','GPU Benchmark':'Grafik İşlemci Sınaması','Overall System Score':'Genel Sistem Puanı','Run scan to calculate':'Hesaplamak için tarama yapın','Waiting for scan...':'Tarama bekleniyor...','One Click Repair Tools':'Tek Tıkla Onarım Araçları','Repair Windows Update':'Windows Update’i Onar','Repair Device Manager':'Aygıt Yöneticisini Onar','Optimize System':'Sistemi İyileştir','Report & Export':'Rapor ve Dışa Aktarma','Generate Health Report':'Durum Raporu Oluştur','Export PDF':'PDF Olarak Dışa Aktar','Cancel':'İptal','Save':'Kaydet','Close':'Kapat','Open':'Aç','Run':'Çalıştır','Refresh':'Yenile','Loading':'Yükleniyor','Please wait...':'Lütfen bekleyin...','Select':'Seç','Choose':'Seçin','Search':'Ara','Settings':'Ayarlar','Help':'Yardım','About':'Hakkında','Unknown':'Bilinmiyor','Ready':'Hazır','Running':'Çalışıyor','Başarılı':'Başarılı','Hata':'Hata','Uyarı':'Uyarı','Failed':'Başarısız','Completed':'Tamamlandı','Enabled':'Etkin','Disabled':'Devre dışı','Today':'Bugün','Yesterday':'Dün','Never':'Hiçbir zaman','Name':'Ad','Type':'Tür','Date':'Tarih','Time':'Saat','Size':'Boyut','Version':'Sürüm','Manufacturer':'Üretici','Details':'Ayrıntılar','More':'Daha Fazla','Back':'Geri','Next':'İleri','Previous':'Önceki','Apply':'Uygula','Reset':'Sıfırla','Remove':'Kaldır','Delete':'Sil','Export':'Dışa Aktar','Import':'İçe Aktar','Start Scan':'Taramayı Başlat','Stop Scan':'Taramayı Durdur','No data available':'Veri yok','No results found':'Sonuç bulunamadı','Search anything...':'Her yerde ara...','Ask anything about your PC...':'Bilgisayarınızla ilgili sorun...','Filter process...':'İşlemleri süz...','Search apps...':'Uygulamalarda ara...'
+    'SYSTEM INFO':'SİSTEM BİLGİSİ','Home':'Ana Sayfa','System Inventory':'Sistem Envanteri','All Parsed Options':'Ayıklanan Tüm Seçenekler','AI Self-Healing Platform':'Yapay Zekâ ile Otomatik Onarım','AI Smart Diagnostics':'Akıllı Yapay Zekâ Tanılaması','Report Center':'Rapor Merkezi','Hardware Diagnostics':'Donanım Tanılaması','CPU/GPU Temp Monitor':'İşlemci/Grafik İşlemci Sıcaklığı','Disk Speed Benchmark':'Disk Hız Sınaması','Software Diagnostics':'Yazılım Tanılaması','Hata Log Self-Repair':'Hata Günlüğü Onarımı','Services Control Panel':'Hizmet Yönetimi','Registry Telemetry Tweaks':'Kayıt Defteri ve Telemetri Ayarları','DNS Flush & Network Repair':'DNS Önbelleği ve Ağ Onarımı','Netstat Connections':'Ağ Bağlantıları','Network Center':'Ağ Merkezi','Firewall Manager':'Güvenlik Duvarı Yönetimi','Security & Privacy Audit':'Güvenlik ve Gizlilik Denetimi','License Vault':'Lisans Kasası','1-Click Backup Migrate':'Tek Tıkla Yedekle ve Taşı','System Restore Manager':'Sistem Geri Yükleme Yönetimi','System Cleaner':'Sistem Temizleyici','Windows Debloater':'Windows Gereksiz Bileşen Temizliği','Startup Optimizer':'Başlangıç İyileştirici','Offline Recovery Center':'Çevrimdışı Kurtarma Merkezi','BSOD Crash Analyzer':'Mavi Ekran Çözümleyici','WinoxIT CMD Toolkit':'WinoxIT Komut Satırı Araçları','100 Apps 1-Click Install':'100 Uygulamayı Tek Tıkla Kur','Custom Apps Bundler':'Özel Uygulama Paketi Oluşturucu','Software Updater':'Yazılım Güncelleyici','One Click Eylems':'Tek Tıkla İşlemler','Portable Tools Menu':'Taşınabilir Araçlar','Scheduled Tasks Manager':'Zamanlanmış Görevler','Visual Process Manager':'Görsel İşlem Yöneticisi','Self-Heal Monitor':'Otomatik Onarım İzleyicisi','AI Knowledge Base':'Yapay Zekâ Bilgi Bankası','Themes Customizer':'Tema Özelleştirme','Dashboard Home':'Ana Sayfa','Quick Durum':'Hızlı Durum','Network Health Excellent':'Ağ Durumu Çok İyi','Last Scan: Today, 01:35 AM':'Son tarama: Bugün, 01:35','Run Full Diagnostics':'Tüm Tanılamaları Çalıştır','SYSTEM STATUS':'SİSTEM DURUMU','System Protected':'Sistem Korunuyor','Dashboard':'Gösterge Paneli','Search anything...':'Her yerde ara...','Open Native GUI Application':'Masaüstü Uygulamasını Aç','Welcome back, Technician! 👋':'Tekrar hoş geldiniz! 👋','System Uptime:':'Sistemin çalışma süresi:','Loading...':'Yükleniyor...','System Health':'Sistem Durumu','System Overview':'Sistem Özeti','View Details >':'Ayrıntıları Görüntüle >','Cyber Control Center — 10 Modules':'Siber Kontrol Merkezi — 10 Modül','Diagnostic logs and HTML reports export':'Tanılama günlüklerini ve HTML raporlarını dışa aktar','WMI probes, SMART status, CPU stress test':'Donanım sorguları, disk durumu ve işlemci yük testi','System file scans & component store repair':'Sistem dosyalarını tara ve bileşen deposunu onar','Manage, start & stop Windows services':'Windows hizmetlerini yönet, başlat ve durdur','Monitor active IP ports & network endpoints':'Etkin IP bağlantı noktalarını ve ağ uçlarını izle','Adapter configurations & signal status':'Bağdaştırıcı ayarları ve sinyal durumu','Control active ports, firewall policies':'Etkin bağlantı noktalarını ve güvenlik duvarı kurallarını yönet','Defender verification, security policies':'Defender doğrulaması ve güvenlik ilkeleri','Check Windows activation & license keys':'Windows etkinleştirmesini ve lisans anahtarlarını denetle','Rollback, create and delete restore points':'Geri yükleme noktalarını yönet','Clear temp folders, junk logs & prefetch':'Geçici dosyaları, gereksiz günlükleri ve ön getirme verilerini temizle','Control background startup apps & delay':'Başlangıç uygulamalarını ve gecikmelerini yönet','Reboot to Advanced Startup, repair WinRE':'Gelişmiş başlangıç seçeneklerini aç ve kurtarma ortamını onar','1-Click Eylems':'Tek Tıkla İşlemler','Portable Tools':'Taşınabilir Araçlar','Process Mgr':'İşlem Yöneticisi','Winget Package Manager':'Winget Paket Yöneticisi','Scan':'Tara','Update All':'Tümünü Güncelle','Quick Scan Completed':'Hızlı tarama tamamlandı','Windows Update Repair':'Windows Update Onarımı','Driver Backup Created':'Sürücü yedeği oluşturuldu','System Optimized':'Sistem iyileştirildi','System Alerts':'Sistem Uyarıları','Windows Update Available':'Windows güncellemesi mevcut','Consider taking a backup':'Yedek almanız önerilir','Weekly Health Report':'Haftalık Sistem Durumu Raporu','System report generated':'Sistem raporu oluşturuldu','Task Manager':'Görev Yöneticisi','Disk Cleanup':'Disk Temizleme','System Info':'Sistem Bilgisi','SYSTEM INFORMATION':'SİSTEM BİLGİLERİ','Operating System':'İşletim Sistemi','Enabled ✓':'Etkin ✓','Enabled':'Etkin','Disabled':'Devre Dışı','Update Intel WiFi Driver':'Intel Wi-Fi sürücüsünü güncelle','Run Disk Health Check':'Disk Durumunu Denetle','Run Recommended Eylems':'Önerilen İşlemleri Uygula','Auto Backup:':'Otomatik yedekleme:','Last Backup:':'Son yedekleme:','Next Schedule:':'Sonraki zamanlama:','Internet Durum:':'İnternet durumu:','VPN Durum:':'VPN durumu:','Health Center':'Sistem Durumu Merkezi','Generate Battery Report':'Pil Raporu Oluştur','Battery Durum':'Pil Durumu','Gaming Tools':'Oyun Araçları','OPEN GAMING UTILITIES':'OYUN ARAÇLARINI AÇ','Task Manager (Close background apps)':'Görev Yöneticisi (Arka plan uygulamalarını kapat)','Device Manager (Update GPU driver)':'Aygıt Yöneticisi (Grafik işlemci sürücüsünü güncelle)','Display Settings (Set refresh rate)':'Ekran Ayarları (Yenileme hızını ayarla)','Sound Settings (Set output device)':'Ses Ayarları (Çıkış aygıtını seç)','Security & Privacy':'Güvenlik ve Gizlilik','Run Full Security Audit':'Tam Güvenlik Denetimini Çalıştır','Security Durum':'Güvenlik Durumu','Real-time protection status':'Gerçek zamanlı koruma durumu','Windows Firewall':'Windows Güvenlik Duvarı','Network traffic protection':'Ağ trafiği koruması','Windows Update Durum':'Windows Update Durumu','Security patches and updates':'Güvenlik düzeltmeleri ve güncellemeler','User Account Control status':'Kullanıcı Hesabı Denetimi durumu','Security Audit Results':'Güvenlik Denetimi Sonuçları','Security Score':'Güvenlik Puanı','Excellent Health':'Çok İyi','System is secure':'Sistem güvenli','Privacy Toolkit':'Gizlilik Araçları','Show all saved wireless network passwords':'Kayıtlı tüm kablosuz ağ parolalarını göster','Product Lisans Anahtarıs':'Ürün Lisans Anahtarları','USB Connection History':'USB Bağlantı Geçmişi','Quick Privacy Tools':'Hızlı Gizlilik Araçları','Lisans Anahtarıs':'Lisans Anahtarları','USB History':'USB Geçmişi','Auto Scan':'Otomatik Tarama','Bilgi':'Bilgiler','Export Inventory Report':'Envanter Raporunu Dışa Aktar','Export Specs JSON':'Özellikleri JSON Olarak Dışa Aktar','System Info GUI':'Sistem Bilgisi Arayüzü','Network MAC/IP Map':'Ağ MAC/IP Haritası','Motherboard Details':'Anakart Ayrıntıları','System Inventory Offline':'Sistem Envanteri Çevrimdışı','Load Full Info':'Tüm Bilgileri Yükle','Load System Bilgi':'Sistem Bilgilerini Yükle','Process Manager':'İşlem Yöneticisi','Filter process...':'İşlemleri süz...','Refresh':'Yenile','Process List Empty':'İşlem listesi boş','Click Refresh to load all running processes sorted by RAM usage.':'Bellek kullanımına göre sıralanmış çalışan işlemleri yüklemek için Yenile’ye tıklayın.','Control Panel':'Denetim Masası','Refresh Services':'Hizmetleri Yenile','All Service Types':'Tüm Hizmet Türleri','Filter services name or display name...':'Hizmet adı veya görünen adına göre süz...','Hizmet Adı':'Hizmet Adı','Görünen Ad':'Görünen Ad','Durum':'Durum','Start Type':'Başlangıç Türü','Selected Service Details':'Seçili Hizmet Ayrıntıları','Application Bilgi':'Uygulama Bilgileri','Service Type':'Hizmet Türü','Win32 Own Process':'Win32 Bağımsız İşlem','Open in Services.msc':'Hizmetler’i Aç','Service Properties':'Hizmet Özellikleri','System Overview':'Sistem Özeti','Quick Eylems':'Hızlı İşlemler','Start All':'Tümünü Başlat','Stop All':'Tümünü Durdur','Clear Service Cache':'Hizmet Önbelleğini Temizle','Export Services List':'Hizmet Listesini Dışa Aktar','Service Health':'Hizmet Durumu','System Stability':'Sistem Kararlılığı','Service started':'Hizmet başlatıldı','Service restarted':'Hizmet yeniden başlatıldı','Service stopped':'Hizmet durduruldu','System Durum:':'Sistem durumu:','Last Refresh: --':'Son yenileme: --','Auto Refresh:':'Otomatik yenileme:','Startup Settings':'Başlangıç Ayarları','Disk Bilgi':'Disk Bilgileri','Drive health, SMART data, usage statistics':'Sürücü durumu, SMART verileri ve kullanım istatistikleri','Load Disk Info':'Disk Bilgilerini Yükle','Disk Bilgi Not Loaded':'Disk bilgileri yüklenmedi','Click "Load Disk Info" to retrieve drive health, SMART data, and usage statistics for all connected drives.':'Bağlı sürücülerin durumunu ve kullanım istatistiklerini görmek için Disk Bilgilerini Yükle’ye tıklayın.','Network Bilgi':'Ağ Bilgileri','Load Network Info':'Ağ Bilgilerini Yükle','Network Connections':'Ağ Bağlantıları','Start Ping':'Ping’i Başlat','Network Durum':'Ağ Durumu','DNS Durum':'DNS Durumu','Checking network...':'Ağ denetleniyor...','Network Speed':'Ağ Hızı','Tools & Eylems':'Araçlar ve İşlemler','Refresh Interval:':'Yenileme Aralığı:','Install 100+ popular apps via Winget — one click installation':'Winget ile 100’den fazla popüler uygulamayı tek tıkla kurun','Search apps...':'Uygulamalarda ara...','Open in CMD':'Komut İsteminde Aç','Custom Winget Search & Install':'Winget ile Uygulama Ara ve Kur','Search':'Ara','MATCHING WINGET REPOSITORY RESULTS:':'EŞLEŞEN WINGET DEPO SONUÇLARI:','Apps Settings':'Uygulama Ayarları','Click "Load Apps" to scan the Windows Registry and list all installed programs with their version and publisher info.':'Yüklü programları listelemek için Uygulamaları Yükle’ye tıklayın.','Windows System event viewer — errors, warnings, info':'Windows sistem olayları — hatalar, uyarılar ve bilgiler','Run SFC Scan':'SFC Taramasını Çalıştır','Click "Load Events" to retrieve recent Windows system events — errors, warnings, and critical alerts.':'Son sistem olaylarını almak için Olayları Yükle’ye tıklayın.','Quick Eylems':'Hızlı İşlemler','All one-click system operations — everything executes REAL on your PC':'Tek tıkla sistem işlemleri — tümü bilgisayarınızda uygulanır','Tools':'Araçlar','Open common registry paths, Windows 11 HUD customizer, NTFS cache optimizer and more':'Sık kullanılan kayıt defteri konumlarını ve sistem araçlarını açın','Open Regedit':'Kayıt Defteri Düzenleyicisini Aç','Open Custom Registry Path':'Özel Kayıt Defteri Konumunu Aç','Open in Regedit':'Kayıt Defteri Düzenleyicisinde Aç','Execute commands · Launch toolkit modules · Open system apps':'Komutları çalıştırın, araçları ve sistem uygulamalarını açın','Clear':'Temizle','Close':'Kapat','Theme & Style':'Tema ve Görünüm','Select Primary Theme Base':'Ana Tema Rengini Seç','Dashboard Background & Wallpaper HUD':'Gösterge Paneli Arka Planı ve Duvar Kâğıdı','SELECT BACKGROUND STYLE PRESET':'ARKA PLAN BİÇİMİNİ SEÇİN','SELECT INTERFACE FONT FAMILY':'ARAYÜZ YAZI TİPİNİ SEÇİN','SELECT TECH GRID OVERLAY STYLE':'TEKNİK IZGARA BİÇİMİNİ SEÇİN','Scan for Updates':'Güncellemeleri Tara','Scan and update Windows software (Winget) and hardware drivers (Windows Update agent)':'Windows yazılımlarını ve donanım sürücülerini tarayıp güncelleyin','Search pending updates...':'Bekleyen güncellemelerde ara...','Update Selected (':'Seçilileri Güncelle (','Install All Drivers':'Tüm Sürücüleri Yükle','Click "Scan for Updates" to start scanning your system.':'Sistem taramasını başlatmak için Güncellemeleri Tara’ya tıklayın.','Update GUID':'Güncelleme GUID’si','Run Diagnostics Scan':'Tanılama Taramasını Çalıştır','Auto-Fix System Issues':'Sistem Sorunlarını Otomatik Onar','System Health Score':'Sistem Durumu Puanı','Your PC is running perfectly optimized with zero detected system issues!':'Bilgisayarınız iyileştirilmiş durumda; herhangi bir sistem sorunu bulunmadı.','System Optimizations & Issues Detected':'Sistem İyileştirmeleri ve Sorunlar Algılandı','Resolve & Optimize System Now':'Sorunları Gider ve Sistemi İyileştir','Hardware Health':'Donanım Durumu','Physical Memory Slots':'Fiziksel Bellek Yuvaları','Report':'Rapor','Generate premium diagnostic reports · Exact file & line analysis · Export HTML':'Ayrıntılı tanılama raporları oluşturun ve HTML olarak dışa aktarın','Settings':'Ayarlar','ONE-CLICK PREMIUM SYSTEM REPORT':'TEK TIKLA SİSTEM RAPORU','Generate Full System Report':'Tam Sistem Raporu Oluştur','SELECT REPORT TYPE':'RAPOR TÜRÜNÜ SEÇİN','Network Diagnostics':'Ağ Tanılaması','Security Audit':'Güvenlik Denetimi','Performance Report':'Performans Raporu','Driver Durum':'Sürücü Durumu','Issue Report':'Sorun Raporu','Battery Report':'Pil Raporu','QUICK ACTIONS':'HIZLI İŞLEMLER','Open Latest Report':'Son Raporu Aç','Export All Reports':'Tüm Raporları Dışa Aktar','Weekly System Report':'Haftalık Sistem Raporu','Daily Security Scan':'Günlük Güvenlik Taraması','AI-powered system health analysis & intelligent repair recommendations':'Yapay zekâ destekli sistem analizi ve akıllı onarım önerileri','Scan Engine':'Tarama Motoru','AI System Analysis':'Yapay Zekâ Sistem Analizi','AI Settings':'Yapay Zekâ Ayarları','Scan History':'Tarama Geçmişi','AI Assistant & Diagnostics Provider Settings':'Yapay Zekâ Asistanı ve Tanılama Sağlayıcısı Ayarları','MODEL NAME':'MODEL ADI','Save Settings':'Ayarları Kaydet','Overall Durum':'Genel Durum','Run AI System Analysis':'Yapay Zekâ Sistem Analizini Çalıştır','CPU Temperature High':'İşlemci Sıcaklığı Yüksek','Battery Health Degrading':'Pil Durumu Kötüleşiyor','Windows Update Pending':'Windows Güncellemesi Bekliyor','AI Quick Eylems':'Hızlı Yapay Zekâ İşlemleri','Repair system files':'Sistem dosyalarını onar','Repair system image':'Sistem görüntüsünü onar','Free up disk space':'Disk alanı aç','Improve memory load':'Bellek kullanımını iyileştir','Run All Recommended Eylems':'Önerilen Tüm İşlemleri Uygula','AI Health Analysis Report':'Yapay Zekâ Durum Analiz Raporu','Your system is in good health. No critical issues found.':'Sisteminiz iyi durumda. Kritik bir sorun bulunmadı.','Export Full Report (PDF)':'Tam Raporu Dışa Aktar (PDF)','Save Report (JSON)':'Raporu Kaydet (JSON)','Share Report':'Raporu Paylaş','System Slow':'Sistem Yavaş','High CPU Usage':'Yüksek İşlemci Kullanımı','Network Problems':'Ağ Sorunları','Live System Monitor':'Canlı Sistem İzleyicisi','Recent Scan History':'Son Tarama Geçmişi','Deep Diagnostics History Logs':'Ayrıntılı Tanılama Geçmişi','Scan Timestamp':'Tarama Zamanı','Scan Type':'Tarama Türü','Full Core System Scan':'Tam Sistem Taraması','Quick Probe Scan':'Hızlı Sorgulama Taraması','Smart Diagnostics Scan':'Akıllı Tanılama Taraması','Control Center':'Denetim Merkezi','Toggle system-level Windows customizations instantly with real-time registry tweaks and explorer auto-restart':'Windows ayarlarını ve kayıt defteri değişikliklerini yönetin','Toggle system-wide dark theme':'Sistem genelinde koyu temayı aç veya kapat','Reveal system hidden files':'Gizli sistem dosyalarını göster','Windows Services Quick Toggle':'Windows Hizmetleri Hızlı Yönetimi','Windows Update':'Windows Update','Start':'Başlat','Stop':'Durdur','Display Settings':'Ekran Ayarları','Bundle Manager':'Paket Yöneticisi','Clear All':'Tümünü Temizle','Install Bundle':'Paketi Yükle','Save Profile':'Profili Kaydet','Import / Export Package List':'Paket Listesini İçe veya Dışa Aktar','Import List':'Listeyi İçe Aktar','Export List':'Listeyi Dışa Aktar','Advanced OS repair tools — SFC, DISM, CHKDSK, Bootrec, and BCD operations with real-time console output':'SFC, DISM, CHKDSK ve önyükleme onarım araçları','OS Repair Tools':'İşletim Sistemi Onarım Araçları','System Recovery Options':'Sistem Kurtarma Seçenekleri','Open System Restore':'Sistem Geri Yüklemeyi Aç','Reset Network Stack':'Ağ Yığınını Sıfırla','Clear Event Logs':'Olay Günlüklerini Temizle','Reset Firewall Rules':'Güvenlik Duvarı Kurallarını Sıfırla','Reset System Hosts File':'Sistem Hosts Dosyasını Sıfırla','Purge Update Cache':'Güncelleme Önbelleğini Temizle','License':'Lisans','Windows product keys, Office activation status, and digital license information retrieval':'Windows ürün anahtarlarını ve etkinleştirme durumunu görüntüleyin','Retrieve Lisans Anahtarıs':'Lisans Anahtarlarını Al','Backup Decrypted Keys':'Çözülmüş Anahtarları Yedekle','Activation Settings':'Etkinleştirme Ayarları','Show License Info (slmgr)':'Lisans Bilgisini Göster (slmgr)','CMD License Vault':'Komut Satırı Lisans Kasası','Backup WiFi Passwords':'Wi-Fi Parolalarını Yedekle','WiFi Security Audit':'Wi-Fi Güvenlik Denetimi','Hız Testini Başlat':'Hız Sınamasını Başlat','Disk Management':'Disk Yönetimi','Drive Health':'Sürücü Durumu','Disk Usage':'Disk Kullanımı','SSD Health Analyzer':'SSD Durum Çözümleyicisi','SMART Durum':'SMART Durumu','Quick Tools':'Hızlı Araçlar','Quick Benchmark':'Hızlı Sınama','Surface Scan':'Yüzey Taraması','Bad Sector Scan':'Bozuk Bölüm Taraması','SMART Refresh':'SMART Verilerini Yenile','Report Export':'Raporu Dışa Aktar','Export CSV':'CSV Olarak Dışa Aktar','Export JSON':'JSON Olarak Dışa Aktar','Email Report':'Raporu E-postayla Gönder','Print Report':'Raporu Yazdır','Network Repair':'Ağ Onarımı','Fix internet connection issues – DNS flush, Winsock reset, IP renewal, and network stack repair':'İnternet bağlantısı sorunlarını giderin: DNS, Winsock ve IP ayarlarını onarın','Run Now':'Şimdi Çalıştır','Reset TCP/IP stack to restore network settings.':'Ağ ayarlarını geri yüklemek için TCP/IP yığınını sıfırlayın.','Network Troubleshooter':'Ağ Sorun Gidericisi','Reset Network Settings':'Ağ Ayarlarını Sıfırla','Clear ARP Cache':'ARP Önbelleğini Temizle','Restore Default Settings':'Varsayılan Ayarları Geri Yükle','Network Adapter:':'Ağ Bağdaştırıcısı:','Create a restore point first!':'Önce bir geri yükleme noktası oluşturun!','Create Restore Point First':'Önce Geri Yükleme Noktası Oluştur','Advanced Debloat & Services Tweaks':'Gelişmiş Bileşen ve Hizmet Ayarları','Disable Cortana & Bing Web Search':'Cortana ve Bing Web Aramasını Kapat','Telemetry & Privacy':'Telemetri ve Gizlilik','Stop DiagTrack Telemetry':'DiagTrack Telemetrisini Durdur','Stop WAP Push Service':'WAP Anında İletim Hizmetini Durdur','Disable Cortana Search':'Cortana Aramasını Kapat','1-Click Install':'Tek Tıkla Kurulum','Install Selected Apps':'Seçili Uygulamaları Yükle','Select All':'Tümünü Seç','BULK INSTALL QUEUE ACTIVE':'TOPLU KURULUM SIRASI ETKİN','Quick Selection Preset Packs':'Hazır Hızlı Seçim Paketleri','Run Hardware Scan':'Donanım Taramasını Çalıştır','Run SFC':'SFC’yi Çalıştır','Disk SMART Durum':'Disk SMART Durumu','CPU Stress Test':'İşlemci Yük Testi','More Tools':'Diğer Araçlar','System Temp':'Sistem Sıcaklığı','CPU Usage':'İşlemci Kullanımı','Disk Activity':'Disk Etkinliği','Network I/O':'Ağ Giriş/Çıkışı','GPU Usage':'Grafik İşlemci Kullanımı','CPU: Healthy':'İşlemci: Sağlıklı','GPU: Healthy':'Grafik İşlemci: Sağlıklı','Run a full hardware scan to get AI-powered diagnostics and personalized recommendations.':'Yapay zekâ destekli tanılama ve öneriler için tam donanım taraması yapın.','Full AI Report':'Tam Yapay Zekâ Raporu','CPU Temperature':'İşlemci Sıcaklığı','GPU Temperature':'Grafik İşlemci Sıcaklığı','System Temperature':'Sistem Sıcaklığı','CPU Benchmark':'İşlemci Sınaması','GPU Benchmark':'Grafik İşlemci Sınaması','Overall System Score':'Genel Sistem Puanı','Run scan to calculate':'Hesaplamak için tarama yapın','Waiting for scan...':'Tarama bekleniyor...','One Click Repair Tools':'Tek Tıkla Onarım Araçları','Repair Windows Update':'Windows Update’i Onar','Repair Device Manager':'Aygıt Yöneticisini Onar','Optimize System':'Sistemi İyileştir','Report & Export':'Rapor ve Dışa Aktarma','Generate Health Report':'Durum Raporu Oluştur','Export PDF':'PDF Olarak Dışa Aktar','Cancel':'İptal','Save':'Kaydet','Close':'Kapat','Open':'Aç','Run':'Çalıştır','Refresh':'Yenile','Loading':'Yükleniyor','Please wait...':'Lütfen bekleyin...','Select':'Seç','Choose':'Seçin','Search':'Ara','Settings':'Ayarlar','Help':'Yardım','About':'Hakkında','Unknown':'Bilinmiyor','Ready':'Hazır','Running':'Çalışıyor','Başarılı':'Başarılı','Hata':'Hata','Uyarı':'Uyarı','Failed':'Başarısız','Completed':'Tamamlandı','Enabled':'Etkin','Disabled':'Devre dışı','Today':'Bugün','Yesterday':'Dün','Never':'Hiçbir zaman','Name':'Ad','Type':'Tür','Date':'Tarih','Time':'Saat','Size':'Boyut','Version':'Sürüm','Manufacturer':'Üretici','Details':'Ayrıntılar','More':'Daha Fazla','Back':'Geri','Next':'İleri','Previous':'Önceki','Apply':'Uygula','Reset':'Sıfırla','Remove':'Kaldır','Delete':'Sil','Export':'Dışa Aktar','Import':'İçe Aktar','Start Scan':'Taramayı Başlat','Stop Scan':'Taramayı Durdur','No data available':'Veri yok','No results found':'Sonuç bulunamadı','Search anything...':'Her yerde ara...','Ask anything about your PC...':'Bilgisayarınızla ilgili sorun...','Filter process...':'İşlemleri süz...','Search apps...':'Uygulamalarda ara...'
   };
     Object.assign(labels, {
     "AI Smart Diagnostics": "Akıllı Yapay Zekâ Tanılaması",
@@ -47493,7 +47330,7 @@ updateLangButtonDisplay();
     "System Health Score": "Sistem Sağlık Puanı",
     "Hardware Diagnostics": "Donanım Tanılaması",
     "Software Diagnostics": "Yazılım Tanılaması",
-    "Error Log Self-Repair": "Hata Günlüğü Onarımı",
+    "Hata Log Self-Repair": "Hata Günlüğü Onarımı",
     "Services Control Panel": "Hizmetler Kontrol Paneli",
     "Registry Telemetry Tweaks": "Kayıt Defteri ve Telemetri Ayarları",
     "DNS Flush & Network Repair": "DNS Temizliği ve Ağ Onarımı",
@@ -47526,7 +47363,7 @@ updateLangButtonDisplay();
     "Load Services": "Hizmetleri Yükle",
     "Load Disk Info": "Disk Bilgilerini Yükle",
     "Load Startup Items": "Başlangıç Öğelerini Yükle",
-    "Retrieve License Keys": "Lisans Anahtarlarını Al",
+    "Retrieve Lisans Anahtarıs": "Lisans Anahtarlarını Al",
     "Create Restore Point": "Geri Yükleme Noktası Oluştur",
     "Create Backup": "Yedek Oluştur",
     "Open Backups Folder": "Yedekler Klasörünü Aç",
@@ -47636,7 +47473,7 @@ updateLangButtonDisplay();
 });
 Object.assign(labels, {
     'Automatically run a complete background system repair sequence: SFC file scans, DISM component store recovery, CHKDSK disk integrity scan, active driver validation check, network stack rebuild (Winsock, IP, DNS flush), temp junk clearance, and full health report creation.':'Tam arka plan sistem onarım dizisini otomatik olarak çalıştırın: SFC dosya taraması, DISM bileşen deposu kurtarma, CHKDSK disk bütünlüğü taraması, sürücü doğrulama, ağ yığını yenileme (Winsock, IP, DNS temizliği), geçici çöp temizliği ve tam durum raporu.',
-    'Click the "Retrieve License Keys" button above to decrypt system product keys from the Windows Registry, SLMGR license records, and Microsoft Office software protection logs.':'Windows Kayıt Defteri, SLMGR lisans kayıtları ve Microsoft Office koruma günlüklerindeki ürün lisans anahtarlarını çözmek için yukarıdaki "Lisans Anahtarlarını Al" düğmesine tıklayın.',
+    'Click the "Retrieve Lisans Anahtarıs" button above to decrypt system product keys from the Windows Registry, SLMGR license records, and Microsoft Office software protection logs.':'Windows Kayıt Defteri, SLMGR lisans kayıtları ve Microsoft Office koruma günlüklerindeki ürün lisans anahtarlarını çözmek için yukarıdaki "Lisans Anahtarlarını Al" düğmesine tıklayın.',
     'Hello! I\'m your AI Diagnostics Assistant. I can help you analyze your system, find issues, and suggest solutions. Ask me anything about your system...':'Merhaba! Ben WinoxIT Yapay Zekâ Tanılama Asistanınızım. Sisteminizi analiz etmenize, sorunları bulmanıza ve çözümler üretmenize yardımcı olabilirim. Sisteminizle ilgili her şeyi sorabilirsiniz...',
     'Select a core topic from the left side panel to view detailed diagnostic pathways, root cause explanations, and run automated recovery scripts.':'Ayrıntılı tanılama adımlarını ve kök neden açıklamalarını görmek, otomatik kurtarma betiklerini çalıştırmak için sol menüden bir konu seçin.',
     'Select a mock system error image or drag-and-drop a crash screen (BSOD, application error, updates) for cognitive AI analysis.':'Yapay zekâ incelemesi için örnek hata görseli seçin veya çökme ekranını (mavi ekran, uygulama hatası ya da güncelleme) sürükleyip bırakın.',
@@ -47659,8 +47496,8 @@ Object.assign(labels, {
     'Analyze Windows minidump files to identify Blue Screen of Death causes and stop codes':'Mavi Ekran (BSOD) nedenlerini ve durdurma kodlarını belirlemek için Windows bellek dökümü (minidump) dosyalarını inceleyin.',
     'Open common registry paths, Windows 11 HUD customizer, NTFS cache optimizer and more':'Sık kullanılan Kayıt Defteri yollarını, Windows 11 HUD özelleştiricisini, NTFS önbellek iyileştiricisini ve fazlasını açın.',
     'Choose an error template from the dropdown to run cognitive OCR diagnostic scans.':'OCR tanılama taraması çalıştırmak için açılır listeden bir hata şablonu seçin.',
-    'Scan Windows Event Logs - Detect Critical Errors - Auto-repair & Apply fixes.':'Windows Olay Günlüklerini tarayın - Kritik Hataları Belirleyin - Otomatik Onarın ve Çözümleri Uygulayın.',
-    'Scan Windows Event Logs - Detect Critical Errors - Auto-repair &amp; Apply fixes.':'Windows Olay Günlüklerini tarayın - Kritik Hataları Belirleyin - Otomatik Onarın ve Çözümleri Uygulayın.',
+    'Scan Windows Event Logs - Detect Critical Hatas - Auto-repair & Apply fixes.':'Windows Olay Günlüklerini tarayın - Kritik Hataları Belirleyin - Otomatik Onarın ve Çözümleri Uygulayın.',
+    'Scan Windows Event Logs - Detect Critical Hatas - Auto-repair &amp; Apply fixes.':'Windows Olay Günlüklerini tarayın - Kritik Hataları Belirleyin - Otomatik Onarın ve Çözümleri Uygulayın.',
     'Toggle system-level Windows customizations instantly with real-time registry tweaks and explorer auto-restart':'Windows ayarlarını ve kayıt defteri değişikliklerini anında uygulayın ve Dosya Gezginini otomatik yeniden başlatın.',
     'Real-time deep analysis of active network sockets, protocol distributions, and socket owners':'Etkin ağ yuvalarını, protokol dağılımlarını ve sahiplerini anlık ve ayrıntılı inceleyin.',
     'Enable TRIM to maintain optimal performance. Consider firmware update for better stability.':'En iyi performansı korumak için TRIM\'i etkinleştirin. Daha fazla kararlılık için ürün yazılımı (firmware) güncellemesini değerlendirin.',
@@ -47717,7 +47554,7 @@ Object.assign(labels, {
     'Create System Restore Point':'Sistem Geri Yükleme Noktası Oluştur',
     'Manage System Restore Points':'Sistem Geri Yükleme Noktalarını Yönet',
     'Backup User Profile (RoboCopy)':'Kullanıcı Profilini Yedekle (RoboCopy)',
-    'View System Info':'Sistem Bilgilerini Görüntüle',
+    'View System Bilgi':'Sistem Bilgilerini Görüntüle',
     'Analyze BSOD Crash Dumps':'Mavi Ekran (BSOD) Dökümlerini Analiz Et',
     'Open Windows Tools':'Windows Araçlarını Aç',
     'Open Device Manager':'Aygıt Yöneticisini Aç',
@@ -47852,7 +47689,7 @@ Object.assign(labels, {
     'Search modules...':'Modüllerde ara...',
     'All Categories':'Tüm Kategoriler',
     'All Types':'Tüm Türler',
-    'System Info':'Sistem Bilgileri',
+    'System Bilgi':'Sistem Bilgileri',
     'Hardware Specifications':'Donanım Özellikleri',
     'Operating System Details':'İşletim Sistemi Detayları',
     'Storage Devices':'Depolama Cihazları',
@@ -47979,7 +47816,7 @@ Object.assign(labels, {
     '→ Use when Windows won\'t boot. Repairs MBR, Boot sector, and BCD store.':'→ Windows açılmıyorsa kullanın. MBR’yi, önyükleme sektörünü ve BCD deposunu onarır.',
     'All operations run silently in elevated console — keep CMD window open until complete.':'İşlemler yönetici izinli komut penceresinde yürütülür. Tamamlanana kadar pencereyi kapatmayın.',
     'Windows product keys, Office activation status, and digital license information retrieval':'Windows ürün anahtarlarını, Office etkinleştirme ve dijital lisans bilgilerini görüntüleyin.',
-    'Click the "Retrieve License Keys" button above to decrypt system product keys from the Windows Registry, SLMGR license records, and Microsoft Office software protection logs.':'Windows ve Office ürün anahtarlarını çözümleyip görüntülemek için yukarıdaki “Lisans Anahtarlarını Al” düğmesine tıklayın.',
+    'Click the "Retrieve Lisans Anahtarıs" button above to decrypt system product keys from the Windows Registry, SLMGR license records, and Microsoft Office software protection logs.':'Windows ve Office ürün anahtarlarını çözümleyip görüntülemek için yukarıdaki “Lisans Anahtarlarını Al” düğmesine tıklayın.',
     'High-precision sequential read/write speed analysis using system-native engines.':'Sistemin yerleşik araçlarıyla sıralı okuma ve yazma hızını hassas biçimde ölçer.',
     'Enable TRIM to maintain optimal performance. Consider firmware update for better stability.':'En iyi performans için TRIM’i etkinleştirin; kararlılık için aygıt yazılımını güncellemeyi değerlendirin.',
     'Fix internet connection issues – DNS flush, Winsock reset, IP renewal, and network stack repair':'DNS önbelleğini temizleyerek, Winsock’u sıfırlayarak, IP’yi yenileyerek ve ağ yığınını onararak bağlantı sorunlarını giderin.',
@@ -48002,7 +47839,7 @@ Object.assign(labels, {
     'Select any connection row to inspect details and run actions.':'Ayrıntıları incelemek ve işlem yapmak için bir bağlantı satırı seçin.',
     'View and manage Windows Firewall rules, inbound/outbound policies and configurations':'Windows Güvenlik Duvarı kurallarını ve gelen/giden bağlantı ilkelerini görüntüleyip yönetin.',
     'Curated Windows registry tweaks • Disable telemetry • Privacy hardening • Performance boost':'Windows Kayıt Defteri ayarları • Telemetriyi kapatma • Gizliliği güçlendirme • Performansı artırma',
-    'Scan Windows Event Logs - Detect Critical Errors - Auto-repair & Apply fixes.':'Windows olay günlüklerini tarayın, kritik hataları belirleyin ve düzeltmeleri uygulayın.',
+    'Scan Windows Event Logs - Detect Critical Hatas - Auto-repair & Apply fixes.':'Windows olay günlüklerini tarayın, kritik hataları belirleyin ve düzeltmeleri uygulayın.',
     'Your system is running smoothly. No critical errors detected.':'Sisteminiz sorunsuz çalışıyor. Kritik hata algılanmadı.',
     'The application-specific permission settings do not grant Local Activation permission.':'Uygulamaya özgü izin ayarları Yerel Etkinleştirme izni vermiyor.',
     'WMI-Activity: Detected a slow response from WMI provider.':'WMI etkinliği: WMI sağlayıcısından yavaş yanıt alındı.',
@@ -48052,18 +47889,6 @@ Object.assign(labels, {
     document.addEventListener('DOMContentLoaded', () => translate(document.body));
   }
 })();
-
-// === WinoxIT Compatibility Aliases & Helpers ===
-window.loadStartup = typeof window.loadStartup === 'function' ? window.loadStartup : (typeof loadStartup === 'function' ? loadStartup : function(){});
-window.loadBaşlatup = window.loadStartup;
-window.configureStartupDelay = typeof window.configureStartupDelay === 'function' ? window.configureStartupDelay : (typeof configureStartupDelay === 'function' ? configureStartupDelay : function(){});
-window.configureBaşlatupDelay = window.configureStartupDelay;
-window.showStartupImpact = typeof window.showStartupImpact === 'function' ? window.showStartupImpact : (typeof showStartupImpact === 'function' ? showStartupImpact : function(){});
-window.showBaşlatupImpact = window.showStartupImpact;
-window.runRecommendedActions = typeof window.runRecommendedActions === 'function' ? window.runRecommendedActions : (typeof runRecommendedActions === 'function' ? runRecommendedActions : function(){});
-window.runRecommendedEylems = window.runRecommendedActions;
-window.autoRepairErrors = typeof window.autoRepairErrors === 'function' ? window.autoRepairErrors : (typeof autoRepairHatas === 'function' ? autoRepairHatas : function(){});
-window.autoRepairHatas = window.autoRepairErrors;
 
 console.log('[Fresh] TaskQueue engine loaded — 10-slot parallelism active. Press Ctrl+Shift+P to run a full parallel health scan.');
 
