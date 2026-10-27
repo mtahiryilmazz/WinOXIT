@@ -1160,6 +1160,17 @@ namespace WinoxIT
             Log("Tüm kurulum paketlerinin seçimi kaldırıldı.");
         }
 
+        private void BtnSelectAllKamu_Click(object sender, RoutedEventArgs e)
+        {
+            if (ChkAkis != null) ChkAkis.IsChecked = true;
+            if (ChkIbsigner != null) ChkIbsigner.IsChecked = true;
+            if (ChkArksigner != null) ChkArksigner.IsChecked = true;
+            if (ChkJavaRuntime != null) ChkJavaRuntime.IsChecked = true;
+            if (ChkUyap != null) ChkUyap.IsChecked = true;
+            if (ChkKamuSmCert != null) ChkKamuSmCert.IsChecked = true;
+            Log("Tüm Kamu E-İmza & Kurumsal paketleri seçildi.");
+        }
+
         private void SetAllAppCheckboxes(bool isChecked)
         {
             var boxes = new CheckBox?[]
@@ -1170,7 +1181,7 @@ namespace WinoxIT
                 ChkNotepadPlus, ChkLibreOffice, ChkAdobeReader, ChkFoxitReader, ChkSumatra,
                 ChkVlc, ChkKLite, ChkIrfanView,
                 ChkVcRedist, ChkVSCode, ChkGit, ChkNodeJs, ChkPython,
-                ChkUyap, ChkAkis
+                ChkAkis, ChkIbsigner, ChkArksigner, ChkJavaRuntime, ChkUyap, ChkKamuSmCert
             };
 
             foreach (var b in boxes)
@@ -1231,8 +1242,12 @@ namespace WinoxIT
             if (ChkPython?.IsChecked == true) targets.Add(("Python.Python.3.12", "Python 3.12"));
 
             // Public & e-Sign
-            if (ChkUyap?.IsChecked == true) targets.Add(("AdaletBakanligi.UyapEditor", "UYAP Editör"));
-            if (ChkAkis?.IsChecked == true) targets.Add(("Tubitak.Akis", "AKİS Akıllı Kart"));
+            if (ChkAkis?.IsChecked == true) targets.Add(("Tubitak.Akis", "AKİS Akıllı Kart (TÜBİTAK UEKAE)"));
+            if (ChkIbsigner?.IsChecked == true) targets.Add(("Icerik.IBSigner", "IBSigner (İçişleri E-İmza İstemcisi)"));
+            if (ChkArksigner?.IsChecked == true) targets.Add(("ArkSigner.ArkSigner", "ArkSigner E-İmza Uygulaması"));
+            if (ChkJavaRuntime?.IsChecked == true) targets.Add(("Oracle.JavaRuntimeEnvironment", "Java Runtime (Oracle JRE / OpenJDK)"));
+            if (ChkUyap?.IsChecked == true) targets.Add(("AdaletBakanligi.UyapEditor", "UYAP Doküman Editörü"));
+            if (ChkKamuSmCert?.IsChecked == true) targets.Add(("Tubitak.KamuSM.Certificates", "TÜBİTAK KamuSM Kök Sertifikaları"));
 
             if (targets.Count == 0)
             {

@@ -5312,6 +5312,85 @@ html[data-color-mode] #sb .sbsec { color:var(--muted)!important; }
 
         </div>
 
+        
+        <!-- 🏛️ Kamu E-İmza & Kurumsal Paketler Card -->
+        <div class="card glow" style="border: 1px solid rgba(0, 255, 200, 0.35); background: linear-gradient(135deg, rgba(0, 255, 200, 0.04), rgba(0, 120, 212, 0.04)); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 24px;">🏛️</span>
+                <h2 style="font-family: var(--fhud); font-size: 17px; font-weight: 800; color: var(--a); margin: 0;">Kamu E-İmza &amp; Özel Kurum Paketleri</h2>
+                <span style="background: rgba(0,255,200,0.15); border: 1px solid rgba(0,255,200,0.3); color: var(--green); font-size: 10px; font-family: var(--fhud); font-weight: 700; padding: 2px 8px; border-radius: 99px;">OFFICIAL</span>
+              </div>
+              <p style="font-size: 12px; color: var(--muted); margin: 6px 0 0 0;">
+                TÜBİTAK KamuSM Akıllı Kart, İçişleri IBSigner, ArkSigner, Oracle Java Runtime, UYAP Doküman Editörü ve Kök Sertifikaları tek tıkla kurun.
+              </p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn bp" onclick="installSelectedKamuAppsDashboard()" style="background: linear-gradient(135deg, #00c6ff, #0072ff); font-weight: 700;">
+                🚀 Seçilen Kamu Paketlerini Kur
+              </button>
+              <button class="btn bs" onclick="selectAllKamuAppsDashboard()">
+                ☑️ Tümünü Seç
+              </button>
+              <button class="btn bs" onclick="go('apps100')">
+                📂 Paket Yöneticisine Git ➔
+              </button>
+            </div>
+          </div>
+
+          <!-- Kamu Packages Checkbox Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px;">
+            <label class="card" style="padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; cursor: pointer; border-radius: 8px;">
+              <input type="checkbox" id="kpkg-akis" checked style="accent-color: var(--a); width: 16px; height: 16px;">
+              <div>
+                <div style="font-weight: 700; font-size: 12px; color: var(--text);">🔐 AKİS Akıllı Kart</div>
+                <div style="font-size: 10px; color: var(--muted);">TÜBİTAK UEKAE Kart Sürücüsü</div>
+              </div>
+            </label>
+
+            <label class="card" style="padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; cursor: pointer; border-radius: 8px;">
+              <input type="checkbox" id="kpkg-ibsigner" checked style="accent-color: var(--a); width: 16px; height: 16px;">
+              <div>
+                <div style="font-weight: 700; font-size: 12px; color: var(--text);">✍️ IBSigner E-İmza</div>
+                <div style="font-size: 10px; color: var(--muted);">İçişleri Bakanlığı İstemcisi</div>
+              </div>
+            </label>
+
+            <label class="card" style="padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; cursor: pointer; border-radius: 8px;">
+              <input type="checkbox" id="kpkg-arksigner" checked style="accent-color: var(--a); width: 16px; height: 16px;">
+              <div>
+                <div style="font-weight: 700; font-size: 12px; color: var(--text);">📑 ArkSigner Uygulaması</div>
+                <div style="font-size: 10px; color: var(--muted);">Sağlık, e-Reçete &amp; Kamu E-İmza</div>
+              </div>
+            </label>
+
+            <label class="card" style="padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; cursor: pointer; border-radius: 8px;">
+              <input type="checkbox" id="kpkg-java" checked style="accent-color: var(--a); width: 16px; height: 16px;">
+              <div>
+                <div style="font-weight: 700; font-size: 12px; color: var(--text);">☕ Java Runtime (JRE / OpenJDK)</div>
+                <div style="font-size: 10px; color: var(--muted);">DYS &amp; Kamu Web Portalları</div>
+              </div>
+            </label>
+
+            <label class="card" style="padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; cursor: pointer; border-radius: 8px;">
+              <input type="checkbox" id="kpkg-uyap" checked style="accent-color: var(--a); width: 16px; height: 16px;">
+              <div>
+                <div style="font-weight: 700; font-size: 12px; color: var(--text);">⚖️ UYAP Doküman Editörü</div>
+                <div style="font-size: 10px; color: var(--muted);">Adalet Bakanlığı UYAP Sistemi</div>
+              </div>
+            </label>
+
+            <label class="card" style="padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; cursor: pointer; border-radius: 8px;">
+              <input type="checkbox" id="kpkg-cert" checked style="accent-color: var(--a); width: 16px; height: 16px;">
+              <div>
+                <div style="font-weight: 700; font-size: 12px; color: var(--text);">📜 TÜBİTAK KamuSM Kök Sertifikaları</div>
+                <div style="font-size: 10px; color: var(--muted);">Windows Root Sertifika Deposu</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
         <!-- Two-column layout grid -->
 
         <div class="db-layout">
@@ -37979,6 +38058,59 @@ const bulkBundles = {
   runtimes: ['Microsoft.DirectX']
 
 };
+
+
+// ─── Kamu E-İmza Dashboard Helpers ─────────────────────────────────────
+function selectAllKamuAppsDashboard() {
+  const ids = ['kpkg-akis', 'kpkg-ibsigner', 'kpkg-arksigner', 'kpkg-java', 'kpkg-uyap', 'kpkg-cert'];
+  const allChecked = ids.every(id => {
+    const el = document.getElementById(id);
+    return el && el.checked;
+  });
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = !allChecked;
+  });
+  toast('Kamu Paketleri', !allChecked ? 'Tüm kamu paketleri seçildi.' : 'Seçimler temizlendi.', 'info');
+}
+
+function installSelectedKamuAppsDashboard() {
+  const map = {
+    'kpkg-akis': { id: 'Tubitak.Akis', name: 'AKİS Akıllı Kart (TÜBİTAK UEKAE)' },
+    'kpkg-ibsigner': { id: 'Icerik.IBSigner', name: 'IBSigner (İçişleri E-İmza İstemcisi)' },
+    'kpkg-arksigner': { id: 'ArkSigner.ArkSigner', name: 'ArkSigner E-İmza Uygulaması' },
+    'kpkg-java': { id: 'Oracle.JavaRuntimeEnvironment', name: 'Java Runtime (Oracle JRE / OpenJDK)' },
+    'kpkg-uyap': { id: 'AdaletBakanligi.UyapEditor', name: 'UYAP Doküman Editörü (Adalet Bakanlığı)' },
+    'kpkg-cert': { id: 'Tubitak.KamuSM.Certificates', name: 'TÜBİTAK KamuSM Kök Sertifikaları' }
+  };
+
+  const selected = [];
+  for (const [key, val] of Object.entries(map)) {
+    const el = document.getElementById(key);
+    if (el && el.checked) selected.push(val);
+  }
+
+  if (selected.length === 0) {
+    toast('Seçim Yapılmadı', 'Lütfen kurulacak en az bir kamu paketi seçiniz.', 'warning');
+    return;
+  }
+
+  toast('Kurulum Başlatıldı', selected.length + ' kamu paketi sessiz kurulum kuyruğuna alındı.', 'success');
+  
+  // Navigate to apps100 page and run queue
+  if (typeof selectedApps100 !== 'undefined') {
+    selected.forEach(s => selectedApps100.add(s.id));
+    go('apps100');
+    if (typeof installSelectedApps100 === 'function') {
+      setTimeout(installSelectedApps100, 300);
+    }
+  } else {
+    // Direct command execution fallback
+    selected.forEach(s => {
+      execCmd('winget install --id ' + s.id + ' -e --silent --accept-package-agreements --accept-source-agreements --disable-interactivity', s.name + ' Kurulumu');
+    });
+  }
+}
 
 function renderApps100() {
 

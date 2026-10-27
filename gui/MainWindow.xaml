@@ -659,6 +659,7 @@
                                             <TextBlock Text="📦 Kurulacak Paketleri Seçin (Toplam 27 Paket Hazır)" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12.5" Foreground="{DynamicResource BrushTextPrimary}"/>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                                 <Button x:Name="BtnSelectAllApps" Content="✅ Tümünü Seç" Style="{StaticResource FluentButton}" Height="30" Padding="12,0" Margin="0,0,8,0" Click="BtnSelectAllApps_Click"/>
+                                                <Button x:Name="BtnSelectAllKamu" Content="🏛️ Kamu Paketlerini Seç" Style="{StaticResource FluentButton}" Height="30" Padding="12,0" Margin="0,0,8,0" Click="BtnSelectAllKamu_Click"/>
                                                 <Button x:Name="BtnClearAllApps" Content="❌ Seçimi Temizle" Style="{StaticResource FluentButton}" Height="30" Padding="12,0" Click="BtnClearAllApps_Click"/>
                                             </StackPanel>
                                         </Grid>
@@ -722,11 +723,15 @@
                                         <CheckBox x:Name="ChkPython" Content="Python 3.12" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
                                     </WrapPanel>
 
-                                    <!-- 7. Kamu & e-İmza Paketleri -->
-                                    <TextBlock Text="🏛️ Kamu &amp; Özel Kurum Paketleri (e-İmza &amp; Doküman):" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
+                                    <!-- 7. Kamu & e-İmza Paketleri (Official) -->
+                                    <TextBlock Text="🏛️ Kamu &amp; Özel Kurum Paketleri (e-İmza, DYS &amp; Kök Sertifikalar):" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
                                     <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                        <CheckBox x:Name="ChkUyap" Content="⚖️ UYAP Editör (Adalet Bakanlığı)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
                                         <CheckBox x:Name="ChkAkis" Content="🔐 AKİS Akıllı Kart (TÜBİTAK UEKAE)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkIbsigner" Content="✍️ IBSigner (İçişleri E-İmza İstemcisi)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkArksigner" Content="📑 ArkSigner E-İmza Uygulaması" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkJavaRuntime" Content="☕ Java Runtime (Oracle JRE / OpenJDK)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkUyap" Content="⚖️ UYAP Doküman Editörü (Adalet Bakanlığı)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkKamuSmCert" Content="📜 TÜBİTAK KamuSM Kök Sertifikaları" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
                                     </WrapPanel>
 
                                     <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">

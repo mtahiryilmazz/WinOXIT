@@ -703,6 +703,30 @@ namespace WinoxIT.Services
 
         public static async Task<string> InstallWingetPackageAsync(string packageId, string appName)
         {
+            // Check local packages/ or packages/kamu/ folder first
+            var localDirs = new[]
+            {
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "packages", "kamu"),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "packages")
+            };
+
+            foreach (var dir in localDirs)
+            {
+                if (Directory.Exists(dir))
+                {
+                    var files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories)
+                        .Where(f => f.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".msi", StringComparison.OrdinalIgnoreCase));
+                    
+                    var match = files.FirstOrDefault(f => Path.GetFileName(f).Contains(packageId.Split('.').Last(), StringComparison.OrdinalIgnoreCase) ||
+                                                          Path.GetFileName(f).Contains(appName.Split(' ')[0], StringComparison.OrdinalIgnoreCase));
+                    if (match != null)
+                    {
+                        var (ok, outMsg) = await RunPowerShellAsync($"Start-Process '{match}' -ArgumentList '/qn /norestart /silent' -Wait; 'Yerel önbellekten kuruldu.'");
+                        if (ok) return $"✅ [OK] {appName} yerel LAN paketinden ({Path.GetFileName(match)}) başarıyla kuruldu.";
+                    }
+                }
+            }
+
             var cmd = $"winget install --id {packageId} -e --silent --accept-package-agreements --accept-source-agreements --disable-interactivity";
             var res = await RunCmdAsync(cmd, 300000);
             if (res.Success)
