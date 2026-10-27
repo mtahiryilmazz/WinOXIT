@@ -82,29 +82,42 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Resolve static file path
+    // Resolve static file path safely
     let reqPath = req.url.split('?')[0];
     if (reqPath === '/' || reqPath === '/dashboard' || reqPath === '/index.html') {
         reqPath = '/dashboard.html';
     }
 
-    let filePath = path.join(WEB_DIR, reqPath);
+    const normalizedReq = reqPath.replace(/^\/+/, '');
+    const filePath = path.resolve(WEB_DIR, normalizedReq);
 
-    // Prevent directory traversal
+    // Prevent directory traversal attacks
     if (!filePath.startsWith(WEB_DIR)) {
         res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
         res.end('403 Forbidden: Invalid file path');
         return;
     }
 
+    // Block hidden dot files and sensitive file extensions
+    const pathParts = normalizedReq.split(/[/\\]/);
+    const ext = path.extname(filePath).toLowerCase();
+    const BLOCKED_EXTENSIONS = ['.key', '.token', '.env', '.pfx', '.cer', '.db', '.log', '.cs', '.csproj', '.sln', '.suo', '.rs', '.toml', '.lock'];
+    if (pathParts.some(p => p.startsWith('.')) || BLOCKED_EXTENSIONS.includes(ext)) {
+        res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('403 Forbidden: Access to sensitive or system files is restricted');
+        return;
+    }
+
     fs.stat(filePath, (err, stats) => {
         if (err || !stats.isFile()) {
-            // Fallback: serve dashboard.html for SPA-style routing if available
-            const dashboardFallback = path.join(WEB_DIR, 'dashboard.html');
-            if (fs.existsSync(dashboardFallback)) {
-                res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-                fs.createReadStream(dashboardFallback).pipe(res);
-                return;
+            // Fallback: serve dashboard.html for SPA-style routing if available (only for non-asset routes)
+            if (!ext || ext === '.html') {
+                const dashboardFallback = path.join(WEB_DIR, 'dashboard.html');
+                if (fs.existsSync(dashboardFallback)) {
+                    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+                    fs.createReadStream(dashboardFallback).pipe(res);
+                    return;
+                }
             }
             res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
             res.end(`404 Not Found: ${reqPath}`);

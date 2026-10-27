@@ -1,7 +1,7 @@
 <Configuration>
   <MappedFolders>
     <MappedFolder>
-      <HostFolder>D:\mtahiryilmazz\Github\winoxit</HostFolder>
+      <HostFolder>C:\WinoxIT</HostFolder>
       <SandboxFolder>C:\WinoxIT</SandboxFolder>
       <ReadOnly>true</ReadOnly>
     </MappedFolder>

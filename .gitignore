@@ -37,3 +37,23 @@ reports/*.html
 
 # Publish output (GitHub Releases uzerinden dagitilir, 100 MB dosya limiti)
 /publish/
+
+# Secrets & Local Configurations
+*.key
+*.token
+*.env
+*.env.*
+*.pfx
+*.cer
+*.db
+
+# AI tool workspaces & caches
+.windsurf/
+.cursor/
+.claude/
+.continue/
+.gemini/
+.factory/
+.trae/
+.roo/
+.opencode/
