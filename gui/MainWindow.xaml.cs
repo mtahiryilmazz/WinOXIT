@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using WinoxIT.Services;
 
 namespace WinoxIT
@@ -278,7 +280,13 @@ namespace WinoxIT
                 TxtNavSection4.Visibility = Visibility.Collapsed;
                 TxtNavSection5.Visibility = Visibility.Collapsed;
                 TxtSidebarFooterText.Visibility = Visibility.Collapsed;
-                BtnToggleSidebar.Content = "»";
+                BtnToggleSidebar.Visibility = Visibility.Collapsed;
+
+                if (BtnLogoToggle != null)
+                {
+                    BtnLogoToggle.Margin = new Thickness(0);
+                    BtnLogoToggle.ToolTip = "Menüyü Aç / Genişlet (WinoxIT)";
+                }
 
                 SetNavButtonsCompact(true);
             }
@@ -293,7 +301,14 @@ namespace WinoxIT
                 TxtNavSection4.Visibility = Visibility.Visible;
                 TxtNavSection5.Visibility = Visibility.Visible;
                 TxtSidebarFooterText.Visibility = Visibility.Visible;
+                BtnToggleSidebar.Visibility = Visibility.Visible;
                 BtnToggleSidebar.Content = "☰";
+
+                if (BtnLogoToggle != null)
+                {
+                    BtnLogoToggle.Margin = new Thickness(0, 0, 10, 0);
+                    BtnLogoToggle.ToolTip = "Menüyü Daralt (WinoxIT)";
+                }
 
                 SetNavButtonsCompact(false);
             }
@@ -1110,8 +1125,147 @@ namespace WinoxIT
         }
 
         // ==========================================
-        // 10. YAPAY ZEKÂ TANILAMA
+        // 10. YAPAY ZEKÂ TANILAMA & CANLI WEB KOMUT ARAMA (SYSFORGE TRANSFERRED)
         // ==========================================
+
+        private void TxtAiIssueQuery_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                BtnAiAnalyze_Click(sender, e);
+            }
+        }
+
+        private void BtnAiPreset_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Content is string text)
+            {
+                TxtAiIssueQuery.Text = text;
+                BtnAiAnalyze_Click(sender, e);
+            }
+        }
+
+        private async void BtnAiAnalyze_Click(object sender, RoutedEventArgs e)
+        {
+            string query = (TxtAiIssueQuery.Text ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                MessageBox.Show("Lütfen analiz edilecek bir arıza veya hata kodu yazınız.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            Log($"🤖 Yapay Zekâ ve Web Canlı Araştırması başlatıldı: '{query}'...");
+            BtnAiAnalyze.IsEnabled = false;
+            BtnAiAnalyze.Content = "⏳ Analiz Ediliyor...";
+
+            try
+            {
+                var result = await AIDiagnosticEngine.Instance.AnalyzeIssueAsync(query);
+                if (result != null)
+                {
+                    CardAiSolution.Visibility = Visibility.Visible;
+                    TxtAiSolutionTitle.Text = result.Title;
+                    TxtAiCategoryText.Text = $"Kategori: {result.Category}";
+                    TxtAiSeverity.Text = result.Severity;
+
+                    // Severity badge styling
+                    if (result.Severity.ToLower().Contains("kritik"))
+                        BadgeAiSeverity.Background = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44));
+                    else if (result.Severity.ToLower().Contains("yüksek"))
+                        BadgeAiSeverity.Background = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B));
+                    else
+                        BadgeAiSeverity.Background = new SolidColorBrush(Color.FromRgb(0x10, 0xB9, 0x81));
+
+                    TxtAiRootCause.Text = result.RootCause;
+
+                    if (result.HasWebInsights)
+                    {
+                        PanelAiWebInsights.Visibility = Visibility.Visible;
+                        TxtAiWebInsights.Text = result.WebInsights;
+                    }
+                    else
+                    {
+                        PanelAiWebInsights.Visibility = Visibility.Collapsed;
+                    }
+
+                    if (result.Steps != null && result.Steps.Count > 0)
+                    {
+                        var sb = new StringBuilder();
+                        for (int i = 0; i < result.Steps.Count; i++)
+                        {
+                            sb.AppendLine($"{i + 1}. {result.Steps[i]}");
+                        }
+                        TxtAiSteps.Text = sb.ToString().TrimEnd();
+                    }
+                    else
+                    {
+                        TxtAiSteps.Text = "Belirlenen otomatik onarım scriptini çalıştırarak çözümü test edin.";
+                    }
+
+                    TxtAiAutoFixScript.Text = result.AutoFixScript;
+
+                    Log($"✅ Yapay Zekâ analizi tamamlandı: {result.Title} [{result.Severity}]");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Yapay Zekâ analiz hatası: {ex.Message}");
+                MessageBox.Show($"Analiz sırasında hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                BtnAiAnalyze.IsEnabled = true;
+                BtnAiAnalyze.Content = "⚡ Yapay Zekâ & Web Analizi";
+            }
+        }
+
+        private async void BtnRunAiScript_Click(object sender, RoutedEventArgs e)
+        {
+            string script = TxtAiAutoFixScript.Text.Trim();
+            if (string.IsNullOrWhiteSpace(script))
+            {
+                MessageBox.Show("Çalıştırılacak bir onarım scripti bulunmuyor.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var confirm = MessageBox.Show($"Bu PowerShell onarım komutu yönetici yetkileriyle çalıştırılacaktır. Devam etmek istiyor musunuz?\n\nKomut:\n{script}", "Onarım Onayı", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.Yes) return;
+
+            Log("⚡ Yapay Zekâ otomatik onarım komutu yürütülüyor...");
+            var res = await NativeSystemEngine.RunPowerShellAsync(script);
+            Log(res.Output);
+
+            ShowModal("Yapay Zekâ Onarım Sonucu", res.Output);
+        }
+
+        private void BtnCopyAiScript_Click(object sender, RoutedEventArgs e)
+        {
+            string script = TxtAiAutoFixScript.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(script))
+            {
+                Clipboard.SetText(script);
+                Log("Çözüm komutu panoya kopyalandı.");
+            }
+        }
+
+        private void BtnSaveAiScript_Click(object sender, RoutedEventArgs e)
+        {
+            string script = TxtAiAutoFixScript.Text.Trim();
+            if (string.IsNullOrWhiteSpace(script)) return;
+
+            var sfd = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Onarım Scriptini Kaydet",
+                Filter = "PowerShell Script (*.ps1)|*.ps1|Batch Dosyası (*.bat)|*.bat",
+                FileName = "WinoxIT_FixScript.ps1"
+            };
+
+            if (sfd.ShowDialog() == true)
+            {
+                File.WriteAllText(sfd.FileName, script, Encoding.UTF8);
+                Log($"Script kaydedildi: {sfd.FileName}");
+            }
+        }
 
         private async void BtnAiEventScan_Click(object sender, RoutedEventArgs e)
         {

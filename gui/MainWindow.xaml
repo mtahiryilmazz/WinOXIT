@@ -36,11 +36,14 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         
-                        <Border Grid.Column="0" Width="38" Height="38" CornerRadius="9" Background="{StaticResource BrushAccentGradient}" Margin="0,0,10,0">
+                        <!-- Logo Button (Tıklayınca Menüyü Daraltır / Açar) -->
+                        <Border x:Name="BtnLogoToggle" Grid.Column="0" Width="38" Height="38" CornerRadius="9" 
+                                Background="{StaticResource BrushAccentGradient}" Margin="0,0,10,0" Cursor="Hand"
+                                ToolTip="Menüyü Daralt / Genişlet (WinoxIT)" MouseLeftButtonUp="BtnToggleSidebar_Click">
                             <TextBlock Text="⚡" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         
-                        <StackPanel x:Name="BrandTextStack" Grid.Column="1" VerticalAlignment="Center">
+                        <StackPanel x:Name="BrandTextStack" Grid.Column="1" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="BtnToggleSidebar_Click">
                             <TextBlock Text="WinoxIT" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" />
                             <TextBlock Text="Enterprise IT Suite" FontSize="10.5" Foreground="{DynamicResource BrushTextSecondary}" />
                         </StackPanel>
@@ -527,16 +530,117 @@
                     </StackPanel>
 
 
-                    <!-- 11. VIEW: YAPAY ZEKÂ TANILAMA -->
+                    <!-- 11. VIEW: YAPAY ZEKÂ TANILAMA & WEB SORGULAMA (SYSFORGE TRANSFERRED) -->
                     <StackPanel x:Name="PanelAI" Visibility="Collapsed">
+                        <!-- Arıza Arama ve Soru Formu -->
                         <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
                             <StackPanel>
-                                <TextBlock Text="🤖 Yapay Zekâ Destekli Kök Neden Analizi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Windows Olay Günlüğü (Event Log) ve minidump dökümlerini analiz ederek çökmeye sebep olan sürücüyü tespit eder." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="🤖 BT Yapay Zekâ Teşhis, Canlı Web Araştırması &amp; Otomatik Onarım" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" />
+                                        <TextBlock Text="Windows arızaları, mavi ekran (BSOD), ağ kilitlenmeleri ve GPO hataları için çok katmanlı yapay zekâ kök neden tespiti ve tek tıkla PowerShell çözüm getirici." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" Background="{DynamicResource BrushAccent}" CornerRadius="6" Padding="10,4" VerticalAlignment="Center">
+                                        <TextBlock Text="AI + Web Live Search" FontSize="11" FontWeight="Bold" Foreground="#000000"/>
+                                    </Border>
+                                </Grid>
 
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="🤖 Sistem Sağlık ve Olay Günlüğü Taraması" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnAiEventScan_Click"/>
-                                    <Button Content="💥 Mavi Ekran (BSOD) Minidump Analizi" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnAiBsodScan_Click"/>
+                                <TextBlock Text="🔍 ARIZA AÇIKLAMASI VEYA HATA KODU GİRİNİZ:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,10,0,6"/>
+
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="TxtAiIssueQuery" Grid.Column="0" Height="42" FontSize="13.5"
+                                             Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
+                                             BorderBrush="{DynamicResource BrushBorder}" Padding="12,8" VerticalContentAlignment="Center" 
+                                             KeyDown="TxtAiIssueQuery_KeyDown"
+                                             ToolTip="Örn: 0x0000011b, ekran kartı kilitlendi, mavi ekran nvlddmkm.sys, internet yok, regedit engellendi"/>
+                                    <Button x:Name="BtnAiAnalyze" Grid.Column="2" Content="⚡ Yapay Zekâ &amp; Web Analizi" 
+                                            Style="{StaticResource FluentButtonPrimary}" Height="42" Padding="16,0" FontSize="13" 
+                                            Click="BtnAiAnalyze_Click"/>
+                                </Grid>
+
+                                <!-- Hızlı Örnek Çipleri -->
+                                <WrapPanel Margin="0,2,0,0">
+                                    <TextBlock Text="Hızlı Örnekler:" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" VerticalAlignment="Center" Margin="0,0,8,4"/>
+                                    <Button Content="0x0000011b Yazıcı RPC" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                    <Button Content="Ekran Kartı Kilitlendi (nvlddmkm)" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                    <Button Content="Dosya Uzantıları Görünmüyor" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                    <Button Content="Ağ Kartı Tanınmıyor &amp; Sürücü" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                    <Button Content="Grup İlkesi (GPO) Engellendi" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                    <Button Content="0x80070005 Erişim Engellendi" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                    <Button Content="DNS &amp; Ağ Yığını Sıfırlama" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Çözüm & Onarım Sonuç Kartı (Dinamik) -->
+                        <Border x:Name="CardAiSolution" Style="{StaticResource FluentCard}" Margin="0,0,0,16" Visibility="Collapsed" BorderBrush="{DynamicResource BrushAccent}" BorderThickness="1.5">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock x:Name="TxtAiSolutionTitle" Text="Arıza Teşhis Başlığı" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"/>
+                                        <TextBlock x:Name="TxtAiCategoryText" Text="Kategori: Windows Çekirdeği" FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0"/>
+                                    </StackPanel>
+                                    <Border x:Name="BadgeAiSeverity" Grid.Column="1" Background="#EF4444" CornerRadius="4" Padding="10,4" VerticalAlignment="Center">
+                                        <TextBlock x:Name="TxtAiSeverity" Text="Kritik" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Kök Neden -->
+                                <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <TextBlock Text="🔬 TESPİT EDİLEN KÖK NEDEN:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,4"/>
+                                        <TextBlock x:Name="TxtAiRootCause" Text="Kök neden tespiti yükleniyor..." FontSize="13" Foreground="{DynamicResource BrushTextPrimary}" TextWrapping="Wrap" LineHeight="18"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Web İçgörüsü -->
+                                <Border x:Name="PanelAiWebInsights" Background="{DynamicResource BrushBgWindow}" BorderBrush="#0284C7" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Text="🌐 CANLI WEB &amp; TOPLULUK VERİTABANI İÇGÖRÜSÜ:" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" Margin="0,0,0,4"/>
+                                        <TextBlock x:Name="TxtAiWebInsights" Text="Web içgörüsü bulunamadı." FontSize="12.5" Foreground="{DynamicResource BrushTextPrimary}" TextWrapping="Wrap" LineHeight="18"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Adım Adım Rehber -->
+                                <TextBlock Text="📋 TAVSİYE EDİLEN ONARIM ADIMLARI:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="TxtAiSteps" Text="1. Adım..." FontSize="12.5" Foreground="{DynamicResource BrushTextSecondary}" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,14"/>
+
+                                <!-- Kod & Script Bloğu -->
+                                <TextBlock Text="⚡ OTOMATİK ONARIM POWERSHELL / CMD SCRİPTİ:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,6"/>
+                                <TextBox x:Name="TxtAiAutoFixScript" Height="130" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                                         FontFamily="Consolas" FontSize="12" Background="#0F172A" Foreground="#34D399" BorderBrush="{DynamicResource BrushBorder}"
+                                         Padding="10" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
+
+                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                    <Button x:Name="BtnRunAiScript" Content="⚡ Bu Onarım Scriptini Çalıştır (PowerShell)" Style="{StaticResource FluentButtonPrimary}" Height="34" Padding="14,0" Margin="0,0,10,6" Click="BtnRunAiScript_Click"/>
+                                    <Button x:Name="BtnCopyAiScript" Content="📋 Komutu Kopyala" Style="{StaticResource FluentButton}" Height="34" Padding="12,0" Margin="0,0,10,6" Click="BtnCopyAiScript_Click"/>
+                                    <Button x:Name="BtnSaveAiScript" Content="💾 Script Olarak Kaydet (.ps1)" Style="{StaticResource FluentButton}" Height="34" Padding="12,0" Margin="0,0,10,6" Click="BtnSaveAiScript_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Sistem Olay ve BSOD Analizi -->
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="💥 Windows Olay Günlüğü &amp; BSOD Minidump Taraması" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                <TextBlock Text="Sistemdeki son kritik hata kayıtlarını ve minidump dökümlerini tarayarak çökmeye yol açan sürücüyü listeleyin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,14"/>
+
+                                <WrapPanel Orientation="Horizontal">
+                                    <Button Content="🤖 Sistem Sağlık &amp; Olay Günlüğü Taraması" Style="{StaticResource FluentButton}" Margin="0,0,10,6" Click="BtnAiEventScan_Click"/>
+                                    <Button Content="💥 Mavi Ekran (BSOD) Minidump Analizi" Style="{StaticResource FluentButton}" Margin="0,0,10,6" Click="BtnAiBsodScan_Click"/>
                                 </WrapPanel>
                             </StackPanel>
                         </Border>
