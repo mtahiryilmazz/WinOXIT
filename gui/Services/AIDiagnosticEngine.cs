@@ -55,9 +55,15 @@ namespace WinoxIT.Services
         public async Task<AISolutionResult> AnalyzeIssueAsync(string query)
         {
             query = (query ?? "").Trim();
+            var symptom = SymptomNormalizer.Normalize(query);
+
             if (string.IsNullOrWhiteSpace(query))
             {
-                return GetDefaultFallbackSolution("Boş Sorgu");
+                var empty = GetDefaultFallbackSolution("Boş Sorgu");
+                empty.PredictedSymptom = symptom;
+                empty.ExtractedTokens = symptom.Tokens;
+                empty.ConfidenceScore = symptom.Confidence;
+                return empty;
             }
 
             // 1. If Gemini API key is configured, query Google Gemini cloud AI
@@ -69,6 +75,9 @@ namespace WinoxIT.Services
                     if (cloudResult != null && !string.IsNullOrWhiteSpace(cloudResult.Title))
                     {
                         PopulateSmartAlternatives(cloudResult, query);
+                        cloudResult.PredictedSymptom = symptom;
+                        cloudResult.ExtractedTokens = symptom.Tokens;
+                        cloudResult.ConfidenceScore = symptom.Confidence;
                         return cloudResult;
                     }
                 }
@@ -100,18 +109,27 @@ namespace WinoxIT.Services
                     local.WebInsights = webResult.RootCause;
                 }
                 PopulateSmartAlternatives(local, query);
+                local.PredictedSymptom = symptom;
+                local.ExtractedTokens = symptom.Tokens;
+                local.ConfidenceScore = symptom.Confidence;
                 return local;
             }
 
             if (webResult != null)
             {
                 PopulateSmartAlternatives(webResult, query);
+                webResult.PredictedSymptom = symptom;
+                webResult.ExtractedTokens = symptom.Tokens;
+                webResult.ConfidenceScore = symptom.Confidence;
                 return webResult;
             }
 
             // 5. Contextual System Log & Smart Domain Fallback
             var fallback = GetDefaultFallbackSolution(query);
             PopulateSmartAlternatives(fallback, query);
+            fallback.PredictedSymptom = symptom;
+            fallback.ExtractedTokens = symptom.Tokens;
+            fallback.ConfidenceScore = symptom.Confidence;
             return fallback;
         }
 
@@ -1555,5 +1573,8 @@ Kullanıcı Arızası:
         public string VerifiedBadge { get; set; } = "✅ ONAYLI RESMİ ÇÖZÜM";
         public string SourceTier { get; set; } = "Microsoft & Kurumsal WinoxIT Standardı";
         public string SourceUrl { get; set; } = "";
+        public NormalizedSymptom? PredictedSymptom { get; set; }
+        public IReadOnlyList<string> ExtractedTokens { get; set; } = Array.Empty<string>();
+        public double ConfidenceScore { get; set; } = 0.85;
     }
 }

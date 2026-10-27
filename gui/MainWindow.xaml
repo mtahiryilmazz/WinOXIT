@@ -71,6 +71,9 @@
                         
                         <!-- Hub 5: Yapay Zekâ Teşhis & Web Çözüm -->
                         <RadioButton x:Name="NavHubAI" Content="🤖  Yapay Zekâ &amp; Web Çözüm" ToolTip="Resmi Microsoft Kaynakları, Topluluk Forumları &amp; Onaylı Rozet" Style="{StaticResource FluentNavButton}" Checked="NavHub_Checked"/>
+                        
+                        <!-- Hub 6: Ayarlar & Ekosistem -->
+                        <RadioButton x:Name="NavHubSettings" Content="⚙️  Ayarlar &amp; Ekosistem" ToolTip="Uygulama Ayarları, Yedekleme/Geri Yükleme, GitHub &amp; Ekosistem (WinOXIT, OxiDesk, OxiDock)" Style="{StaticResource FluentNavButton}" Checked="NavHub_Checked"/>
                     </StackPanel>
                 </ScrollViewer>
 
@@ -1135,6 +1138,7 @@
                                                  Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
                                                  BorderBrush="{DynamicResource BrushBorder}" Padding="12,8" VerticalContentAlignment="Top" 
                                                  KeyDown="TxtAiIssueQuery_KeyDown"
+                                                 TextChanged="TxtAiIssueQuery_TextChanged"
                                                  ToolTip="Örn: 0x0000011b, ekran kartı kilitlendi, mavi ekran nvlddmkm.sys, internet yok, regedit engellendi"/>
                                         
                                         <Button x:Name="BtnAiAnalyze" Grid.Column="2" Content="⚡ Yapay Zekâ &amp; Web Analizi" 
@@ -1153,6 +1157,47 @@
                                         <Button Content="0x80070005 Erişim Engellendi" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
                                         <Button Content="DNS &amp; Ağ Yığını Sıfırlama" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
                                     </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- YAPAIR-1 Tabanlı Canlı Niyet Tespiti, Anahtar Kelime & İfade Tahmin Kartı -->
+                            <Border x:Name="CardAiLivePrediction" Style="{StaticResource FluentCard}" Margin="0,0,0,16" Visibility="Collapsed" Background="{DynamicResource BrushBgWindow}" BorderBrush="#38BDF8" BorderThickness="1.5">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <WrapPanel>
+                                                <Border Background="#0284C7" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                                                    <TextBlock Text="YAPAIR-1 TAHMİNİ" FontSize="9.5" FontWeight="Bold" Foreground="White"/>
+                                                </Border>
+                                                <TextBlock x:Name="TxtAiPredictedDomainBadge" Text="Alan: Yazıcılar" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                                            </WrapPanel>
+                                            <TextBlock x:Name="TxtAiPredictedSymptom" Text="Tahmin: Yazdırma kuyruğu / Spooler kilitlenmesi" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                        <Border x:Name="BadgeAiConfidence" Grid.Column="1" Background="#059669" CornerRadius="4" Padding="8,4" VerticalAlignment="Center">
+                                            <TextBlock x:Name="TxtAiConfidenceScore" Text="%94 Doğruluk" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Çıkarılan Anahtar Kelimeler (Tokens) -->
+                                    <WrapPanel x:Name="PanelAiExtractedTokens" Margin="0,2,0,10">
+                                        <TextBlock Text="🏷️ Çıkarılan Anahtar Kelimeler:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" VerticalAlignment="Center" Margin="0,0,8,4"/>
+                                    </WrapPanel>
+
+                                    <Separator Background="{DynamicResource BrushBorder}" Margin="0,0,0,10"/>
+
+                                    <!-- Önerilen Hızlı Onarım Aksiyonu -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Name="TxtAiQuickFixHint" Text="⚡ Bu ifade için sistemimizde hazır onarım aksiyonu bulundu:" FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" VerticalAlignment="Center"/>
+                                        <Button x:Name="BtnAiQuickFix" Grid.Column="1" Content="⚡ Spooler Servisini Yeniden Başlat" Style="{StaticResource FluentButton}" Height="32" Padding="14,0" FontWeight="Bold" Click="BtnAiQuickFix_Click"/>
+                                    </Grid>
                                 </StackPanel>
                             </Border>
 
@@ -1230,6 +1275,140 @@
                                 </StackPanel>
                             </Border>
                         </StackPanel>
+                    </StackPanel>
+
+                    <!-- ============================================================== -->
+                    <!-- HUB 6: AYARLAR & EKOSİSTEM (WinOXIT, OxiDesk, OxiDock)          -->
+                    <!-- ============================================================== -->
+                    <StackPanel x:Name="PanelHubSettings" Visibility="Collapsed">
+                        <!-- Sub-Navigation Pills -->
+                        <WrapPanel Margin="0,0,0,16">
+                            <RadioButton x:Name="SubNavSettingsGen" Content="⚙️ Genel &amp; Yedekleme" Style="{StaticResource FluentSubNavPill}" IsChecked="True" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <!-- Card 1: Yapılandırma Yedekleme & Geri Yükleme -->
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="💾 Yapılandırma &amp; Sistem Yedeği (.winoxit)" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                        <TextBlock Text="Donanım taban hattı (baseline), ayarlar, manifest ve sistem sağlık durumunu tek tıkla şifreli/sıkıştırılmış arşive yedekleyin veya geri yükleyin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" Background="#059669" CornerRadius="4" Padding="8,4" VerticalAlignment="Center">
+                                        <TextBlock Text="ZIP / MANIFEST TABANLI" FontSize="10.5" FontWeight="Bold" Foreground="White"/>
+                                    </Border>
+                                </Grid>
+
+                                <WrapPanel Orientation="Horizontal" Margin="0,10,0,6">
+                                    <Button x:Name="BtnExportConfigBackup" Content="💾 Yapılandırma Yedeği Al (.winoxit / .zip)" Style="{StaticResource FluentButton}" Height="36" Padding="16,0" Margin="0,0,10,10" Click="BtnExportConfigBackup_Click"/>
+                                    <Button x:Name="BtnImportConfigBackup" Content="📥 Yedekten Geri Yükle" Style="{StaticResource FluentButton}" Height="36" Padding="16,0" Margin="0,0,10,10" Click="BtnImportConfigBackup_Click"/>
+                                    <Button x:Name="BtnOpenBackupFolder" Content="📁 Yedek Klasörünü Aç" Style="{StaticResource FluentButton}" Height="36" Padding="14,0" Margin="0,0,10,10" Click="BtnOpenBackupFolder_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card 2: Geliştirici & GitHub Hesabı -->
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="🐙 Geliştirici &amp; GitHub Profili" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                        <TextBlock Text="WinOXIT ve kardeş ekosistem projelerinin açık kaynak deposu, sürüm takibi ve geliştirici profili." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" Background="#1E293B" BorderBrush="#38BDF8" BorderThickness="1" CornerRadius="4" Padding="10,4" VerticalAlignment="Center">
+                                        <TextBlock Text="@mtahiryilmazz" FontSize="11" FontWeight="Bold" Foreground="#38BDF8"/>
+                                    </Border>
+                                </Grid>
+
+                                <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="M. Tahir Yılmaz" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                            <TextBlock Text="Açık Kaynak Sistem Yazılımları, BT Saha Araçları ve Otomasyon Mühendisliği" FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="GitHub: https://github.com/mtahiryilmazz" FontSize="11" Foreground="#38BDF8" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                        <Button x:Name="BtnOpenGithubProfile" Grid.Column="1" Content="🌐 GitHub Profilini Aç" Style="{StaticResource FluentButton}" Height="34" Padding="16,0" VerticalAlignment="Center" Click="BtnOpenGithubProfile_Click"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card 3: Diğer Programlarımız (Ekosistem: WinOXIT, OxiDesk, OxiDock) -->
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="🌐 Ekosistemimiz &amp; Kardeş Projeler" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,4"/>
+                                <TextBlock Text="BT profesyonelleri ve sistem yöneticileri için geliştirdiğimiz entegre masaüstü ve uzak yönetim ekosistemi." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,14"/>
+
+                                <!-- Ekosistem Proje 1: WinOXIT -->
+                                <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="8" Background="#0F172A" BorderBrush="#0284C7" BorderThickness="1" Margin="0,0,14,0">
+                                            <TextBlock Text="🛡️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="WinOXIT (Mevcut Uygulama)" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                            <TextBlock Text="Kurumsal Windows bakım, ince ayar, format sonrası katılımsız kurulum ve çok katmanlı AI BT arıza asistanı." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button x:Name="BtnOpenWinoxItRepo" Grid.Column="2" Content="📦 GitHub Deposu" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" VerticalAlignment="Center" Click="BtnOpenWinoxItRepo_Click"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Ekosistem Proje 2: OxiDesk -->
+                                <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="8" Background="#0F172A" BorderBrush="#10B981" BorderThickness="1" Margin="0,0,14,0">
+                                            <TextBlock Text="🖥️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="OxiDesk" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                            <TextBlock Text="Yüksek performanslı, güvenli ve hafif yerel ağ / internet uzak masaüstü ve uzaktan teknik destek istemcisi." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button x:Name="BtnOpenOxiDeskRepo" Grid.Column="2" Content="📦 GitHub Deposu" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" VerticalAlignment="Center" Click="BtnOpenOxiDeskRepo_Click"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Ekosistem Proje 3: OxiDock -->
+                                <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="8" Background="#0F172A" BorderBrush="#F59E0B" BorderThickness="1" Margin="0,0,14,0">
+                                            <TextBlock Text="⚓" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="OxiDock" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                            <TextBlock Text="Modern, akıcı animasyonlu ve özelleştirilebilir masaüstü uygulama dock ve görev çubuğu yöneticisi." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button x:Name="BtnOpenOxiDockRepo" Grid.Column="2" Content="📦 GitHub Deposu" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" VerticalAlignment="Center" Click="BtnOpenOxiDockRepo_Click"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
 
                 </Grid>

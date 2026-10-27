@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Management;
 using System.Net;
@@ -759,6 +760,12 @@ namespace WinoxIT.Services
         {
             var res = await RunPowerShellAsync("Stop-Service Spooler -Force; Start-Service Spooler; \"Yazdırma Biriktiricisi yeniden başlatıldı.\"");
             return res.Success ? "Yazdırma Biriktiricisi (Spooler) yeniden başlatıldı." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<bool> RestartPrintSpoolerAsync()
+        {
+            var r = await RunCmdAsync("net stop spooler && del /Q /F /S \"%systemroot%\\System32\\Spool\\Printers\\*.*\" && net start spooler");
+            return r.Success;
         }
 
         public static async Task<string> FixPrinterRpc11bAsync()
@@ -2109,6 +2116,137 @@ namespace WinoxIT.Services
                 catch (Exception ex)
                 {
                     return (false, $"Hata: {ex.Message}");
+                }
+            });
+        }
+
+        public static void OpenUrlInBrowser(string url)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error opening URL: {ex.Message}");
+            }
+        }
+
+        public static async Task<(bool Success, string Message, string Path)> CreateConfigurationBackupAsync(string? customTargetZip = null)
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                    var backupFolder = Path.Combine(baseDir, "backups");
+                    Directory.CreateDirectory(backupFolder);
+
+                    var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                    var targetFile = !string.IsNullOrWhiteSpace(customTargetZip)
+                        ? customTargetZip
+                        : Path.Combine(backupFolder, $"WinoxIT_Backup_{timestamp}.winoxit");
+
+                    if (File.Exists(targetFile)) File.Delete(targetFile);
+
+                    var tempStaging = Path.Combine(Path.GetTempPath(), $"WinoxIT_Backup_{Guid.NewGuid():N}");
+                    Directory.CreateDirectory(tempStaging);
+
+                    try
+                    {
+                        var baselinePath = Path.Combine(baseDir, "hardware_baseline.json");
+                        if (File.Exists(baselinePath))
+                        {
+                            File.Copy(baselinePath, Path.Combine(tempStaging, "hardware_baseline.json"), true);
+                        }
+
+                        var metadata = new
+                        {
+                            BackupVersion = "1.0.0",
+                            CreatedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
+                            MachineName = Environment.MachineName,
+                            OSVersion = Environment.OSVersion.VersionString,
+                            User = Environment.UserName,
+                            Product = "WinoxIT Enterprise IT Suite",
+                            Author = "M. Tahir Yılmaz",
+                            Github = "https://github.com/mtahiryilmazz/WinoxIT"
+                        };
+                        File.WriteAllText(Path.Combine(tempStaging, "winoxit_manifest.json"),
+                            JsonSerializer.Serialize(metadata, new JsonSerializerOptions { WriteIndented = true }), Encoding.UTF8);
+
+                        var logFile = Path.Combine(baseDir, "startup.log");
+                        if (File.Exists(logFile))
+                        {
+                            File.Copy(logFile, Path.Combine(tempStaging, "startup.log"), true);
+                        }
+
+                        ZipFile.CreateFromDirectory(tempStaging, targetFile, CompressionLevel.Optimal, false);
+
+                        return (true, $"✅ Yapılandırma yedeği başarıyla oluşturuldu:\r\n{targetFile}", targetFile);
+                    }
+                    finally
+                    {
+                        try { Directory.Delete(tempStaging, true); } catch { }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"❌ Yedek oluşturulamadı: {ex.Message}", string.Empty);
+                }
+            });
+        }
+
+        public static async Task<(bool Success, string Message)> RestoreConfigurationBackupAsync(string zipFilePath)
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    if (!File.Exists(zipFilePath))
+                    {
+                        return (false, "❌ Belirtilen yedek dosyası bulunamadı.");
+                    }
+
+                    var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                    var tempStaging = Path.Combine(Path.GetTempPath(), $"WinoxIT_Restore_{Guid.NewGuid():N}");
+                    Directory.CreateDirectory(tempStaging);
+
+                    try
+                    {
+                        ZipFile.ExtractToDirectory(zipFilePath, tempStaging, true);
+
+                        var manifestPath = Path.Combine(tempStaging, "winoxit_manifest.json");
+                        if (!File.Exists(manifestPath))
+                        {
+                            return (false, "⚠️ Geçersiz yedek dosyası: 'winoxit_manifest.json' bulunamadı.");
+                        }
+
+                        var baselineSource = Path.Combine(tempStaging, "hardware_baseline.json");
+                        if (File.Exists(baselineSource))
+                        {
+                            File.Copy(baselineSource, Path.Combine(baseDir, "hardware_baseline.json"), true);
+                        }
+
+                        var logSource = Path.Combine(tempStaging, "startup.log");
+                        if (File.Exists(logSource))
+                        {
+                            File.Copy(logSource, Path.Combine(baseDir, "restored_startup.log"), true);
+                        }
+
+                        return (true, "✅ Yapılandırma ve donanım mührü başarıyla sisteme geri yüklendi.");
+                    }
+                    finally
+                    {
+                        try { Directory.Delete(tempStaging, true); } catch { }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"❌ Geri yükleme sırasında hata oluştu: {ex.Message}");
                 }
             });
         }

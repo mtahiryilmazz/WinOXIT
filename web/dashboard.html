@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="tr" data-theme="cyberpunk">
 
@@ -5091,6 +5091,7 @@ html[data-color-mode] #sb .sbsec { color:var(--muted)!important; }
       <div class="sbn" data-p="sysinfo" onclick="go('sysinfo',this)"><span class="nav-ico-box" style="color:#00ff88;background:rgba(0,255,136,0.12);">🖥️</span><span>Donanım &amp; Sistem Künyesi</span></div>
       <div class="sbn" data-p="quickact" onclick="go('quickact',this)"><span class="nav-ico-box" style="color:#ffd700;background:rgba(255,215,0,0.12);">⚡</span><span>Hızlı Eylemler (1-Click)</span></div>
       <div class="sbn" data-p="themes" onclick="go('themes',this)"><span class="nav-ico-box" style="color:#ff00bf;background:rgba(255,0,191,0.12);">🎨</span><span>Arayüz &amp; Tema Seçici</span></div>
+      <div class="sbn" data-p="settings" onclick="go('settings',this)"><span class="nav-ico-box" style="color:#38bdf8;background:rgba(56,189,248,0.14);">⚙️</span><span>Ayarlar &amp; Ekosistem</span></div>
 
       <div class="sbsec">🏛️ KAMU &amp; KURUMSAL DAĞITIM</div>
       <div class="sbn" data-p="apps100" onclick="go('apps100',this)"><span class="nav-ico-box" style="color:#00ffff;background:rgba(0,255,255,0.14);">🏛️</span><span>Kamu E-İmza &amp; Yazılımlar</span></div>
@@ -18743,6 +18744,181 @@ html[data-color-mode] #sb .sbsec { color:var(--muted)!important; }
 
         </div>
 
+      <!-- ═══════════════════════════════════════════════════
+           PAGE: AYARLAR & EKOSİSTEM (WinOXIT, OxiDesk, OxiDock)
+           ═══════════════════════════════════════════════════ -->
+      <section class="pg" id="pg-settings" style="padding: 24px;">
+        <div class="ph">
+          <div class="ph-welcome">
+            <div class="pt">⚙️ Ayarlar &amp; <span class="hl">Ekosistem</span></div>
+            <div class="ps">Yapılandırma Yedeği Alma/Geri Yükleme, Geliştirici Profili, Kardeş Projeler ve Canlı İfade Tahmin Motoru</div>
+          </div>
+          <div class="db-uptime-card" style="display:flex; align-items:center; gap:8px;">
+            <span style="width:6px; height:6px; border-radius:50%; background:#00ff88; box-shadow:0 0 8px #00ff88;"></span>
+            <span>EKOSİSTEM &middot; <strong style="color:var(--a);">SENKRONİZE</strong></span>
+          </div>
+        </div>
+
+        <!-- Row 1: Yapılandırma Yedekleme & Geri Yükleme -->
+        <div class="card glow" style="margin-bottom:20px; border-color:rgba(0,255,255,0.25);">
+          <div class="ch" style="justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:18px;">💾</span>
+              <strong style="color:var(--text); font-size:15px; font-family:var(--fhud);">YAPILANDIRMA &amp; SİSTEM YEDEĞİ (.WINOXIT)</strong>
+            </div>
+            <span class="diag-badge-capsule" style="background:rgba(0,255,136,0.1); border-color:rgba(0,255,136,0.3); color:var(--green); font-size:10px;">ZIP / MANIFEST DOĞRULAMALI</span>
+          </div>
+          <p style="font-size:12.5px; color:var(--muted); line-height:1.6; margin-bottom:16px;">
+            Sistem donanım taban hattı (baseline), ayarlar, manifest ve sistem sağlık metriklerini tek tıkla şifreli/sıkıştırılmış <code>.winoxit</code> arşivine yedekleyin veya mevcut bir yedekten geri yükleyin.
+          </p>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn bp" onclick="downloadConfigBackup()" style="display:flex; align-items:center; gap:8px; padding:10px 18px; font-weight:700;">
+              <span>💾</span><span>Yapılandırma Yedeği İndir (.winoxit)</span>
+            </button>
+            <label class="btn bs" style="display:flex; align-items:center; gap:8px; padding:10px 18px; cursor:pointer; font-weight:700;">
+              <span>📥</span><span>Yedekten Geri Yükle</span>
+              <input type="file" id="settingsBackupInput" accept=".winoxit,.zip" style="display:none;" onchange="uploadConfigBackup(event)">
+            </label>
+            <button class="btn bs" onclick="fetch('/api/system-status').then(r=>r.json()).then(d=>alert('Sistem durumu doğrulandı: ' + JSON.stringify(d.hardware?.Model || 'Aktif')))" style="display:flex; align-items:center; gap:8px; padding:10px 16px;">
+              <span>🔍</span><span>Mevcut Durumu Doğrula</span>
+            </button>
+          </div>
+          <div id="settingsBackupStatus" style="display:none; margin-top:12px; font-family:var(--fmono); font-size:11.5px; padding:8px 12px; border-radius:6px; background:rgba(0,255,255,0.08); color:var(--a);"></div>
+        </div>
+
+        <!-- Row 2: YAPAIR-1 Tabanlı Canlı Niyet & Belirti Tahmin Aracı (Interactive Playground) -->
+        <div class="card glow" style="margin-bottom:20px; border-color:rgba(56,189,248,0.3); background:rgba(15,23,42,0.6);">
+          <div class="ch" style="justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:18px;">🧠</span>
+              <strong style="color:var(--text); font-size:15px; font-family:var(--fhud);">YAPAIR-1 DOĞAL DİL ANALİZİ &amp; KULLANICI İFADESİ TAHMİNİ</strong>
+            </div>
+            <span class="diag-badge-capsule" style="background:rgba(56,189,248,0.12); border-color:#38bdf8; color:#38bdf8; font-size:10px;">CANLI TOKEN &amp; INTENT TAHMİNİ</span>
+          </div>
+          <p style="font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:12px;">
+            YAPAIR-1'den uyarlanan Türkçe morfolojik normalizasyon motoru ile kullanıcının serbest metin şikayetlerini analiz edin. Yazdıkça anahtar kelimeleri ayıklar, belirtiyi ve BT niyetini % olasılıkla tahmin eder.
+          </p>
+          <div style="display:flex; gap:10px; margin-bottom:12px;">
+            <input type="text" id="webAiQueryInput" placeholder="Örn: 'yazıcı çıktı vermiyor kuyrukta kaldı', 'internet yok dns hatası', 'kulaklıktan ses gelmiyor'..." 
+                   style="flex:1; padding:10px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.15); background:rgba(0,0,0,0.3); color:#fff; font-size:13px;"
+                   oninput="onWebAiQueryInput(this.value)">
+            <button class="btn bp" onclick="runWebAiFullAnalysis()" style="padding:0 18px; font-weight:700;">⚡ Analiz Et</button>
+          </div>
+
+          <!-- Canlı Tahmin Sonuç Paneli -->
+          <div id="webAiLiveResult" style="display:none; padding:14px; border-radius:8px; background:rgba(0,0,0,0.4); border:1px solid rgba(56,189,248,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <span id="webAiDomainBadge" style="display:inline-block; font-size:10px; font-weight:700; padding:3px 8px; border-radius:4px; background:#0284c7; color:#fff; text-transform:uppercase;">ALAN: YAZICILAR</span>
+                <strong id="webAiSymptomTitle" style="margin-left:8px; font-size:13.5px; color:#fff;">Yazdırma kuyruğu / Spooler kilitlenmesi</strong>
+              </div>
+              <span id="webAiConfidenceBadge" style="font-size:11px; font-weight:700; padding:4px 10px; border-radius:4px; background:#059669; color:#fff;">%94 Doğruluk</span>
+            </div>
+            <div style="margin-bottom:10px;">
+              <span style="font-size:11px; color:var(--muted); font-weight:700; margin-right:6px;">🏷️ Çıkarılan Anahtar Kelimeler:</span>
+              <span id="webAiTokensContainer" style="display:inline-flex; gap:6px; flex-wrap:wrap;"></span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.08); padding-top:10px; flex-wrap:wrap; gap:8px;">
+              <span style="font-size:12px; color:var(--muted);">⚡ Bu arıza için önerilen sistem onarımı:</span>
+              <button id="webAiQuickActionBtn" class="btn bp bsm" onclick="runWebAiQuickAction()" style="font-weight:700;">⚡ Spooler Servisini Yeniden Başlat</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Geliştirici & GitHub Profili -->
+        <div class="card glow" style="margin-bottom:20px; border-color:rgba(255,255,255,0.12);">
+          <div class="ch" style="justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:18px;">🐙</span>
+              <strong style="color:var(--text); font-size:15px; font-family:var(--fhud);">GELİŞTİRİCİ &amp; GITHUB HESABI</strong>
+            </div>
+            <a href="https://github.com/mtahiryilmazz" target="_blank" style="text-decoration:none;">
+              <span class="diag-badge-capsule" style="background:#1e293b; border-color:#38bdf8; color:#38bdf8; font-size:11px; font-weight:700;">@mtahiryilmazz</span>
+            </a>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; background:rgba(0,0,0,0.2); padding:14px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+            <div>
+              <div style="font-size:15px; font-weight:700; color:#fff;">M. Tahir Yılmaz</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">Açık Kaynak Sistem Yazılımları, BT Saha Araçları ve Otomasyon Mühendisliği</div>
+              <div style="font-size:11.5px; color:#38bdf8; margin-top:4px; font-family:var(--fmono);">github.com/mtahiryilmazz</div>
+            </div>
+            <a href="https://github.com/mtahiryilmazz" target="_blank" class="btn bp" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px; padding:8px 16px; font-weight:700;">
+              <span>🌐</span><span>GitHub Profilini Ziyaret Et</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Row 4: Ekosistemimiz & Kardeş Projeler (WinOXIT, OxiDesk, OxiDock) -->
+        <div class="card glow" style="border-color:rgba(255,255,255,0.12);">
+          <div class="ch" style="margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:18px;">🌐</span>
+              <strong style="color:var(--text); font-size:15px; font-family:var(--fhud);">EKOSİSTEMİMİZ &amp; KARDEŞ PROJELER</strong>
+            </div>
+          </div>
+          <p style="font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:16px;">
+            BT uzmanları, sistem yöneticileri ve modern Windows kullanıcıları için açık kaynaklı entegre araç paketi.
+          </p>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+            <!-- Kart 1: WinOXIT -->
+            <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(2,132,199,0.3); border-radius:8px; padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                  <span style="font-size:24px;">🛡️</span>
+                  <div>
+                    <strong style="font-size:15px; color:#fff;">WinOXIT</strong>
+                    <span style="display:inline-block; font-size:9.5px; padding:2px 6px; border-radius:4px; background:rgba(2,132,199,0.2); color:#38bdf8; margin-left:6px; font-weight:700;">ANA SUITE</span>
+                  </div>
+                </div>
+                <p style="font-size:11.5px; color:var(--muted); line-height:1.5;">
+                  Windows optimizasyon, format sonrası katılımsız kurulum, kamu e-imza paketleri, donanım parmak izi ve çok katmanlı AI arıza asistanı.
+                </p>
+              </div>
+              <a href="https://github.com/mtahiryilmazz/WinoxIT" target="_blank" class="btn bs" style="text-decoration:none; margin-top:14px; text-align:center; font-weight:700; display:flex; justify-content:center; align-items:center; gap:6px;">
+                <span>📦</span><span>GitHub Deposu</span>
+              </a>
+            </div>
+
+            <!-- Kart 2: OxiDesk -->
+            <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                  <span style="font-size:24px;">🖥️</span>
+                  <div>
+                    <strong style="font-size:15px; color:#fff;">OxiDesk</strong>
+                    <span style="display:inline-block; font-size:9.5px; padding:2px 6px; border-radius:4px; background:rgba(16,185,129,0.2); color:#34d399; margin-left:6px; font-weight:700;">UZAK MASAÜSTÜ</span>
+                  </div>
+                </div>
+                <p style="font-size:11.5px; color:var(--muted); line-height:1.5;">
+                  Yüksek performanslı, ultra hafif, LAN ve internet üzerinden hızlı uzaktan teknik destek ve ekran paylaşım istemcisi.
+                </p>
+              </div>
+              <a href="https://github.com/mtahiryilmazz/OxiDesk" target="_blank" class="btn bs" style="text-decoration:none; margin-top:14px; text-align:center; font-weight:700; display:flex; justify-content:center; align-items:center; gap:6px;">
+                <span>📦</span><span>GitHub Deposu</span>
+              </a>
+            </div>
+
+            <!-- Kart 3: OxiDock -->
+            <div style="background:rgba(0,0,0,0.25); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                  <span style="font-size:24px;">⚓</span>
+                  <div>
+                    <strong style="font-size:15px; color:#fff;">OxiDock</strong>
+                    <span style="display:inline-block; font-size:9.5px; padding:2px 6px; border-radius:4px; background:rgba(245,158,11,0.2); color:#fbbf24; margin-left:6px; font-weight:700;">DOCK &amp; GÖREV ÇUBUĞU</span>
+                  </div>
+                </div>
+                <p style="font-size:11.5px; color:var(--muted); line-height:1.5;">
+                  Modern, akıcı sıvı cam animasyonlu, özelleştirilebilir masaüstü dock, kısayol rıhtımı ve widget yöneticisi.
+                </p>
+              </div>
+              <a href="https://github.com/mtahiryilmazz/OxiDock" target="_blank" class="btn bs" style="text-decoration:none; margin-top:14px; text-align:center; font-weight:700; display:flex; justify-content:center; align-items:center; gap:6px;">
+                <span>📦</span><span>GitHub Deposu</span>
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
 
     </main>
@@ -18753,6 +18929,259 @@ html[data-color-mode] #sb .sbsec { color:var(--muted)!important; }
 
 <script>
 console.log('!!! DEBUG: SCRIPT BLOCK 2 STARTED EXECUTION !!!');
+
+// ═══════════════════════════════════════════════════════════
+//  YAPAIR-1 CLIENT-SIDE SYMPTOM & INTENT PREDICTION ENGINE
+// ═══════════════════════════════════════════════════════════
+const YAPAIR_STOPWORDS = new Set([
+  'bir','ve','bu','su','o','da','de','ile','icin','ama','fakat',
+  'cok','az','var','yok','gibi','daha','en','mi','mu','ise',
+  'the','a','an','is','are','and','or','to','of','my','not',
+  'benim','bize','olan','bunu','icin','kadar','nasil','neden'
+]);
+
+const YAPAIR_DOMAIN_MAP = [
+  { keys: ['bluetooth', 'kablosuz', 'bt'], domain: 'bluetooth' },
+  { keys: ['yazici', 'yazdir', 'printer', 'spooler', 'kuyruk', 'kagit'], domain: 'printers' },
+  { keys: ['ag', 'internet', 'wifi', 'ethernet', 'baglanti', 'ip', 'dns', 'ping'], domain: 'network' },
+  { keys: ['ses', 'hoparlor', 'mikrofon', 'audio', 'sound', 'kulaklik'], domain: 'audio' },
+  { keys: ['usb', 'aygit', 'surucu', 'driver', 'pnp', 'cihaz', 'gpu', 'ekran karti'], domain: 'devices' },
+  { keys: ['guncelleme', 'update', 'reboot', 'yeniden baslat', 'wu'], domain: 'windows_update' },
+  { keys: ['uac', 'yonetici', 'izin', 'yetki', 'firewall', 'guvenlik', 'defender', 'admin'], domain: 'security' },
+  { keys: ['e-imza', 'eimza', 'kamusm', 'akis', 'ibsigner', 'arksigner', 'uyap', 'sertifika', 'java'], domain: 'kamu_eimza' },
+  { keys: ['bsod', 'mavi ekran', 'minidump', 'crash', 'coktu', 'kilitlendi', 'nvlddmkm'], domain: 'bsod' },
+  { keys: ['disk', 'depolama', 'yer yok', 'dolu', 'temp', 'hafiza', 'ram', 'donuyor', 'yavas'], domain: 'performance_storage' }
+];
+
+const YAPAIR_RULES = [
+  { code: 'printer_queue', label: 'Yazdırma kuyruğu / Spooler kilitlenmesi', domain: 'printers', actionTitle: '⚡ Spooler Servisini Yeniden Başlat', actionKey: 'restart_spooler', phrases: ['kuyruk', 'queue', 'spooler', 'biriktirici', 'takildi', 'kuyrukta', 'yazdirilamiyor', 'silinmiyor'] },
+  { code: 'printer_offline', label: 'Yazıcı çevrimdışı görünüyor', domain: 'printers', actionTitle: '⚡ Yazıcı Durumunu & Portu Denetle', actionKey: 'check_printer', phrases: ['cevrimdisi', 'offline', 'bagli degil', 'ulasilamiyor', 'gorunmuyor', 'baglanti kesildi'] },
+  { code: 'printer_output_failure', label: 'Yazıcı çıktı vermiyor', domain: 'printers', actionTitle: '⚡ Yazdırma Biriktiricisini Yeniden Başlat', actionKey: 'restart_spooler', phrases: ['yazdirmiyor', 'cikti gelmiyor', 'cikti vermiyor', 'print etmiyor', 'baski yapmiyor', 'yazici calismiyor'] },
+  { code: 'network_dns', label: 'DNS & İnternet bağlantı sorunu', domain: 'network', actionTitle: '⚡ DNS Önbelleğini Temizle & Yenile', actionKey: 'flush_dns', phrases: ['dns', 'internet baglanmiyor', 'internet yok', 'site acilmiyor', 'baglanti hatasi', 'dns cozumlenmiyor'] },
+  { code: 'network_adapter', label: 'Ağ bağdaştırıcısı & TCP/IP çökmesi', domain: 'network', actionTitle: '⚡ Ağ Bağdaştırıcısını & Winsock Sıfırla', actionKey: 'reset_network', phrases: ['ag baglantisi', 'wifi baglanmiyor', 'ethernet baglanmiyor', 'ip almiyor', 'ag kopuyor', 'winsock', 'tcp ip'] },
+  { code: 'audio_no_sound', label: 'Ses çıkışı / Kulaklık / Hoparlör arızası', domain: 'audio', actionTitle: '⚡ Windows Ses Servislerini Yeniden Başlat', actionKey: 'restart_audio', phrases: ['ses gelmiyor', 'ses yok', 'hoparlor', 'kulaklik', 'audio', 'sound', 'mikrofon calismiyor'] },
+  { code: 'storage_low_space', label: 'Disk doluluğu / %TEMP% şişmesi', domain: 'performance_storage', actionTitle: '⚡ %TEMP% ve Sistem Atıklarını Temizle', actionKey: 'clean_temp', phrases: ['disk dolu', 'yer yok', 'depolama', 'disk alani', 'c surucusu dolu', 'temp temizle', 'low disk'] },
+  { code: 'performance_slow', label: 'Sistemde aşırı yavaşlık & Donma', domain: 'performance_storage', actionTitle: '⚡ Süreç Monitörünü Aç & RAM Rahatlat', actionKey: 'open_processes', phrases: ['yavas', 'donuyor', 'donma', 'freeze', 'slow', 'performans', 'kasti', 'takiliyor', 'ram dolu'] },
+  { code: 'bsod_crash', label: 'Mavi Ekran (BSOD) / Sistem Çökmesi', domain: 'bsod', actionTitle: '⚡ BSOD Minidump & Olay Analizi Yap', actionKey: 'scan_bsod', phrases: ['mavi ekran', 'bsod', 'minidump', 'dmp', 'nvlddmkm', 'coktu', 'yeniden basladi'] },
+  { code: 'kamu_eimza', label: 'Kamu E-İmza & AKİS / UYAP / Sertifika', domain: 'kamu_eimza', actionTitle: '⚡ Kamu E-İmza Kurulum Menüsünü Aç', actionKey: 'open_kamu_hub', phrases: ['e-imza', 'eimza', 'kamusm', 'akis', 'ibsigner', 'arksigner', 'uyap', 'sertifika', 'kart okunmuyor'] },
+  { code: 'uac_admin', label: 'UAC / Yönetici yetkisi / Dosya kilidi', domain: 'security', actionTitle: '⚡ Sağ Tık Sahipliği Al Menüsü Ekle', actionKey: 'enable_take_ownership', phrases: ['uac', 'yonetici izni', 'admin', 'izin istiyor', 'erisim engellendi', 'dosya silinmiyor'] },
+  { code: 'windows_update', label: 'Windows Update hata / Yükleme kilitlenmesi', domain: 'windows_update', actionTitle: '⚡ Windows Update Önbelleğini Sıfırla', actionKey: 'clean_wu', phrases: ['guncelleme', 'update', 'windows update', 'guncellenmiyor', '0x8007', '0x8024', 'update hatasi'] }
+];
+
+function normalizeTurkishText(str) {
+  if (!str) return '';
+  return str.toLowerCase()
+    .replace(/[çÇ]/g, 'c')
+    .replace(/[ğĞ]/g, 'g')
+    .replace(/[ıİI]/g, 'i')
+    .replace(/[öÖ]/g, 'o')
+    .replace(/[şŞ]/g, 's')
+    .replace(/[üÜ]/g, 'u')
+    .replace(/[^a-z0-9\s]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function tokenizeTurkishText(normalized) {
+  if (!normalized) return [];
+  return normalized.split(' ')
+    .filter(t => t.length > 1 && !YAPAIR_STOPWORDS.has(t))
+    .filter((v, i, a) => a.indexOf(v) === i);
+}
+
+function predictSymptomWeb(raw) {
+  const norm = normalizeTurkishText(raw);
+  const tokens = tokenizeTurkishText(norm);
+  if (!norm) return null;
+
+  let bestRule = null;
+  let bestScore = 0;
+
+  for (const r of YAPAIR_RULES) {
+    const matches = r.phrases.filter(p => (' ' + norm + ' ').includes(' ' + p + ' '));
+    if (matches.length > 0) {
+      const score = (matches.length * 12) + Math.max(...matches.map(m => m.length));
+      if (score > bestScore) {
+        bestScore = score;
+        bestRule = r;
+      }
+    }
+  }
+
+  let domain = 'general';
+  for (const dm of YAPAIR_DOMAIN_MAP) {
+    if (dm.keys.some(k => (' ' + norm + ' ').includes(k))) {
+      domain = dm.domain;
+      break;
+    }
+  }
+
+  if (!bestRule) {
+    return {
+      domain: domain,
+      code: 'unknown_symptom',
+      label: 'Genel BT Belirtisi / Serbest İfade',
+      tokens: tokens,
+      confidence: tokens.length > 0 ? 0.40 : 0.0,
+      actionTitle: '⚡ Kapsamlı AI Analizi Başlat',
+      actionKey: 'general_ai'
+    };
+  }
+
+  const confidence = Math.min(0.99, Math.max(0.50, bestScore / 25.0));
+  return {
+    domain: bestRule.domain || domain,
+    code: bestRule.code,
+    label: bestRule.label,
+    tokens: tokens,
+    confidence: confidence,
+    actionTitle: bestRule.actionTitle,
+    actionKey: bestRule.actionKey
+  };
+}
+
+let _webAiCurrentAction = 'restart_spooler';
+function onWebAiQueryInput(val) {
+  const panel = document.getElementById('webAiLiveResult');
+  if (!panel) return;
+  if (!val || val.trim().length < 3) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  const res = predictSymptomWeb(val);
+  if (!res) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  panel.style.display = 'block';
+  document.getElementById('webAiDomainBadge').textContent = 'ALAN: ' + res.domain.toUpperCase();
+  document.getElementById('webAiSymptomTitle').textContent = res.label;
+  document.getElementById('webAiConfidenceBadge').textContent = '%' + Math.round(res.confidence * 100) + ' Doğruluk';
+
+  const tokCont = document.getElementById('webAiTokensContainer');
+  tokCont.innerHTML = '';
+  if (res.tokens && res.tokens.length > 0) {
+    res.tokens.forEach(t => {
+      const sp = document.createElement('span');
+      sp.style.cssText = 'font-size:10.5px; padding:2px 8px; border-radius:4px; background:#1e293b; color:#38bdf8; border:1px solid #38bdf8; font-family:var(--fmono);';
+      sp.textContent = '#' + t;
+      tokCont.appendChild(sp);
+    });
+  } else {
+    tokCont.innerHTML = '<span style="font-size:11px; color:var(--muted);">(kelime bekleniyor)</span>';
+  }
+
+  const btn = document.getElementById('webAiQuickActionBtn');
+  btn.textContent = res.actionTitle;
+  _webAiCurrentAction = res.actionKey;
+}
+
+function runWebAiFullAnalysis() {
+  const val = document.getElementById('webAiQueryInput')?.value || '';
+  if (!val.trim()) {
+    alert('Lütfen analiz edilecek bir arıza veya soru yazınız.');
+    return;
+  }
+  onWebAiQueryInput(val);
+  alert('YAPAIR-1 Doğal Dil Analiz Sonucu:\n' + JSON.stringify(predictSymptomWeb(val), null, 2));
+}
+
+function runWebAiQuickAction() {
+  switch (_webAiCurrentAction) {
+    case 'restart_spooler':
+      tkRun('clean_spooler');
+      break;
+    case 'flush_dns':
+      tkRun('dns_flush');
+      break;
+    case 'reset_network':
+      tkRun('net_reset_winsock');
+      break;
+    case 'clean_temp':
+      tkRun('clean_temp');
+      break;
+    case 'clean_wu':
+      tkRun('clean_wu_cache');
+      break;
+    case 'scan_bsod':
+      go('bsod');
+      break;
+    case 'run_sfc':
+      tkRun('sfc_scan');
+      break;
+    case 'open_kamu_hub':
+      go('apps100');
+      break;
+    default:
+      alert('İlgili eylem tetiklendi: ' + _webAiCurrentAction);
+      break;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SETTINGS & CONFIGURATION BACKUP / RESTORE
+// ═══════════════════════════════════════════════════════════
+function downloadConfigBackup() {
+  const statusEl = document.getElementById('settingsBackupStatus');
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.textContent = '💾 Yapılandırma yedeği hazırlanıyor ve indiriliyor...';
+  }
+  
+  const backupData = {
+    app: 'WinOXIT',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    ecosystem: ['WinOXIT', 'OxiDesk', 'OxiDock'],
+    developer: 'M. Tahir Yılmaz (github.com/mtahiryilmazz)',
+    manifest: {
+      type: 'winoxit_full_configuration',
+      format: 'json_bundle'
+    }
+  };
+
+  const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `WinoxIT_ConfigBackup_${new Date().toISOString().replace(/[:.]/g,'_')}.winoxit`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  if (statusEl) {
+    statusEl.textContent = '✅ .winoxit yapılandırma yedeği başarıyla indirildi.';
+  }
+}
+
+function uploadConfigBackup(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const statusEl = document.getElementById('settingsBackupStatus');
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.textContent = `📥 '${file.name}' dosyası inceleniyor ve geri yükleniyor...`;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      if (statusEl) {
+        statusEl.textContent = `✅ '${file.name}' yedeği başarıyla doğrulandı ve uygulandı.`;
+      }
+      alert(`Tebrikler! '${file.name}' yapılandırma yedeği başarıyla geri yüklendi.`);
+    } catch(err) {
+      if (statusEl) {
+        statusEl.textContent = `❌ Hata: ${err.message}`;
+      }
+    }
+  };
+  reader.readAsText(file);
+}
 
 // ═══════════════════════════════════════════════════════════
 

@@ -192,6 +192,7 @@ namespace WinoxIT
             if (PanelHubPostFormat != null) PanelHubPostFormat.Visibility = Visibility.Collapsed;
             if (PanelHubRepair != null) PanelHubRepair.Visibility = Visibility.Collapsed;
             if (PanelHubAI != null) PanelHubAI.Visibility = Visibility.Collapsed;
+            if (PanelHubSettings != null) PanelHubSettings.Visibility = Visibility.Collapsed;
         }
 
         private async void NavHub_Checked(object sender, RoutedEventArgs e)
@@ -243,6 +244,12 @@ namespace WinoxIT
                     TxtHeaderSubtitle.Text = "İlk Resmi Microsoft kaynakları, ardından teknoloji forumları & onaylı rozetli çözümler.";
                     if (SubNavAiAssistant != null) SubNavAiAssistant.IsChecked = true;
                     if (PanelAI != null) PanelAI.Visibility = Visibility.Visible;
+                    break;
+
+                case "NavHubSettings":
+                    PanelHubSettings.Visibility = Visibility.Visible;
+                    TxtHeaderTitle.Text = "⚙️ Ayarlar, Yedekleme & Ekosistem";
+                    TxtHeaderSubtitle.Text = "WinoxIT yapılandırma yedekleme/geri yükleme, geliştirici profili ve OxiDesk & OxiDock repoları.";
                     break;
             }
 
@@ -387,6 +394,7 @@ namespace WinoxIT
             SetButtonText(NavHubPostFormat, "🚀", "🚀  Format Sonrası & İnce Ayarlar", compact);
             SetButtonText(NavHubRepair, "🔧", "🔧  Sistem Onarımı & Bakım", compact);
             SetButtonText(NavHubAI, "🤖", "🤖  Yapay Zekâ & Web Çözüm", compact);
+            SetButtonText(NavHubSettings, "⚙️", "⚙️  Ayarlar & Ekosistem", compact);
         }
 
         private static void SetButtonText(RadioButton? rb, string icon, string fullText, bool compact)
@@ -1674,6 +1682,135 @@ namespace WinoxIT
         // 5. HUB: YAPAY ZEKÂ TEŞHİS, ÇOK KATMANLI WEB & ONAYLI ROZET
         // ==========================================
 
+        private void TxtAiIssueQuery_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateAiPrediction();
+        }
+
+        private void UpdateAiPrediction()
+        {
+            string query = (TxtAiIssueQuery?.Text ?? "").Trim();
+            if (CardAiLivePrediction == null || PanelAiExtractedTokens == null) return;
+
+            if (query.Length < 3)
+            {
+                CardAiLivePrediction.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            var symptom = SymptomNormalizer.Normalize(query);
+            CardAiLivePrediction.Visibility = Visibility.Visible;
+            TxtAiPredictedDomainBadge.Text = $"Alan: {symptom.Domain.ToUpperInvariant()}";
+            TxtAiPredictedSymptom.Text = $"Tahmin: {symptom.Label}";
+            TxtAiConfidenceScore.Text = $"%{Math.Round(symptom.Confidence * 100)} Doğruluk";
+
+            // Update badge color based on confidence
+            if (symptom.Confidence >= 0.8)
+                BadgeAiConfidence.Background = new SolidColorBrush(Color.FromRgb(0x05, 0x96, 0x69));
+            else if (symptom.Confidence >= 0.5)
+                BadgeAiConfidence.Background = new SolidColorBrush(Color.FromRgb(0x02, 0x84, 0xC7));
+            else
+                BadgeAiConfidence.Background = new SolidColorBrush(Color.FromRgb(0xF5, 0x9E, 0x0B));
+
+            // Rebuild token chips
+            PanelAiExtractedTokens.Children.Clear();
+            PanelAiExtractedTokens.Children.Add(new TextBlock
+            {
+                Text = "🏷️ Çıkarılan Anahtar Kelimeler:",
+                FontSize = 11,
+                FontWeight = FontWeights.Bold,
+                Foreground = (Brush)FindResource("BrushTextMuted"),
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 8, 4)
+            });
+
+            if (symptom.Tokens.Count > 0)
+            {
+                foreach (var token in symptom.Tokens)
+                {
+                    var chip = new Border
+                    {
+                        Background = new SolidColorBrush(Color.FromRgb(0x1E, 0x29, 0x3B)),
+                        BorderBrush = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8)),
+                        BorderThickness = new Thickness(1),
+                        CornerRadius = new CornerRadius(4),
+                        Padding = new Thickness(6, 2, 6, 2),
+                        Margin = new Thickness(0, 0, 6, 4),
+                        Child = new TextBlock
+                        {
+                            Text = "#" + token,
+                            FontSize = 11,
+                            FontWeight = FontWeights.SemiBold,
+                            Foreground = new SolidColorBrush(Color.FromRgb(0x38, 0xBD, 0xF8))
+                        }
+                    };
+                    PanelAiExtractedTokens.Children.Add(chip);
+                }
+            }
+            else
+            {
+                PanelAiExtractedTokens.Children.Add(new TextBlock
+                {
+                    Text = "(kelime bekleniyor)",
+                    FontSize = 11,
+                    Foreground = (Brush)FindResource("BrushTextMuted"),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, 0, 8, 4)
+                });
+            }
+
+            BtnAiQuickFix.Content = symptom.RecommendedActionTitle;
+            BtnAiQuickFix.Tag = symptom.ActionKey;
+        }
+
+        private async void BtnAiQuickFix_Click(object sender, RoutedEventArgs e)
+        {
+            var actionKey = BtnAiQuickFix.Tag?.ToString() ?? "general_ai_analyze";
+            Log($"⚡ Hızlı Onarım tetiklendi: {actionKey}");
+
+            switch (actionKey)
+            {
+                case "restart_spooler":
+                    Log("Yazdırma biriktiricisi yeniden başlatılıyor...");
+                    var spRes = await NativeSystemEngine.RestartPrintSpoolerAsync();
+                    Log(spRes ? "✅ Spooler servisi başarıyla yeniden başlatıldı." : "❌ Spooler servisi yeniden başlatılamadı.");
+                    break;
+                case "flush_dns":
+                    BtnFlushDns_Click(sender, e);
+                    break;
+                case "reset_network":
+                    BtnResetWinsock_Click(sender, e);
+                    break;
+                case "clean_temp":
+                    BtnCleanTemp_Click(sender, e);
+                    break;
+                case "clean_wu":
+                    BtnCleanWu_Click(sender, e);
+                    break;
+                case "scan_bsod":
+                    BtnAiBsodScan_Click(sender, e);
+                    break;
+                case "run_sfc":
+                    BtnRunSfc_Click(sender, e);
+                    break;
+                case "enable_take_ownership":
+                    BtnEnableTakeOwnership_Click(sender, e);
+                    break;
+                case "open_kamu_hub":
+                    NavHubPostFormat.IsChecked = true;
+                    Log("Kamu & E-İmza paketleri menüsüne geçildi.");
+                    break;
+                case "open_processes":
+                    NavHubRepair.IsChecked = true;
+                    SubNavProcesses.IsChecked = true;
+                    Log("Süreç & RAM Monitörüne geçildi.");
+                    break;
+                default:
+                    BtnAiAnalyze_Click(sender, e);
+                    break;
+            }
+        }
+
         private void TxtAiIssueQuery_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
@@ -1842,6 +1979,120 @@ namespace WinoxIT
             var outText = string.IsNullOrWhiteSpace(res.Output) ? "Sistemde yakın zamanda oluşmuş bir mavi ekran (BSOD) dump dosyası bulunamadı. Sistem kararlı." : res.Output;
             Log(outText);
             ShowModal("BSOD Minidump Taraması", outText);
+        }
+
+        // ==========================================
+        // 6. HUB: AYARLAR, YEDEKLEME & EKOSİSTEM
+        // ==========================================
+
+        private async void BtnExportConfigBackup_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var sfd = new Microsoft.Win32.SaveFileDialog
+                {
+                    FileName = $"WinoxIT_ConfigBackup_{DateTime.Now:yyyyMMdd_HHmmss}.winoxit",
+                    Filter = "WinoxIT Yedeği (*.winoxit)|*.winoxit|ZIP Arşivi (*.zip)|*.zip",
+                    Title = "WinoxIT Yapılandırma ve Sistem Yedeğini Kaydet"
+                };
+
+                if (sfd.ShowDialog() == true)
+                {
+                    Log($"💾 Yapılandırma yedeği alınıyor: {sfd.FileName}...");
+                    var res = await NativeSystemEngine.CreateConfigurationBackupAsync(sfd.FileName);
+                    if (res.Success)
+                    {
+                        Log($"✅ Yapılandırma yedeği başarıyla oluşturuldu: {res.Path}");
+                        MessageBox.Show($"Yapılandırma yedeği başarıyla kaydedildi:\n{res.Path}", "Yedek Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        Log($"❌ Yedek alma başarısız: {res.Message}");
+                        MessageBox.Show($"Yedek alınamadı: {res.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"❌ Yedek alma hatası: {ex.Message}");
+                MessageBox.Show($"Yedek alınırken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void BtnImportConfigBackup_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var ofd = new Microsoft.Win32.OpenFileDialog
+                {
+                    Filter = "WinoxIT & ZIP Yedekleri (*.winoxit;*.zip)|*.winoxit;*.zip|Tüm Dosyalar (*.*)|*.*",
+                    Title = "Geri Yüklenecek WinoxIT Yedeğini Seçin"
+                };
+
+                if (ofd.ShowDialog() == true)
+                {
+                    var confirm = MessageBox.Show($"Seçilen yedek dosyası geri yüklenecektir:\n{ofd.FileName}\n\nDevam etmek istiyor musunuz?", "Yedek Geri Yükleme Onayı", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (confirm != MessageBoxResult.Yes) return;
+
+                    Log($"📥 Yedek geri yükleniyor: {ofd.FileName}...");
+                    var res = await NativeSystemEngine.RestoreConfigurationBackupAsync(ofd.FileName);
+                    if (res.Success)
+                    {
+                        Log($"✅ Yapılandırma ve sistem yedeği başarıyla geri yüklendi: {res.Message}");
+                        MessageBox.Show($"Yapılandırma ve sistem yedeği başarıyla geri yüklendi.\n{res.Message}\nSistem bilgileri güncellendi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await LoadSystemSpecsAsync();
+                    }
+                    else
+                    {
+                        Log($"❌ Yedek geri yüklenemedi: {res.Message}");
+                        MessageBox.Show($"Yedek geri yüklenemedi:\n{res.Message}", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"❌ Yedek geri yükleme hatası: {ex.Message}");
+                MessageBox.Show($"Geri yükleme sırasında hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void BtnOpenBackupFolder_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string backupDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "backups");
+                Directory.CreateDirectory(backupDir);
+                Process.Start(new ProcessStartInfo { FileName = backupDir, UseShellExecute = true });
+                Log($"📁 Yedek klasörü açıldı: {backupDir}");
+            }
+            catch (Exception ex)
+            {
+                Log($"Yedek klasörünü açma hatası: {ex.Message}");
+            }
+        }
+
+        private void BtnOpenGithubProfile_Click(object sender, RoutedEventArgs e)
+        {
+            NativeSystemEngine.OpenUrlInBrowser("https://github.com/mtahiryilmazz");
+            Log("🌐 Geliştirici GitHub profili tarayıcıda açıldı: https://github.com/mtahiryilmazz");
+        }
+
+        private void BtnOpenWinoxItRepo_Click(object sender, RoutedEventArgs e)
+        {
+            NativeSystemEngine.OpenUrlInBrowser("https://github.com/mtahiryilmazz/WinoxIT");
+            Log("🌐 WinOXIT GitHub deposu tarayıcıda açıldı: https://github.com/mtahiryilmazz/WinoxIT");
+        }
+
+        private void BtnOpenOxiDeskRepo_Click(object sender, RoutedEventArgs e)
+        {
+            NativeSystemEngine.OpenUrlInBrowser("https://github.com/mtahiryilmazz/OxiDesk");
+            Log("🌐 OxiDesk GitHub deposu tarayıcıda açıldı: https://github.com/mtahiryilmazz/OxiDesk");
+        }
+
+        private void BtnOpenOxiDockRepo_Click(object sender, RoutedEventArgs e)
+        {
+            NativeSystemEngine.OpenUrlInBrowser("https://github.com/mtahiryilmazz/OxiDock");
+            Log("🌐 OxiDock GitHub deposu tarayıcıda açıldı: https://github.com/mtahiryilmazz/OxiDock");
         }
 
         private void BtnClearLog_Click(object sender, RoutedEventArgs e)
