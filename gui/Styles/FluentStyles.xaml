@@ -107,6 +107,43 @@
         </Setter>
     </Style>
 
+    <!-- Sub-navigation Pill Style for Category Hub Tabs -->
+    <Style x:Key="FluentSubNavPill" TargetType="RadioButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrushTextSecondary}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BrushBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontFamily" Value="{StaticResource FluentFont}"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Padding" Value="14,0"/>
+        <Setter Property="Margin" Value="0,0,8,0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="16" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrushBgCardHover}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource BrushTextPrimary}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource BrushBorderHighlight}"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrushAccent}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource BrushAccent}"/>
+                            <Setter Property="Foreground" Value="#000000"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Unified Fluent Button Style: Consistent across ALL buttons (tek tarz buton) -->
     <Style x:Key="FluentButton" TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource BrushButtonBg}"/>

@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:WinoxIT"
         mc:Ignorable="d"
         Title="WinoxIT v1.0.0 — Enterprise Windows IT, Hardware &amp; Deployment Suite" 
-        Height="840" Width="1280"
-        MinHeight="700" MinWidth="1000"
+        Height="860" Width="1300"
+        MinHeight="720" MinWidth="1020"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource BrushBgWindow}"
         FontFamily="{StaticResource FluentFont}">
@@ -27,64 +27,50 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <!-- Brand Header & Sidebar Toggle (Daralt / Genişlet) -->
+                <!-- Brand Header & Sidebar Toggle (Tek Tıkla Logo ile Daralt / Genişlet) -->
                 <StackPanel Grid.Row="0" Margin="14,16,14,12">
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         
-                        <!-- Logo Button (Tıklayınca Menüyü Daraltır / Açar) -->
-                        <Border x:Name="BtnLogoToggle" Grid.Column="0" Width="38" Height="38" CornerRadius="9" 
+                        <!-- Official Brand Logo Button (Menüyü Daraltır / Açar) -->
+                        <Border x:Name="BtnLogoToggle" Grid.Column="0" Width="40" Height="40" CornerRadius="10" 
                                 Background="{StaticResource BrushAccentGradient}" Margin="0,0,10,0" Cursor="Hand"
                                 ToolTip="Menüyü Daralt / Genişlet (WinoxIT)" MouseLeftButtonUp="BtnToggleSidebar_Click">
-                            <TextBlock Text="⚡" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Image Source="logo.png" Width="26" Height="26" RenderOptions.BitmapScalingMode="HighQuality" 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         
                         <StackPanel x:Name="BrandTextStack" Grid.Column="1" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonUp="BtnToggleSidebar_Click">
                             <TextBlock Text="WinoxIT" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" />
                             <TextBlock Text="Enterprise IT Suite" FontSize="10.5" Foreground="{DynamicResource BrushTextSecondary}" />
                         </StackPanel>
-
-                        <!-- Hamburger Toggle Button -->
-                        <Button x:Name="BtnToggleSidebar" Grid.Column="2" Content="☰" Style="{StaticResource FluentSidebarToggleBtn}"
-                                ToolTip="Menüyü Daralt / Genişlet" Click="BtnToggleSidebar_Click" VerticalAlignment="Center"/>
                     </Grid>
 
                     <Separator Background="{DynamicResource BrushBorder}" Margin="0,0,0,4"/>
                 </StackPanel>
 
-                <!-- Navigation Menu Items -->
+                <!-- Navigation Menu Items (5 Category Hubs) -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Margin="0,2,0,0">
-                        <TextBlock x:Name="TxtNavSection1" Text="KONTROL MERKEZİ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,6,18,3"/>
-                        <RadioButton x:Name="NavDashboard" Content="📊  Genel Bakış &amp; Durum" ToolTip="Genel Bakış &amp; Durum" Style="{StaticResource FluentNavButton}" IsChecked="True" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavLanServer" Content="🌐  Sanal Web Sunucu (LAN)" ToolTip="Sanal Web Sunucu (LAN)" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-
-                        <TextBlock x:Name="TxtNavSectionSysForge" Text="İMAJ &amp; AĞ FİLOSU (SYSFORGE)" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
-                        <RadioButton x:Name="NavIsoStudio" Content="💿  Katılımsız ISO / WIM Stüdyosu" ToolTip="Katılımsız ISO / WIM Stüdyosu" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavLanFleet" Content="📡  LAN Filo &amp; Push Agent" ToolTip="LAN Filo &amp; Push Agent" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-
-                        <TextBlock x:Name="TxtNavSection2" Text="DONANIM &amp; EKSPERTİZ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
-                        <RadioButton x:Name="NavHardware" Content="🛡️  Donanım Ekspertizi &amp; HWID" ToolTip="Donanım Ekspertizi &amp; HWID" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavDrivers" Content="📦  Sürücüler &amp; Offline NIC" ToolTip="Sürücüler &amp; Offline NIC" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavPrinters" Content="🖨️  Yazıcı &amp; Spooler Onarımı" ToolTip="Yazıcı &amp; Spooler Onarımı" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-
-                        <TextBlock x:Name="TxtNavSection3" Text="YAZILIM &amp; DAĞITIM" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
-                        <RadioButton x:Name="NavAppDeploy" Content="🛒  Kurumsal AppDeploy (Winget)" ToolTip="Kurumsal AppDeploy (Winget)" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-
-                        <TextBlock x:Name="TxtNavSection4" Text="SİSTEM ONARIMI &amp; GİZLİLİK" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
-                        <RadioButton x:Name="NavCleaner" Content="🧹  Sistem Temizliği &amp; Cache" ToolTip="Sistem Temizliği &amp; Cache" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavDebloat" Content="⚡  Win 11 Debloat &amp; Gizlilik" ToolTip="Win 11 Debloat &amp; Gizlilik" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavNetwork" Content="📶  Ağ &amp; DNS &amp; TCP/IP Onarım" ToolTip="Ağ &amp; DNS &amp; TCP/IP Onarım" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-
-                        <TextBlock x:Name="TxtNavSection5" Text="YÖNETİM &amp; ANALİZ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
-                        <RadioButton x:Name="NavDiagnostics" Content="🔧  Çekirdek Sistem Onarımı" ToolTip="Çekirdek Sistem Onarımı" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavProcesses" Content="⚙️  İşlemler &amp; Hizmetler" ToolTip="İşlemler &amp; Hizmetler" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavStartup" Content="🚀  Başlangıç Yöneticisi" ToolTip="Başlangıç Yöneticisi" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavAI" Content="🤖  Yapay Zekâ Tanılama" ToolTip="Yapay Zekâ Tanılama" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                    <StackPanel Margin="0,4,0,0">
+                        <TextBlock x:Name="TxtNavSectionHubs" Text="KATEGORİ MERKEZLERİ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,6,18,6"/>
+                        
+                        <!-- Hub 1: Kontrol Merkezi & Ağ Filosu -->
+                        <RadioButton x:Name="NavHubDashboard" Content="📊  Kontrol Merkezi &amp; Ağ Filosu" ToolTip="Kontrol Merkezi, Sanal Sunucu, ISO Stüdyosu &amp; Ağ Filosu" Style="{StaticResource FluentNavButton}" IsChecked="True" Checked="NavHub_Checked"/>
+                        
+                        <!-- Hub 2: Donanım, Sürücüler & Yazıcı -->
+                        <RadioButton x:Name="NavHubHardware" Content="🛡️  Donanım, Sürücüler &amp; Yazıcı" ToolTip="Donanım Ekspertizi, Sürücüler &amp; Yazıcı Onarımı" Style="{StaticResource FluentNavButton}" Checked="NavHub_Checked"/>
+                        
+                        <!-- Hub 3: Format Sonrası Kurulum & İnce Ayarlar -->
+                        <RadioButton x:Name="NavHubPostFormat" Content="🚀  Format Sonrası &amp; İnce Ayarlar" ToolTip="27+ Katılımsız Paket, Klasik Sağ Tuş &amp; Debloat" Style="{StaticResource FluentNavButton}" Checked="NavHub_Checked"/>
+                        
+                        <!-- Hub 4: Sistem Onarımı & Bakım -->
+                        <RadioButton x:Name="NavHubRepair" Content="🔧  Sistem Onarımı &amp; Bakım" ToolTip="Temizlik, Ağ Onarımı, SFC/DISM &amp; Geri Yükleme" Style="{StaticResource FluentNavButton}" Checked="NavHub_Checked"/>
+                        
+                        <!-- Hub 5: Yapay Zekâ Teşhis & Web Çözüm -->
+                        <RadioButton x:Name="NavHubAI" Content="🤖  Yapay Zekâ &amp; Web Çözüm" ToolTip="Resmi Microsoft Kaynakları, Topluluk Forumları &amp; Onaylı Rozet" Style="{StaticResource FluentNavButton}" Checked="NavHub_Checked"/>
                     </StackPanel>
                 </ScrollViewer>
 
@@ -129,10 +115,10 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <!-- Theme Toggle Button (Açık / Koyu Tema) -->
+                        <!-- Theme Toggle Button -->
                         <Button x:Name="BtnThemeToggle" Content="🌙 Koyu Tema" Style="{StaticResource FluentThemeToggleBtn}" Margin="0,0,10,0" Click="BtnThemeToggle_Click"/>
                         
-                        <!-- Action buttons: All in single unified style -->
+                        <!-- Quick Actions -->
                         <Button x:Name="BtnQuickServer" Content="🌐 Web Kokpitini Aç (Port 9999)" Style="{StaticResource FluentButton}" Margin="0,0,10,0" Click="BtnQuickServer_Click"/>
                         <Button x:Name="BtnQuickClean" Content="🧹 Hızlı Temizle" Style="{StaticResource FluentButton}" Margin="0,0,10,0" Click="BtnQuickClean_Click"/>
                         <Button x:Name="BtnFlushDns" Content="📡 DNS Temizle" Style="{StaticResource FluentButton}" Click="BtnFlushDns_Click"/>
@@ -140,626 +126,989 @@
                 </Grid>
             </Border>
 
-            <!-- Main Content Area with Dynamic Views -->
+            <!-- Main Content Area with 5 Category Hubs -->
             <ScrollViewer Grid.Row="1" Padding="24,20" VerticalScrollBarVisibility="Auto">
                 <Grid>
 
-                    <!-- 1. VIEW: DASHBOARD -->
-                    <StackPanel x:Name="PanelDashboard" Visibility="Visible">
-                        <!-- Metric Cards -->
-                        <Grid Margin="0,0,0,16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Style="{StaticResource FluentCard}" Margin="0,0,8,0">
-                                <StackPanel>
-                                    <TextBlock Text="SİSTEM DURUMU" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextSecondary}"/>
-                                    <TextBlock x:Name="TxtHealthStatus" Text="SAĞLIKLI (%98)" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushSuccess}" Margin="0,6,0,0"/>
-                                    <TextBlock Text="0 Kritik Sistem Sorunu" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Grid.Column="1" Style="{StaticResource FluentCard}" Margin="4,0,4,0">
-                                <StackPanel>
-                                    <TextBlock Text="İŞLEMCİ YÜKÜ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextSecondary}"/>
-                                    <TextBlock x:Name="TxtCpuLoad" Text="%12" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,6,0,0"/>
-                                    <TextBlock x:Name="TxtCpuName" Text="16 Çekirdek Aktif" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Grid.Column="2" Style="{StaticResource FluentCard}" Margin="4,0,4,0">
-                                <StackPanel>
-                                    <TextBlock Text="BELLEK KULLANIMI" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextSecondary}"/>
-                                    <TextBlock x:Name="TxtMemoryUsage" Text="%42" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushAccentPurple}" Margin="0,6,0,0"/>
-                                    <TextBlock x:Name="TxtRamDetails" Text="RAM Durumu Aktif" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Grid.Column="3" Style="{StaticResource FluentCard}" Margin="8,0,0,0">
-                                <StackPanel>
-                                    <TextBlock Text="AĞ KOKPİTİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextSecondary}"/>
-                                    <TextBlock x:Name="TxtServerStatus" Text="0.0.0.0:9999" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,6,0,0"/>
-                                    <TextBlock x:Name="TxtServerSub" Text="Çoklu Cihaz Hazır" FontSize="11" Foreground="{DynamicResource BrushSuccess}" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-
-                        <!-- Dynamic Action Panel -->
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="⚡ Hızlı Operasyonlar ve Çekirdek İşlemler" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,12"/>
-                                <WrapPanel Orientation="Horizontal">
-                                    <Button Content="🛡️ HWID Parmak İzi Oluştur" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnGenHwid_Click"/>
-                                    <Button Content="🖨️ 0x11b &amp; 0x709 Yazıcı Onar" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFixPrinters_Click"/>
-                                    <Button Content="🛑 Spooler Servisini Temizle &amp; Başlat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnPurgeSpooler_Click"/>
-                                    <Button Content="🚀 Win11 Copilot &amp; Recall Kapat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDisableCopilot_Click"/>
-                                    <Button Content="🖱️ Klasik Sağ Tık Menüsünü Aç" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnClassicMenu_Click"/>
-                                    <Button Content="🧹 %TEMP% ve Önbellek Temizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnCleanTemp_Click"/>
-                                    <Button Content="🔧 SFC Dosya Taramasını Başlat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRunSfc_Click"/>
-                                    <Button Content="💾 DISM İmaj Onarımını Başlat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRunDism_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- System Information Spec Box -->
-                        <Border Style="{StaticResource FluentCard}">
-                            <StackPanel>
-                                <TextBlock Text="💻 Algılanan Donanım &amp; İşletim Sistemi Profili" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
-                                <TextBox x:Name="TxtSpecs" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
-                                         BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                         FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 2. VIEW: SANAL WEB SUNUCU (LAN) -->
-                    <StackPanel x:Name="PanelLanServer" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="🌐 WinoxIT Sanal Ağ Sunucusu ve Cyber HUD Kokpiti" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Node.js tabanlı yüksek eşzamanlı sanal sunucu 0.0.0.0:9999 üzerinden ağdaki tüm cihazlara açıktır." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <Grid Margin="0,0,0,16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border Grid.Column="0" Width="16" Height="16" CornerRadius="8" Background="{DynamicResource BrushSuccess}" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="TxtLanServerBigStatus" Grid.Column="1" Text="Sunucu Durumu: Kontrol Ediliyor..." FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" VerticalAlignment="Center"/>
-
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                        <Button x:Name="BtnStartServer" Content="▶️ Sunucuyu Başlat" Style="{StaticResource FluentButton}" Margin="0,0,8,0" Click="BtnStartServer_Click"/>
-                                        <Button x:Name="BtnStopServer" Content="⏹️ Durdur" Style="{StaticResource FluentButton}" Margin="0,0,8,0" Click="BtnStopServer_Click"/>
-                                        <Button x:Name="BtnOpenDashboard" Content="🌐 Tarayıcıda Aç" Style="{StaticResource FluentButton}" Margin="0,0,8,0" Click="BtnOpenDashboard_Click"/>
-                                        <Button x:Name="BtnFirewallFix" Content="🛡️ Güvenlik Duvarı Aç" Style="{StaticResource FluentButton}" Click="BtnFirewallFix_Click"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <Separator Background="{DynamicResource BrushBorder}" Margin="0,0,0,16"/>
-
-                                <TextBlock Text="📱 LAN / Wi-Fi Erişim Adresleri (Mobil Cihazlar ve Ağdaki Bilgisayarlar):" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,10"/>
-                                <TextBox x:Name="TxtLanAddresses" Height="110" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushAccent}" 
-                                         BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                         FontFamily="Consolas" FontSize="13" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
-
-                                <TextBlock Text="💡 İpucu: Telefonunuzdan veya aynı Wi-Fi ağındaki herhangi bir cihazdan yukarıdaki IP adreslerinden birini tarayıcınıza yazarak tüm WinoxIT kokpitine uzaktan erişebilirsiniz." 
-                                           FontSize="11" Foreground="{DynamicResource BrushTextMuted}" Margin="0,10,0,0"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 3. VIEW: DONANIM & HWID -->
-                    <StackPanel x:Name="PanelHardware" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="🛡️ Kriptografik HWID Parmak İzi &amp; Parça Değişim Tespiti (Anti-Tamper)" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Anakart, CPU, RAM slotları ve SSD seri numaralarından deterministik SHA-256 hash üretilir. Servis veya periyodik denetimlerde parça sökülmesi/değişmesi kırmızı alarmla tespit edilir." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="🛡️ HWID Baseline Referansı Oluştur" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnGenHwid_Click"/>
-                                    <Button Content="💾 Baseline Referansını Kaydet" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnSaveBaselineToFile_Click"/>
-                                    <Button Content="🔍 Parça Değişim / Drift Taraması Yap" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnCheckDrift_Click"/>
-                                    <Button Content="📄 Ekspertiz / Zimmet Raporu Çıkar" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnExportHwidReport_Click"/>
-                                    <Button Content="🔑 Anakart OEM Windows Lisansını Oku" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnReadOemKey_Click"/>
-                                </WrapPanel>
-
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                                        <TextBlock Text="Mevcut Donanım Parmak İzi (SHA-256):" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
-                                        <TextBox x:Name="TxtHwidDetails" Height="170" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
-                                                 BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                                 FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                        <TextBlock Text="Donanım Sapması (Drift Diff) Analizi:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
-                                        <TextBox x:Name="TxtDriftDiff" Height="170" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushAccent}" 
-                                                 BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                                 FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"
-                                                 Text="Henüz drift analizi çalıştırılmadı. 'Parça Değişim / Drift Taraması Yap' butonuna tıklayınız."/>
-                                    </StackPanel>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 3.1 VIEW: SÜRÜCÜLER & OFFLINE NIC & OEM SÜRÜCÜ ORKESTRATÖRÜ -->
-                    <StackPanel x:Name="PanelDrivers" Visibility="Collapsed">
-                        <!-- Universal NIC Card -->
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="🌐 Gömülü Evrensel Çevrimdışı Ağ Kartı Sürücü Enjektörü (Universal Offline NIC)" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Format sonrası internet bağlantısı olmayan bilgisayarlara Intel, Realtek, Broadcom, MediaTek WHQL Ethernet ve Wi-Fi sürücülerini 5 saniyede internetsiz enjekte eder." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                    <Button x:Name="BtnInstallOfflineNic" Content="🚀 Universal NIC Sürücülerini Enjekte Et" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnInstallOfflineNic_Click"/>
-                                    <Button x:Name="BtnScanMissingDrivers" Content="🔍 Eksik / Hatalı Sürücüleri Tara" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnScanMissingDrivers_Click"/>
-                                    <Button x:Name="BtnOpenDriversFolder" Content="📂 Sürücü Klasörünü Aç (drivers/)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnOpenDriversFolder_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- OEM Hardware & Driver Card -->
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="🏢 OEM Donanım / Anakart Tespiti &amp; Orijinal Sürücü İndirici" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Dell Command Update (dcu-cli), Lenovo System Update / ThinInstaller ve HP Image Assistant resmi kataloglarından temiz sürücü çeker." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                    <Button x:Name="BtnDetectOem" Content="🔍 Anakart &amp; OEM Modelini Tara" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDetectOem_Click"/>
-                                    <Button x:Name="BtnTriggerOemUpdate" Content="⚡ Üretici Resmi Sürücü Motorunu Tetikle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnTriggerOemUpdate_Click"/>
-                                </WrapPanel>
-
-                                <Grid Margin="0,0,0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                                        <TextBlock Text="Tespit Edilen OEM / Anakart Profili:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                        <TextBox x:Name="TxtOemDetails" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushAccentGreen}" 
-                                                 BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                                 FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
-                                                 Text="Henüz tarama yapılmadı. 'Anakart &amp; OEM Modelini Tara' butonuna tıklayınız."/>
-                                    </StackPanel>
-
-                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                        <TextBlock Text="Sürücü Operasyon Günlüğü:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                        <TextBox x:Name="TxtDriversLog" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
-                                                 BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                                 FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 3.2 VIEW: KURUMSAL APPDEPLOY (WINGET & OFFLINE MIRROR) -->
-                    <StackPanel x:Name="PanelAppDeploy" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="🛒 Kurumsal AppDeploy — Sessiz &amp; Katılımsız Yazılım Dağıtımı" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,4"/>
-                                        <TextBlock Text="Winget ve yerel LAN önbellekleme (Offline Mirror) ile tek tıkla reklamsız, parametresiz sessiz (--silent) kurulum." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}"/>
-                                    </StackPanel>
-                                    <Border Grid.Column="1" Style="{StaticResource FluentBadge}" VerticalAlignment="Center">
-                                        <TextBlock x:Name="TxtWingetStatus" Text="Winget Kontrol Ediliyor..." FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource BrushAccent}"/>
-                                    </Border>
-                                </Grid>
-
-                                <Separator Background="{DynamicResource BrushBorder}" Margin="0,0,0,12"/>
-
-                                <TextBlock Text="🏢 Standart Kurumsal Paketler (Tek Tıkla Katılımsız Kurulum):" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                    <CheckBox x:Name="ChkChrome" Content="Google Chrome" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkFirefox" Content="Mozilla Firefox" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="Chk7Zip" Content="7-Zip" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkAnyDesk" Content="AnyDesk" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkRustDesk" Content="RustDesk" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkNotepadPlus" Content="Notepad++" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkVlc" Content="VLC Media Player" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkVSCode" Content="Visual Studio Code" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkGit" Content="Git for Windows" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                </WrapPanel>
-
-                                <TextBlock Text="🏛️ Kamu &amp; Özel Kurum Paketleri (e-İmza &amp; Doküman):" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,4,0,8"/>
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <CheckBox x:Name="ChkUyap" Content="⚖️ UYAP Editör (Adalet Bakanlığı)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkAkis" Content="🔐 AKİS Akıllı Kart (TÜBİTAK UEKAE)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                    <CheckBox x:Name="ChkLibreOffice" Content="📄 LibreOffice (Açık Kaynak Ofis)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
-                                </WrapPanel>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button x:Name="BtnInstallSelectedApps" Content="🚀 Seçili Programları Sessiz Kur (--silent)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnInstallSelectedApps_Click"/>
-                                    <Button x:Name="BtnOpenPackagesFolder" Content="📂 Yerel LAN Önbellek (packages/) Klasörünü Aç" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnOpenPackagesFolder_Click"/>
-                                </WrapPanel>
-
-                                <TextBlock Text="Kurulum Süreç ve Terminal Durumu:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
-                                <TextBox x:Name="TxtAppDeployLog" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
-                                         BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                         FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 4. VIEW: YAZICI & SPOOLER ONARIMI -->
-                    <StackPanel x:Name="PanelPrinters" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="🖨️ Kurumsal Ağ Yazıcı &amp; Spooler Onarım Paketi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Windows Güncellemeleri sonrası bozulan 0x0000011b RPC ve 0x00000709 Point &amp; Print yetki kısıtlamalarını tek tıkla onarır." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="🖨️ 0x0000011b RPC Yetkilendirme Onar" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFixPrinters_Click"/>
-                                    <Button Content="🔧 0x00000709 Point &amp; Print İlkesini Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFix709_Click"/>
-                                    <Button Content="🛑 Spooler Servisini Temizle &amp; Başlat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnPurgeSpooler_Click"/>
-                                    <Button Content="🗑️ Kilitli Yazdırma Kuyruğunu Temizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnClearQueue_Click"/>
-                                </WrapPanel>
-
-                                <TextBlock Text="Yazıcı Kuyruğu ve Servis Durumu:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
-                                <TextBox x:Name="TxtPrinterLog" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushSuccess}" 
-                                         BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
-                                         FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 5. VIEW: SİSTEM TEMİZLİĞİ -->
-                    <StackPanel x:Name="PanelCleaner" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="🧹 Sistem Temizliği &amp; Disk Önbellek Sıfırlama" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Gereksiz sistem atıklarını, geçici dosyaları (%TEMP%), kilitli logları ve DNS önbelleğini temizler." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="🧹 %TEMP% ve Kullanıcı Önbelleklerini Temizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnCleanTemp_Click"/>
-                                    <Button Content="💾 Windows Update Önbelleğini Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnCleanWu_Click"/>
-                                    <Button Content="📡 DNS Önbelleğini Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFlushDns_Click"/>
-                                    <Button Content="🗑️ Geri Dönüşüm Kutusunu Boşalt" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnEmptyRecycle_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 6. VIEW: DEBLOAT & GİZLİLİK -->
-                    <StackPanel x:Name="PanelDebloat" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="⚡ Windows 11 Debloat, Gizlilik &amp; BİGR Kamu Sıkılaştırma" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Yapay zekâ telemetrisini (Copilot, Recall) kapatır, klasik ergonomiyi geri getirir ve kurumsal güvenlik sağlar." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="🚀 Windows 11 Copilot &amp; Recall Kapat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDisableCopilot_Click"/>
-                                    <Button Content="🖱️ Klasik Windows 10 Sağ Tık Menüsünü Aç" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnClassicMenu_Click"/>
-                                    <Button Content="🛡️ Telemetri ve Veri Toplama Servislerini Kapat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDisableTelemetry_Click"/>
-                                    <Button Content="🔍 Başlat Menüsü Bing Arama Sonuçlarını Kapat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDisableBingSearch_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 7. VIEW: AĞ & DNS ONARIM -->
-                    <StackPanel x:Name="PanelNetwork" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="📡 Ağ, DNS &amp; TCP/IP Yığını Onarım Merkezi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Bozuk ağ bağlantılarını, DNS zehirlenmelerini ve takılı kalan Winsock soketlerini fabrika ayarlarına sıfırlar." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="📡 DNS Önbelleğini Temizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFlushDns_Click"/>
-                                    <Button Content="🔌 Winsock &amp; TCP/IP Yığınını Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnResetWinsock_Click"/>
-                                    <Button Content="🔄 IP Adresini Yenile (Release / Renew)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRenewIp_Click"/>
-                                    <Button Content="📶 Ağ Gecikmesi &amp; Ping Testi Yap" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnPingTest_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 8. VIEW: ÇEKİRDEK SİSTEM ONARIMI -->
-                    <StackPanel x:Name="PanelDiagnostics" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="🔧 Çekirdek Sistem Dosyası &amp; İmaj Onarımı" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Bozulan Windows çekirdek dosyalarını ve Windows Update bileşen depolarını doğrular." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="🔧 SFC /scannow Dosya Doğrulaması" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRunSfc_Click"/>
-                                    <Button Content="💾 DISM /RestoreHealth İmaj Onarımı" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRunDism_Click"/>
-                                    <Button Content="📀 Chkdsk Disk Hata Taraması" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRunChkdsk_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 9. VIEW: İŞLEMLER & HİZMETLER -->
-                    <StackPanel x:Name="PanelProcesses" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="⚙️ İşlemler &amp; Hizmetler Yöneticisi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="En çok bellek ve işlemci tüketen işlemleri gerçek zamanlı listeler." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="📋 Aktif İşlemleri Listele" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnListProcesses_Click"/>
-                                    <Button Content="🛑 Yanıt Vermeyen Görevleri Sonlandır" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnKillNotResponding_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 10. VIEW: BAŞLANGIÇ YÖNETİCİSİ -->
-                    <StackPanel x:Name="PanelStartup" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="🚀 Windows Başlangıç &amp; Açılış Hızlandırıcısı" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Bilgisayar açılışında otomatik başlayan ağır programları denetleyin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
-                                    <Button Content="🚀 Başlangıç Öğelerini Tara" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnScanStartup_Click"/>
-                                    <Button Content="⚡ Başlangıç Gecikmesini Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnOptimizeStartupDelay_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-
-                    <!-- 11. VIEW: YAPAY ZEKÂ TANILAMA & WEB SORGULAMA (SYSFORGE TRANSFERRED) -->
-                    <StackPanel x:Name="PanelAI" Visibility="Collapsed">
-                        <!-- Arıza Arama ve Soru Formu -->
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <Grid Margin="0,0,0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="🤖 BT Yapay Zekâ Teşhis, Canlı Web Araştırması &amp; Otomatik Onarım" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" />
-                                        <TextBlock Text="Windows arızaları, mavi ekran (BSOD), ağ kilitlenmeleri ve GPO hataları için çok katmanlı yapay zekâ kök neden tespiti ve tek tıkla PowerShell çözüm getirici." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0"/>
-                                    </StackPanel>
-                                    <Border Grid.Column="1" Background="{DynamicResource BrushAccent}" CornerRadius="6" Padding="10,4" VerticalAlignment="Center">
-                                        <TextBlock Text="AI + Web Live Search" FontSize="11" FontWeight="Bold" Foreground="#000000"/>
-                                    </Border>
-                                </Grid>
-
-                                <TextBlock Text="🔍 ARIZA AÇIKLAMASI VEYA HATA KODU GİRİNİZ:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,10,0,6"/>
-
-                                <Grid Margin="0,0,0,10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="TxtAiIssueQuery" Grid.Column="0" Height="42" FontSize="13.5"
-                                             Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
-                                             BorderBrush="{DynamicResource BrushBorder}" Padding="12,8" VerticalContentAlignment="Center" 
-                                             KeyDown="TxtAiIssueQuery_KeyDown"
-                                             ToolTip="Örn: 0x0000011b, ekran kartı kilitlendi, mavi ekran nvlddmkm.sys, internet yok, regedit engellendi"/>
-                                    <Button x:Name="BtnAiAnalyze" Grid.Column="2" Content="⚡ Yapay Zekâ &amp; Web Analizi" 
-                                            Style="{StaticResource FluentButton}" Height="42" Padding="16,0" FontSize="13" 
-                                            Click="BtnAiAnalyze_Click"/>
-                                </Grid>
-
-                                <!-- Hızlı Örnek Çipleri -->
-                                <WrapPanel Margin="0,2,0,0">
-                                    <TextBlock Text="Hızlı Örnekler:" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" VerticalAlignment="Center" Margin="0,0,8,4"/>
-                                    <Button Content="0x0000011b Yazıcı RPC" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
-                                    <Button Content="Ekran Kartı Kilitlendi (nvlddmkm)" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
-                                    <Button Content="Dosya Uzantıları Görünmüyor" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
-                                    <Button Content="Ağ Kartı Tanınmıyor &amp; Sürücü" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
-                                    <Button Content="Grup İlkesi (GPO) Engellendi" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
-                                    <Button Content="0x80070005 Erişim Engellendi" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
-                                    <Button Content="DNS &amp; Ağ Yığını Sıfırlama" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Çözüm & Onarım Sonuç Kartı (Dinamik) -->
-                        <Border x:Name="CardAiSolution" Style="{StaticResource FluentCard}" Margin="0,0,0,16" Visibility="Collapsed" BorderBrush="{DynamicResource BrushAccent}" BorderThickness="1.5">
-                            <StackPanel>
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock x:Name="TxtAiSolutionTitle" Text="Arıza Teşhis Başlığı" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"/>
-                                        <TextBlock x:Name="TxtAiCategoryText" Text="Kategori: Windows Çekirdeği" FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0"/>
-                                    </StackPanel>
-                                    <Border x:Name="BadgeAiSeverity" Grid.Column="1" Background="#EF4444" CornerRadius="4" Padding="10,4" VerticalAlignment="Center">
-                                        <TextBlock x:Name="TxtAiSeverity" Text="Kritik" FontSize="11" FontWeight="Bold" Foreground="White"/>
-                                    </Border>
-                                </Grid>
-
-                                <!-- Kök Neden -->
-                                <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                    <!-- ============================================================== -->
+                    <!-- HUB 1: KONTROL MERKEZİ & AĞ FİLOSU                            -->
+                    <!-- ============================================================== -->
+                    <StackPanel x:Name="PanelHubDashboard" Visibility="Visible">
+                        <!-- Category Sub-Navigation Pills -->
+                        <WrapPanel Margin="0,0,0,16">
+                            <RadioButton x:Name="SubNavDashboard" Content="📊 Genel Bakış" Style="{StaticResource FluentSubNavPill}" IsChecked="True" Checked="SubNavDashboard_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavLanFleet" Content="📡 Ağ Filo Keşfi" Style="{StaticResource FluentSubNavPill}" Checked="SubNavDashboard_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavLanServer" Content="🌐 Web Kokpiti &amp; HTTP" Style="{StaticResource FluentSubNavPill}" Checked="SubNavDashboard_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavIsoStudio" Content="💿 Katılımsız ISO / WIM" Style="{StaticResource FluentSubNavPill}" Checked="SubNavDashboard_Checked" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <!-- Sub-View 1: Dashboard Panel -->
+                        <StackPanel x:Name="PanelDashboard" Visibility="Visible">
+                            <!-- Metric Cards -->
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource FluentCard}" Margin="0,0,8,0">
                                     <StackPanel>
-                                        <TextBlock Text="🔬 TESPİT EDİLEN KÖK NEDEN:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,4"/>
-                                        <TextBlock x:Name="TxtAiRootCause" Text="Kök neden tespiti yükleniyor..." FontSize="13" Foreground="{DynamicResource BrushTextPrimary}" TextWrapping="Wrap" LineHeight="18"/>
+                                        <TextBlock Text="SİSTEM DURUMU" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                        <TextBlock x:Name="TxtHealthStatus" Text="SAĞLIKLI (%98)" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushSuccess}" Margin="0,6,0,0"/>
+                                        <TextBlock Text="0 Kritik Sistem Sorunu" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" Margin="0,2,0,0"/>
                                     </StackPanel>
                                 </Border>
 
-                                <!-- Web İçgörüsü -->
-                                <Border x:Name="PanelAiWebInsights" Background="{DynamicResource BrushBgWindow}" BorderBrush="#0284C7" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12" Visibility="Collapsed">
+                                <Border Grid.Column="1" Style="{StaticResource FluentCard}" Margin="4,0,4,0">
                                     <StackPanel>
-                                        <TextBlock Text="🌐 CANLI WEB &amp; TOPLULUK VERİTABANI İÇGÖRÜSÜ:" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" Margin="0,0,0,4"/>
-                                        <TextBlock x:Name="TxtAiWebInsights" Text="Web içgörüsü bulunamadı." FontSize="12.5" Foreground="{DynamicResource BrushTextPrimary}" TextWrapping="Wrap" LineHeight="18"/>
+                                        <TextBlock Text="İŞLEMCİ YÜKÜ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                        <TextBlock x:Name="TxtCpuLoad" Text="%12" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,6,0,0"/>
+                                        <TextBlock x:Name="TxtCpuName" Text="16 Çekirdek Aktif" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" Margin="0,2,0,0"/>
                                     </StackPanel>
                                 </Border>
 
-                                <!-- Adım Adım Rehber -->
-                                <TextBlock Text="📋 TAVSİYE EDİLEN ONARIM ADIMLARI:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,6"/>
-                                <TextBlock x:Name="TxtAiSteps" Text="1. Adım..." FontSize="12.5" Foreground="{DynamicResource BrushTextSecondary}" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,14"/>
-
-                                <!-- Kod & Script Bloğu -->
-                                <TextBlock Text="⚡ OTOMATİK ONARIM POWERSHELL / CMD SCRİPTİ:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,6"/>
-                                <TextBox x:Name="TxtAiAutoFixScript" Height="130" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
-                                         FontFamily="Consolas" FontSize="12" Background="#0F172A" Foreground="#34D399" BorderBrush="{DynamicResource BrushBorder}"
-                                         Padding="10" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
-
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                    <Button x:Name="BtnRunAiScript" Content="⚡ Bu Onarım Scriptini Çalıştır (PowerShell)" Style="{StaticResource FluentButton}" Height="34" Padding="14,0" Margin="0,0,10,6" Click="BtnRunAiScript_Click"/>
-                                    <Button x:Name="BtnCopyAiScript" Content="📋 Komutu Kopyala" Style="{StaticResource FluentButton}" Height="34" Padding="12,0" Margin="0,0,10,6" Click="BtnCopyAiScript_Click"/>
-                                    <Button x:Name="BtnSaveAiScript" Content="💾 Script Olarak Kaydet (.ps1)" Style="{StaticResource FluentButton}" Height="34" Padding="12,0" Margin="0,0,10,6" Click="BtnSaveAiScript_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Sistem Olay ve BSOD Analizi -->
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="💥 Windows Olay Günlüğü &amp; BSOD Minidump Taraması" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Sistemdeki son kritik hata kayıtlarını ve minidump dökümlerini tarayarak çökmeye yol açan sürücüyü listeleyin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,14"/>
-
-                                <WrapPanel Orientation="Horizontal">
-                                    <Button Content="🤖 Sistem Sağlık &amp; Olay Günlüğü Taraması" Style="{StaticResource FluentButton}" Margin="0,0,10,6" Click="BtnAiEventScan_Click"/>
-                                    <Button Content="💥 Mavi Ekran (BSOD) Minidump Analizi" Style="{StaticResource FluentButton}" Margin="0,0,10,6" Click="BtnAiBsodScan_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- 12. VIEW: KATILIMSIZ ISO / WIM STÜDYOSU (SYSFORGE TRANSFERRED) -->
-                    <StackPanel x:Name="PanelIsoStudio" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="💿 Katılımsız (Unattended) Windows 11 ISO &amp; WIM Stüdyosu" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="TPM 2.0, SecureBoot, RAM ve CPU kontrollerini bypass eden autounattend.xml ve DISM çevrimdışı sürücü enjeksiyonu." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <TextBlock Text="DONANIM KISITLAMALARI BYPASS &amp; KURULUM AYARLARI" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,10"/>
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,14">
-                                    <CheckBox x:Name="ChkIsoBypassTpm" Content="Bypass TPM 2.0" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
-                                    <CheckBox x:Name="ChkIsoBypassSecureBoot" Content="Bypass SecureBoot" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
-                                    <CheckBox x:Name="ChkIsoBypassRam" Content="Bypass 4GB RAM Sınırı" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
-                                    <CheckBox x:Name="ChkIsoBypassCpu" Content="Bypass Desteklenmeyen CPU" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
-                                    <CheckBox x:Name="ChkIsoBypassStorage" Content="Bypass 64GB Depolama &amp; VM" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
-                                </WrapPanel>
-
-                                <Grid Margin="0,0,0,16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="16"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Yerel Yönetici Kullanıcı Adı:" FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,4"/>
-                                        <TextBox x:Name="TxtIsoUser" Text="WinoxAdmin" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,6"/>
+                                <Border Grid.Column="2" Style="{StaticResource FluentCard}" Margin="4,0,4,0">
+                                    <StackPanel>
+                                        <TextBlock Text="RAM KULLANIMI" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                        <TextBlock x:Name="TxtRamLoad" Text="%42" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,6,0,0"/>
+                                        <TextBlock x:Name="TxtRamTotal" Text="13.4 GB / 32 GB" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" Margin="0,2,0,0"/>
                                     </StackPanel>
-                                    <StackPanel Grid.Column="2">
-                                        <TextBlock Text="Yönetici Parolası (Boş bırakılabilir):" FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,4"/>
-                                        <PasswordBox x:Name="TxtIsoPass" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,6"/>
+                                </Border>
+
+                                <Border Grid.Column="3" Style="{StaticResource FluentCard}" Margin="8,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="DİSK ALANI (C:)" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                        <TextBlock x:Name="TxtDiskLoad" Text="342 GB BOŞ" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,6,0,0"/>
+                                        <TextBlock x:Name="TxtDiskSpace" Text="Toplam: 512 GB NVMe" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" Margin="0,2,0,0"/>
                                     </StackPanel>
-                                </Grid>
+                                </Border>
+                            </Grid>
 
-                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                    <Button x:Name="BtnGenerateIsoXml" Content="⚡ autounattend.xml Oluştur &amp; Pencerede Önizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnGenerateIsoXml_Click"/>
-                                    <Button x:Name="BtnOpenIsoWorkspace" Content="📂 ISO Çalışma Klasörünü Aç" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnOpenIsoWorkspace_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
+                            <!-- System Overview Banner -->
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="💻 İş İstasyonu ve Ağ Kimliği" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="İŞLETİM SİSTEMİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBlock x:Name="TxtOsInfo" Text="Windows 11 Pro 23H2" FontSize="13" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="BİLGİSAYAR ADI" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBlock x:Name="TxtHostName" Text="WINOX-DESKTOP" FontSize="13" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="YEREL IP ADRESİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBlock x:Name="TxtIpAddress" Text="192.168.1.100" FontSize="13" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="3">
+                                            <TextBlock Text="AÇIK KALMA SÜRESİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBlock x:Name="TxtUptime" Text="02 Gün 04 Saat" FontSize="13" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
 
-                        <!-- DISM WIM Operations -->
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="📦 DISM Çevrimdışı WIM İmaj ve Sürücü Enjeksiyonu" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="install.wim veya boot.wim dosyasını bağlayıp içine Universal NIC ve OEM sürücülerini internetsiz entegre edin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="160"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="WIM Dosya Yolu:" VerticalAlignment="Center" Foreground="{DynamicResource BrushTextSecondary}"/>
-                                    <TextBox x:Name="TxtWimFilePath" Grid.Column="1" Text="C:\WinoxIT_Workspace\install.wim" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,6" Margin="0,0,8,0"/>
-                                    <Button Grid.Column="2" Content="Gözat..." Style="{StaticResource FluentButton}" Height="32" Click="BtnBrowseWim_Click"/>
-                                </Grid>
-
-                                <Grid Margin="0,0,0,16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="160"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Bağlama Dizini (Mount):" VerticalAlignment="Center" Foreground="{DynamicResource BrushTextSecondary}"/>
-                                    <TextBox x:Name="TxtWimMountDir" Grid.Column="1" Text="C:\WinoxIT_Mount" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,6"/>
-                                </Grid>
-
-                                <WrapPanel Orientation="Horizontal">
-                                    <Button x:Name="BtnWimMount" Content="📥 WIM İmajını Bağla (Mount)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimMount_Click"/>
-                                    <Button x:Name="BtnWimInjectDrivers" Content="📦 Universal NIC Sürücülerini Enjekte Et" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimInjectDrivers_Click"/>
-                                    <Button x:Name="BtnWimCommit" Content="💾 Kaydet &amp; Kapat (Commit)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimCommit_Click"/>
-                                    <Button x:Name="BtnWimDiscard" Content="❌ İptal Et &amp; Kapat (Discard)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimDiscard_Click"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- 13. VIEW: LAN FİLO DAĞITIMI & PUSH AGENT (SYSFORGE TRANSFERRED) -->
-                    <StackPanel x:Name="PanelLanFleet" Visibility="Collapsed">
-                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="📡 LAN Filo Keşfi &amp; Push Agent Yönetimi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                <TextBlock Text="Aynı yerel ağdaki (Ethernet &amp; Wi-Fi) tüm cihazları tek tıkla keşfedin, Ping ve WinoxIT uzaktan sağlık taraması komutları gönderin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
-
-                                <Grid Margin="0,0,0,16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="16"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Button Grid.Column="0" Content="🔍 Ağdaki Cihazları Keşfet (ARP / NetNeighbor)" Style="{StaticResource FluentButton}" Height="36" Click="BtnDiscoverLanFleet_Click"/>
-                                    
-                                    <TextBox x:Name="TxtFleetTargetIp" Grid.Column="2" Text="192.168.1.1" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" VerticalContentAlignment="Center" Padding="8,4" Margin="0,0,8,0"/>
-                                    <WrapPanel Grid.Column="3" Orientation="Horizontal">
-                                        <Button Content="📡 Ping Gönder" Style="{StaticResource FluentButton}" Height="36" Margin="0,0,8,0" Click="BtnPingFleetTarget_Click"/>
-                                        <Button Content="🛡️ Sağlık Taraması" Style="{StaticResource FluentButton}" Height="36" Click="BtnProbeFleetTarget_Click"/>
+                            <!-- Hub Action Launcher -->
+                            <Border Style="{StaticResource FluentCard}">
+                                <StackPanel>
+                                    <TextBlock Text="⚡ Hızlı Bakım &amp; Sağlık Taraması" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Tüm donanım, sürücü ve işletim sistemi bileşenlerini tek tıkla tarayarak detaylı teşhis raporu hazırlayın." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+                                    <WrapPanel Orientation="Horizontal">
+                                        <Button x:Name="BtnScanHealth" Content="🔍 Tam Sistem Sağlık Taramasını Başlat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnScanHealth_Click"/>
+                                        <Button x:Name="BtnExportReport" Content="📋 HTML Sağlık Raporu Oluştur &amp; İndir" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnExportReport_Click"/>
+                                        <Button x:Name="BtnRefreshDashboard" Content="🔄 Metrikleri Yenile" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRefreshDashboard_Click"/>
                                     </WrapPanel>
-                                </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
 
-                                <TextBlock Text="KEŞFEDİLEN AĞ CİHAZLARI LİSTESİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,8"/>
-                                <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="180" MaxHeight="280">
-                                    <DataGrid x:Name="GridLanFleet" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" 
-                                              BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
-                                              Foreground="{DynamicResource BrushTextPrimary}">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn Header="IP Adresi" Binding="{Binding IPAddress}" Width="160"/>
-                                            <DataGridTextColumn Header="MAC Adresi" Binding="{Binding MACAddress}" Width="180"/>
-                                            <DataGridTextColumn Header="Durum" Binding="{Binding State}" Width="140"/>
-                                            <DataGridCheckBoxColumn Header="Erişilebilir" Binding="{Binding IsReachable}" Width="100"/>
-                                        </DataGrid.Columns>
-                                    </DataGrid>
-                                </Border>
-                            </StackPanel>
-                        </Border>
+                        <!-- Sub-View 2: LanFleet Panel -->
+                        <StackPanel x:Name="PanelLanFleet" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="📡 LAN Filo Keşfi &amp; Push Agent Yönetimi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Aynı yerel ağdaki (Ethernet &amp; Wi-Fi) tüm cihazları tek tıkla keşfedin, Ping ve WinoxIT uzaktan sağlık taraması komutları gönderin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <Grid Margin="0,0,0,16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="16"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button Grid.Column="0" Content="🔍 Ağdaki Cihazları Keşfet (ARP / NetNeighbor)" Style="{StaticResource FluentButton}" Height="36" Click="BtnDiscoverLanFleet_Click"/>
+                                        
+                                        <TextBox x:Name="TxtFleetTargetIp" Grid.Column="2" Text="192.168.1.1" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" VerticalContentAlignment="Center" Padding="8,4" Margin="0,0,8,0"/>
+                                        <WrapPanel Grid.Column="3" Orientation="Horizontal">
+                                            <Button Content="📡 Ping Gönder" Style="{StaticResource FluentButton}" Height="36" Margin="0,0,8,0" Click="BtnPingFleetTarget_Click"/>
+                                            <Button Content="🛡️ Sağlık Taraması" Style="{StaticResource FluentButton}" Height="36" Click="BtnProbeFleetTarget_Click"/>
+                                        </WrapPanel>
+                                    </Grid>
+
+                                    <TextBlock Text="KEŞFEDİLEN AĞ CİHAZLARI LİSTESİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,8"/>
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="180" MaxHeight="280">
+                                        <DataGrid x:Name="GridLanFleet" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" 
+                                                  BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
+                                                  Foreground="{DynamicResource BrushTextPrimary}">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="IP Adresi" Binding="{Binding IPAddress}" Width="160"/>
+                                                <DataGridTextColumn Header="MAC Adresi" Binding="{Binding MACAddress}" Width="180"/>
+                                                <DataGridTextColumn Header="Durum" Binding="{Binding State}" Width="140"/>
+                                                <DataGridCheckBoxColumn Header="Erişilebilir" Binding="{Binding IsReachable}" Width="100"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 3: LanServer Panel -->
+                        <StackPanel x:Name="PanelLanServer" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="🌐 Yerel LAN HTTP Web Sunucusu &amp; Uzaktan Kokpit" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Cep telefonunuzdan veya ağdaki başka bir bilgisayardan WinoxIT arayüzüne ve katılımsız kurulum paketlerine erişin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <Grid Margin="0,0,0,16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Sunucu Portu:" VerticalAlignment="Center" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,12,0"/>
+                                        <TextBox x:Name="TxtLanServerPort" Grid.Column="1" Text="9999" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" VerticalContentAlignment="Center" Padding="8,4" Margin="0,0,16,0"/>
+
+                                        <WrapPanel Grid.Column="2" Orientation="Horizontal">
+                                            <Button x:Name="BtnStartLanServer" Content="▶️ Sunucuyu Başlat" Style="{StaticResource FluentButton}" Margin="0,0,8,0" Click="BtnStartLanServer_Click"/>
+                                            <Button x:Name="BtnStopLanServer" Content="⏹️ Durdur" Style="{StaticResource FluentButton}" Margin="0,0,8,0" Click="BtnStopLanServer_Click"/>
+                                            <Button x:Name="BtnOpenBrowser" Content="🌐 Tarayıcıda Aç" Style="{StaticResource FluentButton}" Click="BtnOpenBrowser_Click"/>
+                                        </WrapPanel>
+                                    </Grid>
+
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                                        <StackPanel>
+                                            <TextBlock Text="DURUM &amp; YEREL ERİŞİM BAĞLANTILARI" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,4"/>
+                                            <TextBlock x:Name="TxtLanServerStatus" Text="Sunucu Durumu: Kapalı" FontSize="13" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <TextBlock Text="Sunucu Canlı İstek Günlüğü:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                    <TextBox x:Name="TxtLanServerLog" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
+                                             BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
+                                             FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 4: IsoStudio Panel -->
+                        <StackPanel x:Name="PanelIsoStudio" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="💿 Katılımsız Windows ISO &amp; WIM Enjeksiyon Stüdyosu" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Windows kurulum imajını (install.wim / boot.wim) bağlayın, evrensel NIC ve depolama sürücülerini çevrimdışı enjekte edin ve paketleyin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="160"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Kaynak ISO / WIM Yolu:" VerticalAlignment="Center" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                        <TextBox x:Name="TxtIsoPath" Grid.Column="1" Text="D:\ISO\Win11_23H2_Turkish_x64.iso" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" VerticalContentAlignment="Center" Padding="8,4" Margin="0,0,8,0"/>
+                                        <Button x:Name="BtnBrowseIso" Grid.Column="2" Content="📁 Seç..." Style="{StaticResource FluentButton}" Click="BtnBrowseIso_Click"/>
+                                    </Grid>
+
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="160"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Hedef WIM Dosyası:" VerticalAlignment="Center" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                        <TextBox x:Name="TxtWimPath" Grid.Column="1" Text="C:\WinoxIT_Mount\sources\boot.wim" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" VerticalContentAlignment="Center" Padding="8,4" Margin="0,0,8,0"/>
+                                        <Button x:Name="BtnBrowseWim" Grid.Column="2" Content="📁 Seç..." Style="{StaticResource FluentButton}" Click="BtnBrowseWim_Click"/>
+                                    </Grid>
+
+                                    <Grid Margin="0,0,0,16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="160"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Geçici Mount Dizini:" VerticalAlignment="Center" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                        <TextBox x:Name="TxtMountDir" Grid.Column="1" Text="C:\WinoxIT_Mount\wim_mount" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" VerticalContentAlignment="Center" Padding="8,4" Margin="0,0,8,0"/>
+                                        <Button x:Name="BtnBrowseMount" Grid.Column="2" Content="📁 Seç..." Style="{StaticResource FluentButton}" Click="BtnBrowseMount_Click"/>
+                                    </Grid>
+
+                                    <WrapPanel Orientation="Horizontal">
+                                        <Button x:Name="BtnWimMount" Content="📥 WIM İmajını Bağla (Mount)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimMount_Click"/>
+                                        <Button x:Name="BtnWimInjectDrivers" Content="📦 Universal NIC Sürücülerini Enjekte Et" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimInjectDrivers_Click"/>
+                                        <Button x:Name="BtnWimCommit" Content="💾 Kaydet &amp; Kapat (Commit)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimCommit_Click"/>
+                                        <Button x:Name="BtnWimDiscard" Content="❌ İptal Et &amp; Kapat (Discard)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimDiscard_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- ============================================================== -->
+                    <!-- HUB 2: DONANIM, SÜRÜCÜLER & YAZICI                            -->
+                    <!-- ============================================================== -->
+                    <StackPanel x:Name="PanelHubHardware" Visibility="Collapsed">
+                        <!-- Category Sub-Navigation Pills -->
+                        <WrapPanel Margin="0,0,0,16">
+                            <RadioButton x:Name="SubNavHardware" Content="🛡️ Donanım Ekspertizi &amp; HWID" Style="{StaticResource FluentSubNavPill}" IsChecked="True" Checked="SubNavHardware_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavDrivers" Content="📦 Evrensel Sürücüler &amp; NIC" Style="{StaticResource FluentSubNavPill}" Checked="SubNavHardware_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavPrinters" Content="🖨️ Yazıcı &amp; Spooler Onarım" Style="{StaticResource FluentSubNavPill}" Checked="SubNavHardware_Checked" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <!-- Sub-View 1: Hardware Panel -->
+                        <StackPanel x:Name="PanelHardware" Visibility="Visible">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="🛡️ Donanım Ekspertizi &amp; Anti-Tamper Parça Değişim Kilidi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Teknik servislerde veya filo yönetiminde RAM, SSD, Anakart ve İşlemci çalınmalarını SHA-256 kriptografik HWID mührüyle önler." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <Grid Margin="0,0,0,16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,16,12">
+                                            <TextBlock Text="İŞLEMCİ (CPU) SERİ NO &amp; ID:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBox x:Name="TxtHwidCpu" Text="Okunuyor..." IsReadOnly="True" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,4" Margin="0,4,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,12">
+                                            <TextBlock Text="ANAKART (MOTHERBOARD) SERİ NO:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBox x:Name="TxtHwidMobo" Text="Okunuyor..." IsReadOnly="True" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,4" Margin="0,4,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,16,12">
+                                            <TextBlock Text="BİRİNCİL DİSK (NVME/SSD) SERİ NO:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBox x:Name="TxtHwidDisk" Text="Okunuyor..." IsReadOnly="True" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,4" Margin="0,4,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                                            <TextBlock Text="AĞ KARTI FİZİKSEL MAC ADRESİ:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBox x:Name="TxtHwidMac" Text="Okunuyor..." IsReadOnly="True" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,4" Margin="0,4,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,16,0">
+                                            <TextBlock Text="EKRAN KARTI (GPU) DONANIM KİMLİĞİ:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBox x:Name="TxtHwidGpu" Text="Okunuyor..." IsReadOnly="True" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,4" Margin="0,4,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="2" Grid.Column="1">
+                                            <TextBlock Text="BİLEŞİK SHA-256 HWID MÜHRÜ:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            <TextBox x:Name="TxtHwidHash" Text="Hesaplanıyor..." IsReadOnly="True" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushAccent}" BorderBrush="{DynamicResource BrushBorder}" FontWeight="Bold" Padding="8,4" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <TextBlock Text="ANTİ-TAMPER MÜHÜR VE DOĞRULAMA DURUMU:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,4"/>
+                                            <TextBlock x:Name="TxtAntiTamperStatus" Text="Henüz mühür kaydedilmedi." FontSize="13" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <WrapPanel Orientation="Horizontal">
+                                        <Button x:Name="BtnVerifyHardware" Content="🔍 Donanım Bileşenlerini Doğrula" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnVerifyHardware_Click"/>
+                                        <Button x:Name="BtnAntiTamperLock" Content="🔒 Mevcut Donanımı Mühürle (Kilit Kaydet)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnAntiTamperLock_Click"/>
+                                        <Button x:Name="BtnExportHwid" Content="📋 Donanım Raporunu Dışa Aktar" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnExportHwid_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 2: Drivers Panel -->
+                        <StackPanel x:Name="PanelDrivers" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="📦 Evrensel Sürücü Yönetimi &amp; Offline Universal NIC Paketi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,4"/>
+                                            <TextBlock Text="Windows 11 temiz kurulum sonrası internete bağlanamama sorununa son! Realtek, Intel, MediaTek sürücüleri tek tıkla enjekte edilir." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Style="{StaticResource FluentBadge}" VerticalAlignment="Center">
+                                            <TextBlock x:Name="TxtDriverCount" Text="0 Sürücü Yüklü" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource BrushAccent}"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <Button x:Name="BtnScanDrivers" Content="🔍 Sistemdeki 3. Parti Sürücüleri Tara" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnScanDrivers_Click"/>
+                                        <Button x:Name="BtnExportDrivers" Content="💾 Tüm Sürücüleri Yedekle (DISM Export)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnExportDrivers_Click"/>
+                                        <Button x:Name="BtnInjectUniversalNic" Content="🌐 Universal NIC &amp; Wi-Fi Paketini Yükle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnInjectUniversalNic_Click"/>
+                                    </WrapPanel>
+
+                                    <TextBlock Text="YÜKLÜ SÜRÜCÜLER TABLOSU" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,8"/>
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="180" MaxHeight="280">
+                                        <DataGrid x:Name="GridDrivers" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" 
+                                                  BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
+                                                  Foreground="{DynamicResource BrushTextPrimary}">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="INF Adı" Binding="{Binding PublishedName}" Width="120"/>
+                                                <DataGridTextColumn Header="Sağlayıcı" Binding="{Binding ProviderName}" Width="160"/>
+                                                <DataGridTextColumn Header="Sınıfı" Binding="{Binding ClassName}" Width="140"/>
+                                                <DataGridTextColumn Header="Sürüm" Binding="{Binding Version}" Width="120"/>
+                                                <DataGridTextColumn Header="Tarih" Binding="{Binding Date}" Width="120"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 3: Printers Panel -->
+                        <StackPanel x:Name="PanelPrinters" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="🖨️ Kurumsal Ağ Yazıcı &amp; Spooler Onarım Paketi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Windows Güncellemeleri sonrası bozulan 0x0000011b RPC ve 0x00000709 Point &amp; Print yetki kısıtlamalarını tek tıkla onarır." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <Button Content="🖨️ 0x0000011b RPC Yetkilendirme Onar" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFixPrinters_Click"/>
+                                        <Button Content="🔧 0x00000709 Point &amp; Print İlkesini Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFix709_Click"/>
+                                        <Button Content="🛑 Spooler Servisini Temizle &amp; Başlat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnPurgeSpooler_Click"/>
+                                        <Button Content="🗑️ Kilitli Yazdırma Kuyruğunu Temizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnClearQueue_Click"/>
+                                    </WrapPanel>
+
+                                    <TextBlock Text="Yazıcı Kuyruğu ve Servis Durumu:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                    <TextBox x:Name="TxtPrinterLog" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushSuccess}" 
+                                             BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
+                                             FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- ============================================================== -->
+                    <!-- HUB 3: FORMAT SONRASI KURULUM & İNCE AYARLAR                   -->
+                    <!-- ============================================================== -->
+                    <StackPanel x:Name="PanelHubPostFormat" Visibility="Collapsed">
+                        <!-- Category Sub-Navigation Pills -->
+                        <WrapPanel Margin="0,0,0,16">
+                            <RadioButton x:Name="SubNavAppDeploy" Content="🚀 Toplu Program Yükleyici (27 Paket)" Style="{StaticResource FluentSubNavPill}" IsChecked="True" Checked="SubNavPostFormat_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavContextMenu" Content="🖱️ Klasik Sağ Tuş &amp; Windows Araçları" Style="{StaticResource FluentSubNavPill}" Checked="SubNavPostFormat_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavDebloat" Content="⚡ Debloat &amp; Gizlilik Ayarları" Style="{StaticResource FluentSubNavPill}" Checked="SubNavPostFormat_Checked" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <!-- Sub-View 1: AppDeploy Panel (27 Essential Packages) -->
+                        <StackPanel x:Name="PanelAppDeploy" Visibility="Visible">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="🛒 Kurumsal AppDeploy — Sessiz &amp; Katılımsız Yazılım Dağıtımı" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,4"/>
+                                            <TextBlock Text="Winget ve yerel LAN önbellekleme (Offline Mirror) ile tek tıkla reklamsız, parametresiz sessiz (--silent) kurulum." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Style="{StaticResource FluentBadge}" VerticalAlignment="Center">
+                                            <TextBlock x:Name="TxtWingetStatus" Text="Winget Kontrol Ediliyor..." FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource BrushAccent}"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Selection Toolbar -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="📦 Kurulacak Paketleri Seçin (Toplam 27 Paket Hazır)" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12.5" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Button x:Name="BtnSelectAllApps" Content="✅ Tümünü Seç" Style="{StaticResource FluentButton}" Height="30" Padding="12,0" Margin="0,0,8,0" Click="BtnSelectAllApps_Click"/>
+                                                <Button x:Name="BtnClearAllApps" Content="❌ Seçimi Temizle" Style="{StaticResource FluentButton}" Height="30" Padding="12,0" Click="BtnClearAllApps_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- 1. Web Tarayıcılar -->
+                                    <TextBlock Text="🌐 Popüler Web Tarayıcılar:" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <CheckBox x:Name="ChkChrome" Content="Google Chrome" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkFirefox" Content="Mozilla Firefox" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkBrave" Content="Brave Browser" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkEdge" Content="Microsoft Edge" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkOpera" Content="Opera GX / One" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    </WrapPanel>
+
+                                    <!-- 2. Uzak Masaüstü & IT Yönetimi -->
+                                    <TextBlock Text="📡 Uzak Masaüstü &amp; Destek Araçları:" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <CheckBox x:Name="ChkAnyDesk" Content="AnyDesk" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkRustDesk" Content="RustDesk (Açık Kaynak)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkTeamViewer" Content="TeamViewer" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkWinScp" Content="WinSCP (SFTP/FTP)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkPutty" Content="PuTTY (SSH/Telnet)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    </WrapPanel>
+
+                                    <!-- 3. Arşiv & Sistem Yardımcıları -->
+                                    <TextBlock Text="🗜️ Arşiv, Dosya &amp; Sistem Araçları:" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <CheckBox x:Name="Chk7Zip" Content="7-Zip" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkWinRar" Content="WinRAR" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkEverything" Content="Voidtools Everything (Hızlı Arama)" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkPowerToys" Content="Microsoft PowerToys" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkTreeSize" Content="TreeSize Free (Disk Analizörü)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    </WrapPanel>
+
+                                    <!-- 4. Editör, Ofis & Doküman -->
+                                    <TextBlock Text="📄 Metin Editörleri &amp; Ofis / Doküman:" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <CheckBox x:Name="ChkNotepadPlus" Content="Notepad++" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkLibreOffice" Content="LibreOffice (Tam Ofis Paketi)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkAdobeReader" Content="Adobe Acrobat Reader DC" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkFoxitReader" Content="Foxit PDF Reader" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkSumatra" Content="SumatraPDF (Ultra Hafif)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    </WrapPanel>
+
+                                    <!-- 5. Medya & Oynatıcılar -->
+                                    <TextBlock Text="🎬 Medya Oynatıcılar &amp; Kodekler:" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <CheckBox x:Name="ChkVlc" Content="VLC Media Player" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkKLite" Content="K-Lite Mega Codec Pack" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkIrfanView" Content="IrfanView Resim Görüntüleyici" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    </WrapPanel>
+
+                                    <!-- 6. Geliştirici & Runtimes -->
+                                    <TextBlock Text="💻 Geliştirici Ortamı &amp; Çalışma Zamanları (Runtime):" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <CheckBox x:Name="ChkVcRedist" Content="Visual C++ All-in-One Runtimes" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkVSCode" Content="Visual Studio Code" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkGit" Content="Git for Windows" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkNodeJs" Content="Node.js LTS" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkPython" Content="Python 3.12" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    </WrapPanel>
+
+                                    <!-- 7. Kamu & e-İmza Paketleri -->
+                                    <TextBlock Text="🏛️ Kamu &amp; Özel Kurum Paketleri (e-İmza &amp; Doküman):" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}" Margin="0,4,0,6"/>
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <CheckBox x:Name="ChkUyap" Content="⚖️ UYAP Editör (Adalet Bakanlığı)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                        <CheckBox x:Name="ChkAkis" Content="🔐 AKİS Akıllı Kart (TÜBİTAK UEKAE)" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,16,8"/>
+                                    </WrapPanel>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <Button x:Name="BtnInstallSelectedApps" Content="🚀 Seçili Programları Sessiz Kur (--silent)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnInstallSelectedApps_Click"/>
+                                        <Button x:Name="BtnOpenPackagesFolder" Content="📂 Yerel LAN Önbellek (packages/) Klasörünü Aç" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnOpenPackagesFolder_Click"/>
+                                    </WrapPanel>
+
+                                    <TextBlock Text="Kurulum Süreç ve Terminal Durumu:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                    <TextBox x:Name="TxtAppDeployLog" Height="140" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
+                                             BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" Padding="12" 
+                                             FontFamily="Consolas" FontSize="11" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 2: ContextMenu Panel (Sordum Easy Context Menu & Nilesoft Shell Style Reversible Tools) -->
+                        <StackPanel x:Name="PanelContextMenu" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="🖱️ Windows Sağ Tuş Menüsü &amp; Hızlı IT Araçları" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,4"/>
+                                    <TextBlock Text="Sordum Easy Context Menu ve Nilesoft Shell tarzında tasarlanmış, sisteme DLL enjekte etmeyen %100 güvenli ve geri alınabilir Windows sağ tuş araçları." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <!-- Bilgilendirme Notu -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushAccent}" BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="0,0,0,16">
+                                        <TextBlock Text="💡 BİLGİ: Tüm araçlar bağımsız iki yönlü (Uygula &amp; Geri Al) çalışır. Yaptığınız tüm değişiklikleri istediğiniz zaman 'Geri Al' butonuna basarak orijinal Windows varsayılanına döndürebilirsiniz." FontSize="11.5" Foreground="{DynamicResource BrushTextPrimary}" TextWrapping="Wrap"/>
+                                    </Border>
+
+                                    <!-- Araç 1: Klasik Sağ Tuş Menüsü -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="🖱️ Windows 10 Klasik Sağ Tuş Menüsü (Tam Menü)" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Windows 11'in 'Daha fazla seçenek göster (Shift+F10)' gerektiren daraltılmış menüsü yerine tam klasik sağ tık menüsünü açar." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnEnableClassicMenu" Content="✅ Uygula (Klasik)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnEnableClassicMenu_Click"/>
+                                                <Button x:Name="BtnRevertModernMenu" Content="↩️ Geri Al (Win 11)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnRevertModernMenu_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Araç 2: Klasik Fotoğraf Görüntüleyici -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="🖼️ Windows Klasik Fotoğraf Görüntüleyici (PhotoViewer.dll)" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Modern hantal Fotoğraflar uygulaması yerine efsanevi anında açılan hafif Windows Fotoğraf Görüntüleyiciyi (.jpg, .png, .bmp, .gif vb.) etkinleştirir." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnEnablePhotoViewer" Content="✅ Uygula (Klasik)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnEnablePhotoViewer_Click"/>
+                                                <Button x:Name="BtnRevertPhotoViewer" Content="↩️ Geri Al (Varsayılan)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnRevertPhotoViewer_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Araç 3: Sahipliği Al Menüsü -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="🔑 Sağ Tık: 'Sahipliği Al' (Take Ownership) Kısayolu" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Dosya ve klasör sağ tuş menüsüne 'Sahipliği Al' ekler. TrustedInstaller veya SYSTEM tarafından kilitlenen dosyaları tek tıkla silip düzenlemenizi sağlar." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnEnableTakeOwnership" Content="✅ Menüye Ekle" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnEnableTakeOwnership_Click"/>
+                                                <Button x:Name="BtnDisableTakeOwnership" Content="↩️ Geri Al (Kaldır)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnDisableTakeOwnership_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Araç 4: Yönetici CMD & PowerShell -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="💻 Sağ Tık: 'Yönetici Olarak Komut İstemi / PowerShell Aç'" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Klasör sağ tuşuna ve boş alana tıklandığında geçerli dizinde Yönetici yetkileriyle CMD veya PowerShell terminali açma seçeneği ekler." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnEnableAdminShell" Content="✅ Menüye Ekle" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnEnableAdminShell_Click"/>
+                                                <Button x:Name="BtnDisableAdminShell" Content="↩️ Geri Al (Kaldır)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnDisableAdminShell_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Araç 5: Yazdırma Biriktiricisi Yeniden Başlat -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="🖨️ Sağ Tık: 'Yazdırma Biriktiricisini (Spooler) Yeniden Başlat'" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Masaüstü sağ tık menüsüne kilitlenen yazıcı kuyruğunu ve Spooler servisini anında yeniden başlatan pratik bir kısayol ekler." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnEnableSpoolerRestart" Content="✅ Menüye Ekle" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnEnableSpoolerRestart_Click"/>
+                                                <Button x:Name="BtnDisableSpoolerRestart" Content="↩️ Geri Al (Kaldır)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnDisableSpoolerRestart_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Araç 6: Gelişmiş Güç Menüsü (Kapat / Yeniden Başlat / UEFI / Güvenli Mod) -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="⚡ Sağ Tık: Gelişmiş Güç Menüsü (Kapat / Yeniden Başlat / UEFI / Güvenli Mod)" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Masaüstü sağ tık menüsüne tek tıkla Hızlı Kapat, Hızlı Yeniden Başlat, UEFI/BIOS Ayarlarına Giriş ve Güvenli Modda Başlatma kısayolları ekler." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnEnablePowerMenu" Content="✅ Menüye Ekle" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnEnablePowerMenu_Click"/>
+                                                <Button x:Name="BtnDisablePowerMenu" Content="↩️ Geri Al (Kaldır)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnDisablePowerMenu_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Araç 7: Gizli Dosyaları ve Uzantıları Göster / Gizle -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="👁️ Dosya Gezgini: Bilinen Dosya Uzantılarını ve Gizli Dosyaları Göster" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Windows'un varsayılan olarak gizlediği dosya uzantılarını (.exe, .bat, .ps1, .pdf vb.) ve gizli sistem dosyalarını görünür yapar veya varsayılana döndürür." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnShowHiddenExt" Content="✅ Göster (Görünür Yap)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnShowHiddenExt_Click"/>
+                                                <Button x:Name="BtnHideHiddenExt" Content="↩️ Geri Al (Varsayılan)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnHideHiddenExt_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 3: Debloat Panel (Reversible) -->
+                        <StackPanel x:Name="PanelDebloat" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="⚡ Windows 11 Debloat, Gizlilik &amp; BİGR Kamu Sıkılaştırma" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Yapay zekâ telemetrisini (Copilot, Recall) kapatır, klasik ergonomiyi geri getirir ve kurumsal güvenlik sağlar. Her ayar tek tıkla geri alınabilir." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <!-- Copilot & Recall -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="🚀 Windows 11 Copilot &amp; Recall Ekran Kaydediciyi Kapat" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Arka planda ekran görüntüsü kaydeden Recall ve görev çubuğu Copilot yapay zekâsını devre dışı bırakır veya yeniden etkinleştirir." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnDisableCopilot" Content="🛑 Kapat (Uygula)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnDisableCopilot_Click"/>
+                                                <Button x:Name="BtnEnableCopilot" Content="↩️ Geri Al (Aç)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnEnableCopilot_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Telemetri & Veri Toplama -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="🛡️ Telemetri, Tanılama &amp; Veri Toplama Servisleri" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="DiagTrack (Connected User Experiences and Telemetry) servisini ve müşteri deneyimi veri raporlamasını kapatır veya geri açar." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnDisableTelemetry" Content="🛑 Kapat (Uygula)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnDisableTelemetry_Click"/>
+                                                <Button x:Name="BtnEnableTelemetry" Content="↩️ Geri Al (Aç)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnEnableTelemetry_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Başlat Bing Arama -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="🔍 Başlat Menüsü Bing Web Araması Sonuçları" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Başlat menüsünde dosya ararken internete bağlanarak Bing reklamları ve web aramaları göstermesini engeller; sadece yerel dosyaları aratır." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button x:Name="BtnDisableBingSearch" Content="🛑 Kapat (Uygula)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Margin="0,0,8,0" Click="BtnDisableBingSearch_Click"/>
+                                                <Button x:Name="BtnEnableBingSearch" Content="↩️ Geri Al (Aç)" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnEnableBingSearch_Click"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Klasik Menü Hızlı Bağlantı -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="14">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="🖱️ Windows 10 Klasik Sağ Tık Menüsü" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                                                <TextBlock Text="Windows 11 sağ tık menüsünü klasik tam sürüme çevirir." FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0"/>
+                                            </StackPanel>
+                                            <Button x:Name="BtnClassicMenu" Grid.Column="1" Content="🖱️ Sağ Tık Menü Aracına Git" Style="{StaticResource FluentButton}" Height="32" Padding="12,0" Click="BtnClassicMenu_Click"/>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- ============================================================== -->
+                    <!-- HUB 4: SİSTEM ONARIMI & BAKIM                                 -->
+                    <!-- ============================================================== -->
+                    <StackPanel x:Name="PanelHubRepair" Visibility="Collapsed">
+                        <!-- Category Sub-Navigation Pills -->
+                        <WrapPanel Margin="0,0,0,16">
+                            <RadioButton x:Name="SubNavCleaner" Content="🧹 Akıllı Disk &amp; Log Temizliği" Style="{StaticResource FluentSubNavPill}" IsChecked="True" Checked="SubNavRepair_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavNetwork" Content="🌐 Ağ &amp; DNS Onarımı" Style="{StaticResource FluentSubNavPill}" Checked="SubNavRepair_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavDiagnostics" Content="🩺 SFC / DISM &amp; Geri Yükleme" Style="{StaticResource FluentSubNavPill}" Checked="SubNavRepair_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavProcesses" Content="⚡ İşlem &amp; RAM Monitörü" Style="{StaticResource FluentSubNavPill}" Checked="SubNavRepair_Checked" Margin="0,0,8,6"/>
+                            <RadioButton x:Name="SubNavStartup" Content="🚀 Başlangıç Yöneticisi" Style="{StaticResource FluentSubNavPill}" Checked="SubNavRepair_Checked" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <!-- Sub-View 1: Cleaner Panel -->
+                        <StackPanel x:Name="PanelCleaner" Visibility="Visible">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="🧹 Sistem Temizliği &amp; Disk Önbellek Sıfırlama" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Gereksiz sistem atıklarını, geçici dosyaları (%TEMP%), kilitli logları ve DNS önbelleğini temizler." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <Button Content="🧹 %TEMP% ve Kullanıcı Önbelleklerini Temizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnCleanTemp_Click"/>
+                                        <Button Content="💾 Windows Update Önbelleğini Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnCleanWu_Click"/>
+                                        <Button Content="📡 DNS Önbelleğini Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFlushDns_Click"/>
+                                        <Button Content="🗑️ Geri Dönüşüm Kutusunu Boşalt" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnEmptyRecycle_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 2: Network Panel -->
+                        <StackPanel x:Name="PanelNetwork" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="🌐 Ağ Bağdaştırıcısı &amp; TCP/IP Yığını Onarımı" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Ağ kopmaları, sarı ünlem ve DNS çözümleme kilitlenmelerinde TCP/IP yığınını ve Winsock kataloglarını sıfırlar." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <Button Content="🌐 Ağ Bağdaştırıcılarını Yeniden Başlat" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFixNetworkAdapter_Click"/>
+                                        <Button Content="🔌 Winsock &amp; TCP/IP Yığınını Sıfırla" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnResetWinsock_Click"/>
+                                        <Button Content="🔄 IP Adresini Yenile (Release / Renew)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnReleaseRenew_Click"/>
+                                        <Button Content="📡 DNS Önbelleğini Temizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnFlushDns_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 3: Diagnostics Panel -->
+                        <StackPanel x:Name="PanelDiagnostics" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="🔧 Çekirdek Sistem Dosyası &amp; İmaj Onarımı" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Bozulan Windows çekirdek dosyalarını, Windows Update bileşen depolarını ve dosya sistemi bütünlüğünü onarır." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <Button Content="🛡️ Sistem Geri Yükleme Noktası Oluştur" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnCreateRestorePoint_Click"/>
+                                        <Button Content="🔧 SFC /scannow Dosya Doğrulaması" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRunSfc_Click"/>
+                                        <Button Content="💾 DISM /RestoreHealth İmaj Onarımı" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRunDism_Click"/>
+                                        <Button Content="📀 Chkdsk Disk Hata Taraması" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRunChkdsk_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 4: Processes Panel -->
+                        <StackPanel x:Name="PanelProcesses" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="⚡ Çalışan İşlemler &amp; Canlı Bellek (RAM) Monitörü" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Sistemi yoran, yanıt vermeyen işlemleri listeleyin ve tek tıkla zorla sonlandırın." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <Button Content="🔄 İşlem Listesini Yenile" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRefreshProcesses_Click"/>
+                                        <Button Content="🛑 Seçili İşlemi Sonlandır (Kill Process)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnKillSelectedProcess_Click"/>
+                                    </WrapPanel>
+
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="200" MaxHeight="300">
+                                        <DataGrid x:Name="GridProcesses" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" 
+                                                  BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
+                                                  Foreground="{DynamicResource BrushTextPrimary}">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="80"/>
+                                                <DataGridTextColumn Header="İşlem Adı" Binding="{Binding Name}" Width="220"/>
+                                                <DataGridTextColumn Header="RAM (MB)" Binding="{Binding MemoryMB}" Width="120"/>
+                                                <DataGridTextColumn Header="Yanıt Durumu" Binding="{Binding Responding}" Width="120"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Sub-View 5: Startup Panel -->
+                        <StackPanel x:Name="PanelStartup" Visibility="Collapsed">
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="🚀 Windows Başlangıç Programları Yöneticisi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Açılışı yavaşlatan başlangıç kayıtlarını denetleyin ve tek tıkla devre dışı bırakın." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                        <Button Content="🔄 Başlangıç Listesini Yenile" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRefreshStartup_Click"/>
+                                        <Button Content="❌ Seçili Başlangıç Öğesini Kaldır" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDisableStartupItem_Click"/>
+                                    </WrapPanel>
+
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="200" MaxHeight="300">
+                                        <DataGrid x:Name="GridStartup" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" 
+                                                  BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
+                                                  Foreground="{DynamicResource BrushTextPrimary}">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Kayıt Adı" Binding="{Binding Name}" Width="200"/>
+                                                <DataGridTextColumn Header="Komut / Dosya Yolu" Binding="{Binding Command}" Width="320"/>
+                                                <DataGridTextColumn Header="Konum" Binding="{Binding Location}" Width="160"/>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- ============================================================== -->
+                    <!-- HUB 5: YAPAY ZEKÂ TEŞHİS & WEB ÇÖZÜM                          -->
+                    <!-- ============================================================== -->
+                    <StackPanel x:Name="PanelHubAI" Visibility="Collapsed">
+                        <!-- Category Sub-Navigation Pills -->
+                        <WrapPanel Margin="0,0,0,16">
+                            <RadioButton x:Name="SubNavAiAssistant" Content="🤖 AI Arıza Asistanı &amp; Onaylı Çözümler" Style="{StaticResource FluentSubNavPill}" IsChecked="True" Checked="SubNavAI_Checked" Margin="0,0,8,6"/>
+                        </WrapPanel>
+
+                        <!-- PanelAI: 2 Satırlık Giriş Kutusu + Onay Rozetli Çözüm Kartı -->
+                        <StackPanel x:Name="PanelAI" Visibility="Visible">
+                            <!-- Arıza Arama ve Soru Formu -->
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="🤖 BT Yapay Zekâ Teşhis &amp; Çok Katmanlı Kaynak Motoru" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" />
+                                            <TextBlock Text="İlk olarak Resmi Microsoft kaynaklarını (learn.microsoft.com, support.microsoft.com), ardından saygın teknoloji forumlarını (SuperUser, ElevenForum vb.) tarayarak onaylı PowerShell ve CMD çözümleri üretir." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="{DynamicResource BrushAccent}" CornerRadius="6" Padding="10,4" VerticalAlignment="Center">
+                                            <TextBlock Text="Microsoft Docs + Forumlar" FontSize="11" FontWeight="Bold" Foreground="#000000"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <TextBlock Text="🔍 ARIZA AÇIKLAMASI VEYA HATA KODU GİRİNİZ (2 SATIR DESTEKLİ):" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,10,0,6"/>
+
+                                    <!-- 2-Line Input Box & Big Analyze Button -->
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!-- 2-Satır Genişletilebilir Arama Kutusu -->
+                                        <TextBox x:Name="TxtAiIssueQuery" Grid.Column="0" MinHeight="64" FontSize="13.5"
+                                                 AcceptsReturn="True" TextWrapping="Wrap"
+                                                 Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" 
+                                                 BorderBrush="{DynamicResource BrushBorder}" Padding="12,8" VerticalContentAlignment="Top" 
+                                                 KeyDown="TxtAiIssueQuery_KeyDown"
+                                                 ToolTip="Örn: 0x0000011b, ekran kartı kilitlendi, mavi ekran nvlddmkm.sys, internet yok, regedit engellendi"/>
+                                        
+                                        <Button x:Name="BtnAiAnalyze" Grid.Column="2" Content="⚡ Yapay Zekâ &amp; Web Analizi" 
+                                                Style="{StaticResource FluentButton}" Height="64" Padding="20,0" FontSize="13.5" FontWeight="Bold"
+                                                Click="BtnAiAnalyze_Click"/>
+                                    </Grid>
+
+                                    <!-- Hızlı Örnek Çipleri -->
+                                    <WrapPanel Margin="0,2,0,0">
+                                        <TextBlock Text="Hızlı Örnekler:" FontSize="11" Foreground="{DynamicResource BrushTextMuted}" VerticalAlignment="Center" Margin="0,0,8,4"/>
+                                        <Button Content="0x0000011b Yazıcı RPC" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                        <Button Content="Ekran Kartı Kilitlendi (nvlddmkm)" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                        <Button Content="Dosya Uzantıları Görünmüyor" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                        <Button Content="Ağ Kartı Tanınmıyor &amp; Sürücü" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                        <Button Content="Grup İlkesi (GPO) Engellendi" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                        <Button Content="0x80070005 Erişim Engellendi" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                        <Button Content="DNS &amp; Ağ Yığını Sıfırlama" Style="{StaticResource FluentButton}" Padding="8,4" FontSize="11" Margin="0,0,6,4" Click="BtnAiPreset_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Çözüm & Onarım Sonuç Kartı (Dinamik - Onay Rozeti ile) -->
+                            <Border x:Name="CardAiSolution" Style="{StaticResource FluentCard}" Margin="0,0,0,16" Visibility="Collapsed" BorderBrush="{DynamicResource BrushAccent}" BorderThickness="1.5">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock x:Name="TxtAiSolutionTitle" Text="Arıza Teşhis Başlığı" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"/>
+                                            <WrapPanel Margin="0,3,0,0">
+                                                <TextBlock x:Name="TxtAiCategoryText" Text="Kategori: Windows Çekirdeği" FontSize="11.5" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,12,0"/>
+                                                <TextBlock x:Name="TxtAiSourceTier" Text="Kaynak: Resmi Microsoft Belgesi" FontSize="11.5" Foreground="#38BDF8" FontWeight="SemiBold"/>
+                                            </WrapPanel>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <!-- Onaylı Çözüm Rozeti (Kullanıcı Talebi: Onay İşaretli Rozet) -->
+                                            <Border x:Name="BadgeAiVerified" Background="#059669" CornerRadius="4" Padding="10,4" Margin="0,0,8,0" Visibility="Collapsed">
+                                                <TextBlock x:Name="TxtAiVerifiedBadge" Text="✅ ONAYLI RESMİ ÇÖZÜM" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                            </Border>
+                                            
+                                            <Border x:Name="BadgeAiSeverity" Background="#EF4444" CornerRadius="4" Padding="10,4">
+                                                <TextBlock x:Name="TxtAiSeverity" Text="Kritik" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Kök Neden -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                                        <StackPanel>
+                                            <TextBlock Text="🔬 TESPİT EDİLEN KÖK NEDEN:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,4"/>
+                                            <TextBlock x:Name="TxtAiRootCause" Text="Kök neden tespiti yükleniyor..." FontSize="13" Foreground="{DynamicResource BrushTextPrimary}" TextWrapping="Wrap" LineHeight="18"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Web İçgörüsü -->
+                                    <Border x:Name="PanelAiWebInsights" Background="{DynamicResource BrushBgWindow}" BorderBrush="#0284C7" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12" Visibility="Collapsed">
+                                        <StackPanel>
+                                            <TextBlock Text="🌐 CANLI WEB &amp; TOPLULUK VERİTABANI İÇGÖRÜSÜ:" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" Margin="0,0,0,4"/>
+                                            <TextBlock x:Name="TxtAiWebInsights" Text="Web içgörüsü bulunamadı." FontSize="12.5" Foreground="{DynamicResource BrushTextPrimary}" TextWrapping="Wrap" LineHeight="18"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Adım Adım Rehber -->
+                                    <TextBlock Text="📋 TAVSİYE EDİLEN ONARIM ADIMLARI:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,6"/>
+                                    <TextBlock x:Name="TxtAiSteps" Text="1. Adım..." FontSize="12.5" Foreground="{DynamicResource BrushTextSecondary}" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,14"/>
+
+                                    <!-- Kod & Script Bloğu -->
+                                    <TextBlock Text="⚡ OTOMATİK ONARIM POWERSHELL / CMD SCRİPTİ:" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,6"/>
+                                    <TextBox x:Name="TxtAiAutoFixScript" Height="130" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                                             FontFamily="Consolas" FontSize="12" Background="#0F172A" Foreground="#34D399" BorderBrush="{DynamicResource BrushBorder}"
+                                             Padding="10" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12"/>
+
+                                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <Button x:Name="BtnRunAiScript" Content="⚡ Bu Onarım Scriptini Çalıştır (PowerShell)" Style="{StaticResource FluentButton}" Height="34" Padding="14,0" Margin="0,0,10,6" Click="BtnRunAiScript_Click"/>
+                                        <Button x:Name="BtnCopyAiScript" Content="📋 Komutu Kopyala" Style="{StaticResource FluentButton}" Height="34" Padding="12,0" Margin="0,0,10,6" Click="BtnCopyAiScript_Click"/>
+                                        <Button x:Name="BtnSaveAiScript" Content="💾 Script Olarak Kaydet (.ps1)" Style="{StaticResource FluentButton}" Height="34" Padding="12,0" Margin="0,0,10,6" Click="BtnSaveAiScript_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Sistem Olay ve BSOD Analizi -->
+                            <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="💥 Windows Olay Günlüğü &amp; BSOD Minidump Taraması" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Sistemdeki son kritik hata kayıtlarını ve minidump dökümlerini tarayarak çökmeye yol açan sürücüyü listeleyin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,14"/>
+
+                                    <WrapPanel Orientation="Horizontal">
+                                        <Button Content="🤖 Sistem Sağlık &amp; Olay Günlüğü Taraması" Style="{StaticResource FluentButton}" Margin="0,0,10,6" Click="BtnAiEventScan_Click"/>
+                                        <Button Content="💥 Mavi Ekran (BSOD) Minidump Analizi" Style="{StaticResource FluentButton}" Margin="0,0,10,6" Click="BtnAiBsodScan_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
                     </StackPanel>
 
                 </Grid>

@@ -323,6 +323,51 @@ namespace WinoxIT.Services
             return res.Success ? res.Output : $"Tarama hatası: {res.Output}";
         }
 
+        public static async Task<List<InstalledDriverItem>> GetInstalledDriversAsync()
+        {
+            var script = @"
+                Get-WindowsDriver -Online -All -ErrorAction SilentlyContinue | Where-Object { $_.Driver -like 'oem*.inf' } | 
+                Select-Object Driver, ProviderName, ClassName, Version, Date | ConvertTo-Json -Compress
+            ";
+            var res = await RunPowerShellAsync(script);
+            var list = new List<InstalledDriverItem>();
+            if (res.Success && !string.IsNullOrWhiteSpace(res.Output))
+            {
+                try
+                {
+                    using var doc = JsonDocument.Parse(res.Output);
+                    if (doc.RootElement.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var el in doc.RootElement.EnumerateArray())
+                        {
+                            list.Add(new InstalledDriverItem
+                            {
+                                PublishedName = el.TryGetProperty("Driver", out var pD) ? pD.GetString() ?? "" : "",
+                                ProviderName = el.TryGetProperty("ProviderName", out var pP) ? pP.GetString() ?? "" : "",
+                                ClassName = el.TryGetProperty("ClassName", out var pC) ? pC.GetString() ?? "" : "",
+                                Version = el.TryGetProperty("Version", out var pV) ? pV.GetString() ?? "" : "",
+                                Date = el.TryGetProperty("Date", out var pDt) ? pDt.GetString() ?? "" : ""
+                            });
+                        }
+                    }
+                    else if (doc.RootElement.ValueKind == JsonValueKind.Object)
+                    {
+                        var el = doc.RootElement;
+                        list.Add(new InstalledDriverItem
+                        {
+                            PublishedName = el.TryGetProperty("Driver", out var pD) ? pD.GetString() ?? "" : "",
+                            ProviderName = el.TryGetProperty("ProviderName", out var pP) ? pP.GetString() ?? "" : "",
+                            ClassName = el.TryGetProperty("ClassName", out var pC) ? pC.GetString() ?? "" : "",
+                            Version = el.TryGetProperty("Version", out var pV) ? pV.GetString() ?? "" : "",
+                            Date = el.TryGetProperty("Date", out var pDt) ? pDt.GetString() ?? "" : ""
+                        });
+                    }
+                }
+                catch { }
+            }
+            return list;
+        }
+
         // =========================================================================
         // 3. OEM HARDWARE DETECTION & UPDATE
         // =========================================================================
@@ -570,17 +615,273 @@ namespace WinoxIT.Services
             return res.Success ? "Windows 11 Copilot & Recall AI başarıyla kapatıldı." : $"Hata: {res.Output}";
         }
 
+        public static async Task<string> EnableCopilotAndRecallAsync()
+        {
+            var script = @"
+                $hkcu = 'HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot';
+                $hklm = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot';
+                if (Test-Path $hkcu) { Remove-ItemProperty -Path $hkcu -Name 'TurnOffWindowsCopilot' -ErrorAction SilentlyContinue };
+                if (Test-Path $hklm) { Remove-ItemProperty -Path $hklm -Name 'TurnOffWindowsCopilot' -ErrorAction SilentlyContinue };
+
+                $ai = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI';
+                if (Test-Path $ai) { Remove-ItemProperty -Path $ai -Name 'DisableAIDataAnalysis' -ErrorAction SilentlyContinue };
+                'Copilot ve Recall varsayılan durumuna geri getirildi.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Windows 11 Copilot ve Recall varsayılan durumuna geri getirildi." : $"Hata: {res.Output}";
+        }
+
+        // =========================================================================
+        // REVERSIBLE WINDOWS UTILITIES & CONTEXT MENU (SORDUM / NILESOFT STANDARD)
+        // =========================================================================
+
         public static async Task<string> RestoreClassicContextMenuAsync()
         {
             var script = @"
                 $key = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32';
-                New-Item -Path $key -Value '' -Force | Out-Null;
+                if (-not (Test-Path $key)) { New-Item -Path $key -Force | Out-Null };
+                Set-ItemProperty -Path $key -Name '(Default)' -Value '' -Force;
                 Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue;
                 Start-Process explorer;
-                'Klasik sağ tık menüsü geri getirildi.'
+                'Klasik Windows 10 sağ tık menüsü başarıyla uygulandı.'
             ";
             var res = await RunPowerShellAsync(script);
-            return res.Success ? "Klasik Windows 10 sağ tık menüsü geri getirildi." : $"Hata: {res.Output}";
+            return res.Success ? "Klasik Windows 10 sağ tık menüsü etkinleştirildi." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> RevertModernContextMenuAsync()
+        {
+            var script = @"
+                $key = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}';
+                if (Test-Path $key) { Remove-Item -Path $key -Recurse -Force -ErrorAction SilentlyContinue };
+                Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue;
+                Start-Process explorer;
+                'Windows 11 modern sağ tık menüsüne geri dönüldü.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Windows 11 varsayılan modern sağ tık menüsü geri yüklendi." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> EnableClassicPhotoViewerAsync()
+        {
+            var script = @"
+                $pvKey = 'HKCU:\Software\Classes\Applications\photoviewer.dll\shell\open\command';
+                if (-not (Test-Path $pvKey)) { New-Item -Path $pvKey -Force | Out-Null };
+                Set-ItemProperty -Path $pvKey -Name '(Default)' -Value 'rundll32.exe ""%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll"", ImageView_Fullscreen %1' -Force;
+
+                $exts = @('.jpg','.jpeg','.png','.bmp','.gif','.ico','.tiff','.tif');
+                foreach ($ext in $exts) {
+                    $extKey = ""HKCU:\Software\Classes\$ext"";
+                    if (-not (Test-Path $extKey)) { New-Item -Path $extKey -Force | Out-Null };
+                    Set-ItemProperty -Path $extKey -Name '(Default)' -Value 'PhotoViewer.FileAssoc.Tiff' -Force;
+                }
+                'Klasik Windows Fotoğraf Görüntüleyici başarıyla etkinleştirildi.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Klasik Windows Fotoğraf Görüntüleyici tüm görsel formatları için etkinleştirildi." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> RevertDefaultPhotoViewerAsync()
+        {
+            var script = @"
+                $exts = @('.jpg','.jpeg','.png','.bmp','.gif','.ico','.tiff','.tif');
+                foreach ($ext in $exts) {
+                    $extKey = ""HKCU:\Software\Classes\$ext"";
+                    if (Test-Path $extKey) { Remove-Item -Path $extKey -Force -ErrorAction SilentlyContinue };
+                }
+                $pvApp = 'HKCU:\Software\Classes\Applications\photoviewer.dll';
+                if (Test-Path $pvApp) { Remove-Item -Path $pvApp -Recurse -Force -ErrorAction SilentlyContinue };
+                'Windows varsayılan Fotoğraflar uygulaması ilişkilendirmelerine geri dönüldü.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Windows varsayılan Fotoğraflar uygulamasına geri dönüldü." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> EnableTakeOwnershipMenuAsync()
+        {
+            var script = @"
+                $fileRunas = 'HKCU:\Software\Classes\*\shell\runas';
+                New-Item -Path ""$fileRunas\command"" -Force | Out-Null;
+                Set-ItemProperty -Path $fileRunas -Name '(Default)' -Value 'Sahipliği Al (Take Ownership)' -Force;
+                Set-ItemProperty -Path $fileRunas -Name 'NoWorkingDirectory' -Value '' -Force;
+                Set-ItemProperty -Path ""$fileRunas\command"" -Name '(Default)' -Value 'cmd.exe /c takeown /f ""%1"" && icacls ""%1"" /grant *S-1-3-4:F /c /l' -Force;
+                Set-ItemProperty -Path ""$fileRunas\command"" -Name 'IsolatedCommand' -Value 'cmd.exe /c takeown /f ""%1"" && icacls ""%1"" /grant *S-1-3-4:F /c /l' -Force;
+
+                $dirRunas = 'HKCU:\Software\Classes\Directory\shell\runas';
+                New-Item -Path ""$dirRunas\command"" -Force | Out-Null;
+                Set-ItemProperty -Path $dirRunas -Name '(Default)' -Value 'Sahipliği Al (Take Ownership)' -Force;
+                Set-ItemProperty -Path $dirRunas -Name 'NoWorkingDirectory' -Value '' -Force;
+                Set-ItemProperty -Path ""$dirRunas\command"" -Name '(Default)' -Value 'cmd.exe /c takeown /f ""%1"" /r /d y && icacls ""%1"" /grant *S-1-3-4:F /t /c /l' -Force;
+                Set-ItemProperty -Path ""$dirRunas\command"" -Name 'IsolatedCommand' -Value 'cmd.exe /c takeown /f ""%1"" /r /d y && icacls ""%1"" /grant *S-1-3-4:F /t /c /l' -Force;
+
+                'Dosya ve klasör sağ tık menüsüne Sahipliği Al eklendi.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Sağ tık 'Sahipliği Al (Take Ownership)' menüsü başarıyla eklendi." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> DisableTakeOwnershipMenuAsync()
+        {
+            var script = @"
+                Remove-Item -Path 'HKCU:\Software\Classes\*\shell\runas' -Recurse -Force -ErrorAction SilentlyContinue;
+                Remove-Item -Path 'HKCU:\Software\Classes\Directory\shell\runas' -Recurse -Force -ErrorAction SilentlyContinue;
+                'Sahipliği Al sağ tık menüsünden kaldırıldı.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Sağ tık 'Sahipliği Al' menüsü kaldırıldı ve varsayılana dönüldü." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> EnableAdminShellContextMenuAsync()
+        {
+            var script = @"
+                $cmdKey = 'HKCU:\Software\Classes\Directory\Background\shell\WinoxOpenCmdAdmin';
+                New-Item -Path ""$cmdKey\command"" -Force | Out-Null;
+                Set-ItemProperty -Path $cmdKey -Name '(Default)' -Value 'Yönetici Komut İstemi (CMD)' -Force;
+                Set-ItemProperty -Path $cmdKey -Name 'Icon' -Value 'cmd.exe' -Force;
+                Set-ItemProperty -Path ""$cmdKey\command"" -Name '(Default)' -Value 'cmd.exe /s /k pushd ""%V""' -Force;
+
+                $psKey = 'HKCU:\Software\Classes\Directory\Background\shell\WinoxOpenPsAdmin';
+                New-Item -Path ""$psKey\command"" -Force | Out-Null;
+                Set-ItemProperty -Path $psKey -Name '(Default)' -Value 'Yönetici PowerShell' -Force;
+                Set-ItemProperty -Path $psKey -Name 'Icon' -Value 'powershell.exe' -Force;
+                Set-ItemProperty -Path ""$psKey\command"" -Name '(Default)' -Value 'powershell.exe -NoExit -Command Set-Location -LiteralPath ''%V''' -Force;
+
+                'Yönetici CMD ve PowerShell sağ tık arka plan menüsüne eklendi.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Sağ tık 'Yönetici CMD' ve 'Yönetici PowerShell' kısayolları eklendi." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> DisableAdminShellContextMenuAsync()
+        {
+            var script = @"
+                Remove-Item -Path 'HKCU:\Software\Classes\Directory\Background\shell\WinoxOpenCmdAdmin' -Recurse -Force -ErrorAction SilentlyContinue;
+                Remove-Item -Path 'HKCU:\Software\Classes\Directory\Background\shell\WinoxOpenPsAdmin' -Recurse -Force -ErrorAction SilentlyContinue;
+                'Yönetici CMD ve PowerShell sağ tık menüsünden kaldırıldı.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Yönetici terminal kısayolları sağ tık menüsünden kaldırıldı." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> EnableSpoolerRestartMenuAsync()
+        {
+            var script = @"
+                $spKey = 'HKCU:\Software\Classes\DesktopBackground\Shell\WinoxRestartSpooler';
+                New-Item -Path ""$spKey\command"" -Force | Out-Null;
+                Set-ItemProperty -Path $spKey -Name '(Default)' -Value '🖨️ Yazıcı Biriktiricisini Sıfırla / Başlat' -Force;
+                Set-ItemProperty -Path $spKey -Name 'Icon' -Value 'shell32.dll,-16858' -Force;
+                Set-ItemProperty -Path ""$spKey\command"" -Name '(Default)' -Value 'cmd.exe /c net stop spooler & net start spooler' -Force;
+                'Masaüstü sağ tık menüsüne Yazıcı Sıfırla eklendi.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Masaüstü sağ tık 'Yazıcı Biriktiricisini Sıfırla' kısayolu eklendi." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> DisableSpoolerRestartMenuAsync()
+        {
+            var script = @"
+                Remove-Item -Path 'HKCU:\Software\Classes\DesktopBackground\Shell\WinoxRestartSpooler' -Recurse -Force -ErrorAction SilentlyContinue;
+                'Yazıcı Sıfırla sağ tık menüsünden kaldırıldı.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Yazıcı biriktirici kısayolu masaüstü sağ tık menüsünden kaldırıldı." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> EnablePowerMenuContextMenuAsync()
+        {
+            var script = @"
+                $pKey = 'HKCU:\Software\Classes\DesktopBackground\Shell\WinoxPowerMenu';
+                New-Item -Path $pKey -Force | Out-Null;
+                Set-ItemProperty -Path $pKey -Name 'MUIVerb' -Value '⚡ Gelişmiş Güç Menüsü' -Force;
+                Set-ItemProperty -Path $pKey -Name 'SubCommands' -Value 'WinoxRestart;WinoxSafeMode;WinoxUefi;WinoxShutdown' -Force;
+                Set-ItemProperty -Path $pKey -Name 'Icon' -Value 'shell32.dll,-28' -Force;
+
+                $cmdRoot = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell';
+                New-Item -Path ""$cmdRoot\WinoxRestart\command"" -Force | Out-Null;
+                Set-ItemProperty -Path ""$cmdRoot\WinoxRestart"" -Name '(Default)' -Value '🔄 Yeniden Başlat' -Force;
+                Set-ItemProperty -Path ""$cmdRoot\WinoxRestart\command"" -Name '(Default)' -Value 'shutdown /r /t 0' -Force;
+
+                New-Item -Path ""$cmdRoot\WinoxUefi\command"" -Force | Out-Null;
+                Set-ItemProperty -Path ""$cmdRoot\WinoxUefi"" -Name '(Default)' -Value '🛠️ UEFI / BIOS Ekranına Başlat' -Force;
+                Set-ItemProperty -Path ""$cmdRoot\WinoxUefi\command"" -Name '(Default)' -Value 'shutdown /r /fw /t 0' -Force;
+
+                New-Item -Path ""$cmdRoot\WinoxSafeMode\command"" -Force | Out-Null;
+                Set-ItemProperty -Path ""$cmdRoot\WinoxSafeMode"" -Name '(Default)' -Value '🛡️ Gelişmiş Kurtarma Menüsü' -Force;
+                Set-ItemProperty -Path ""$cmdRoot\WinoxSafeMode\command"" -Name '(Default)' -Value 'shutdown /r /o /t 0' -Force;
+
+                New-Item -Path ""$cmdRoot\WinoxShutdown\command"" -Force | Out-Null;
+                Set-ItemProperty -Path ""$cmdRoot\WinoxShutdown"" -Name '(Default)' -Value '🛑 Bilgisayarı Kapat' -Force;
+                Set-ItemProperty -Path ""$cmdRoot\WinoxShutdown\command"" -Name '(Default)' -Value 'shutdown /s /t 0' -Force;
+
+                'Masaüstü sağ tık menüsüne Gelişmiş Güç Menüsü eklendi.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Masaüstü sağ tık 'Gelişmiş Güç Menüsü' başarıyla eklendi." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> DisablePowerMenuContextMenuAsync()
+        {
+            var script = @"
+                Remove-Item -Path 'HKCU:\Software\Classes\DesktopBackground\Shell\WinoxPowerMenu' -Recurse -Force -ErrorAction SilentlyContinue;
+                $cmdRoot = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell';
+                Remove-Item -Path ""$cmdRoot\WinoxRestart"" -Recurse -Force -ErrorAction SilentlyContinue;
+                Remove-Item -Path ""$cmdRoot\WinoxUefi"" -Recurse -Force -ErrorAction SilentlyContinue;
+                Remove-Item -Path ""$cmdRoot\WinoxSafeMode"" -Recurse -Force -ErrorAction SilentlyContinue;
+                Remove-Item -Path ""$cmdRoot\WinoxShutdown"" -Recurse -Force -ErrorAction SilentlyContinue;
+                'Gelişmiş Güç Menüsü sağ tık menüsünden kaldırıldı.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Gelişmiş Güç Menüsü masaüstü sağ tık menüsünden kaldırıldı." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> ShowHiddenFilesAndExtensionsAsync()
+        {
+            var script = @"
+                $adv = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced';
+                Set-ItemProperty -Path $adv -Name 'Hidden' -Value 1 -Type DWord -Force;
+                Set-ItemProperty -Path $adv -Name 'HideFileExt' -Value 0 -Type DWord -Force;
+                Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue;
+                Start-Process explorer;
+                'Gizli dosyalar ve dosya uzantıları görünür yapıldı.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Gizli dosyalar ve dosya uzantıları (.exe, .dll, .txt) görünür yapıldı." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> RestoreHiddenFilesAndExtensionsAsync()
+        {
+            var script = @"
+                $adv = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced';
+                Set-ItemProperty -Path $adv -Name 'Hidden' -Value 2 -Type DWord -Force;
+                Set-ItemProperty -Path $adv -Name 'HideFileExt' -Value 1 -Type DWord -Force;
+                Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue;
+                Start-Process explorer;
+                'Dosya uzantıları ve gizli dosyalar varsayılan ayarlara döndürüldü.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Dosya uzantıları ve gizli dosyalar varsayılan Windows ayarlarına döndürüldü." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> EnableBingSearchAsync()
+        {
+            var script = @"
+                $key = 'HKCU:\Software\Policies\Microsoft\Windows\Explorer';
+                if (Test-Path $key) { Remove-ItemProperty -Path $key -Name 'DisableSearchBoxSuggestions' -ErrorAction SilentlyContinue };
+                'Başlat menüsü Bing arama önerileri varsayılana döndürüldü.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Başlat menüsü Bing arama önerileri varsayılana döndürüldü." : $"Hata: {res.Output}";
+        }
+
+        public static async Task<string> EnableTelemetryAsync()
+        {
+            var script = @"
+                Set-Service DiagTrack -StartupType Automatic -ErrorAction SilentlyContinue;
+                Start-Service DiagTrack -ErrorAction SilentlyContinue;
+                'Windows telemetri servisleri varsayılan çalışma durumuna döndürüldü.'
+            ";
+            var res = await RunPowerShellAsync(script);
+            return res.Success ? "Windows telemetri servisleri varsayılan çalışma durumuna döndürüldü." : $"Hata: {res.Output}";
         }
 
         // =========================================================================
@@ -799,6 +1100,24 @@ namespace WinoxIT.Services
             var reachable = res.Success && res.Output.Trim().Equals("True", StringComparison.OrdinalIgnoreCase);
             return (reachable, reachable ? $"Cihaz ({ip}) ağda çevrimiçi ve yanıt veriyor." : $"Cihaz ({ip}) çevrimdışı veya ICMP kapalı.");
         }
+
+        public static async Task<(bool Success, string Output)> CreateRestorePointAsync(string description = "WinoxIT Guvenli Sistem Noktasi")
+        {
+            var script = $@"
+                try {{
+                    Enable-ComputerRestore -Drive 'C:\' -ErrorAction SilentlyContinue
+                    Checkpoint-Computer -Description '{description}' -RestorePointType 'MODIFY_SETTINGS' -ErrorAction Stop
+                    'Sistem geri yükleme noktası başarıyla oluşturuldu.'
+                }} catch {{
+                    $err = $_.Exception.Message
+                    if ($err -match '0x80042306' -or $err -match 'disabled' -or $err -match 'devre dışı') {{
+                        'Sistem Koruması (System Restore) C: sürücüsü için devre dışı bırakılmış. Lütfen sysdm.cpl üzerinden Sistem Korumasını etkinleştiriniz.'
+                    }} else {{
+                        'Hata: ' + $err
+                    }}
+                }}";
+            return await RunPowerShellAsync(script, 90000);
+        }
     }
 
     public class LanFleetNode
@@ -807,5 +1126,14 @@ namespace WinoxIT.Services
         public string MACAddress { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public bool IsReachable { get; set; }
+    }
+
+    public class InstalledDriverItem
+    {
+        public string PublishedName { get; set; } = string.Empty;
+        public string ProviderName { get; set; } = string.Empty;
+        public string ClassName { get; set; } = string.Empty;
+        public string Version { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
     }
 }
