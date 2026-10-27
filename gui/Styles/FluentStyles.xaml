@@ -182,4 +182,43 @@
         <Setter Property="Padding" Value="8,2"/>
     </Style>
 
+    <!-- Sidebar Toggle Hamburger Button Style -->
+    <Style x:Key="FluentSidebarToggleBtn" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrushTextPrimary}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Width" Value="34"/>
+        <Setter Property="Height" Value="34"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6">
+                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrushBgCardHover}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Modal Dialog Card Style -->
+    <Style x:Key="FluentModalCard" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource BrushBgCard}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BrushBorderHighlight}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="24"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="30" Color="#000000" Opacity="0.6" ShadowDepth="6"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

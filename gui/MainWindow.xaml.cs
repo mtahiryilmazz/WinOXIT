@@ -135,6 +135,8 @@ namespace WinoxIT
         {
             if (PanelDashboard != null) PanelDashboard.Visibility = Visibility.Collapsed;
             if (PanelLanServer != null) PanelLanServer.Visibility = Visibility.Collapsed;
+            if (PanelIsoStudio != null) PanelIsoStudio.Visibility = Visibility.Collapsed;
+            if (PanelLanFleet != null) PanelLanFleet.Visibility = Visibility.Collapsed;
             if (PanelHardware != null) PanelHardware.Visibility = Visibility.Collapsed;
             if (PanelDrivers != null) PanelDrivers.Visibility = Visibility.Collapsed;
             if (PanelPrinters != null) PanelPrinters.Visibility = Visibility.Collapsed;
@@ -169,6 +171,18 @@ namespace WinoxIT
                     TxtHeaderSubtitle.Text = "0.0.0.0:9999 üzerinden ağdaki telefon, tablet ve bilgisayarlardan erişim.";
                     await CheckServerStatusAsync();
                     PopulateLanAddresses();
+                    break;
+
+                case "NavIsoStudio":
+                    PanelIsoStudio.Visibility = Visibility.Visible;
+                    TxtHeaderTitle.Text = "💿 Katılımsız (Unattended) ISO & WIM Stüdyosu";
+                    TxtHeaderSubtitle.Text = "Windows 11 TPM 2.0, SecureBoot, RAM ve CPU bypass yanıt dosyası ve DISM sürücü enjeksiyonu.";
+                    break;
+
+                case "NavLanFleet":
+                    PanelLanFleet.Visibility = Visibility.Visible;
+                    TxtHeaderTitle.Text = "📡 LAN Filo Keşfi & Push Agent";
+                    TxtHeaderSubtitle.Text = "Ağdaki diğer teknisyen ve istemci bilgisayarları otomatik keşfetme ve uzaktan sağlık taraması.";
                     break;
 
                 case "NavHardware":
@@ -241,6 +255,257 @@ namespace WinoxIT
             }
 
             Log($"Menüye geçildi: {TxtHeaderTitle.Text}");
+        }
+
+        // ==========================================
+        // SIDEBAR COLLAPSE / EXPAND TOGGLE (☰ DARALT / AÇ)
+        // ==========================================
+
+        private bool _isSidebarCollapsed = false;
+
+        private void BtnToggleSidebar_Click(object sender, RoutedEventArgs e)
+        {
+            _isSidebarCollapsed = !_isSidebarCollapsed;
+
+            if (_isSidebarCollapsed)
+            {
+                ColSidebar.Width = new GridLength(68);
+                BrandTextStack.Visibility = Visibility.Collapsed;
+                TxtNavSection1.Visibility = Visibility.Collapsed;
+                TxtNavSectionSysForge.Visibility = Visibility.Collapsed;
+                TxtNavSection2.Visibility = Visibility.Collapsed;
+                TxtNavSection3.Visibility = Visibility.Collapsed;
+                TxtNavSection4.Visibility = Visibility.Collapsed;
+                TxtNavSection5.Visibility = Visibility.Collapsed;
+                TxtSidebarFooterText.Visibility = Visibility.Collapsed;
+                BtnToggleSidebar.Content = "»";
+
+                SetNavButtonsCompact(true);
+            }
+            else
+            {
+                ColSidebar.Width = new GridLength(270);
+                BrandTextStack.Visibility = Visibility.Visible;
+                TxtNavSection1.Visibility = Visibility.Visible;
+                TxtNavSectionSysForge.Visibility = Visibility.Visible;
+                TxtNavSection2.Visibility = Visibility.Visible;
+                TxtNavSection3.Visibility = Visibility.Visible;
+                TxtNavSection4.Visibility = Visibility.Visible;
+                TxtNavSection5.Visibility = Visibility.Visible;
+                TxtSidebarFooterText.Visibility = Visibility.Visible;
+                BtnToggleSidebar.Content = "☰";
+
+                SetNavButtonsCompact(false);
+            }
+        }
+
+        private void SetNavButtonsCompact(bool compact)
+        {
+            SetButtonText(NavDashboard, "📊", "📊  Genel Bakış & Durum", compact);
+            SetButtonText(NavLanServer, "🌐", "🌐  Sanal Web Sunucu (LAN)", compact);
+            SetButtonText(NavIsoStudio, "💿", "💿  Katılımsız ISO / WIM Stüdyosu", compact);
+            SetButtonText(NavLanFleet, "📡", "📡  LAN Filo & Push Agent", compact);
+            SetButtonText(NavHardware, "🛡️", "🛡️  Donanım Ekspertizi & HWID", compact);
+            SetButtonText(NavDrivers, "📦", "📦  Sürücüler & Offline NIC", compact);
+            SetButtonText(NavPrinters, "🖨️", "🖨️  Yazıcı & Spooler Onarımı", compact);
+            SetButtonText(NavAppDeploy, "🛒", "🛒  Kurumsal AppDeploy (Winget)", compact);
+            SetButtonText(NavCleaner, "🧹", "🧹  Sistem Temizliği & Cache", compact);
+            SetButtonText(NavDebloat, "⚡", "⚡  Win 11 Debloat & Gizlilik", compact);
+            SetButtonText(NavNetwork, "📶", "📶  Ağ & DNS & TCP/IP Onarım", compact);
+            SetButtonText(NavDiagnostics, "🔧", "🔧  Çekirdek Sistem Onarımı", compact);
+            SetButtonText(NavProcesses, "⚙️", "⚙️  İşlemler & Hizmetler", compact);
+            SetButtonText(NavStartup, "🚀", "🚀  Başlangıç Yöneticisi", compact);
+            SetButtonText(NavAI, "🤖", "🤖  Yapay Zekâ Tanılama", compact);
+        }
+
+        private static void SetButtonText(RadioButton? rb, string icon, string fullText, bool compact)
+        {
+            if (rb == null) return;
+            rb.Content = compact ? icon : fullText;
+        }
+
+        // ==========================================
+        // IN-APP MODAL / POPUP DIALOG WINDOW
+        // ==========================================
+
+        private void ShowModal(string title, string content, string subtitle = "Modül içi anlık önizleme penceresi")
+        {
+            Dispatcher.Invoke(() =>
+            {
+                TxtModalTitle.Text = title;
+                TxtModalSubtitle.Text = subtitle;
+                TxtModalContent.Text = content;
+                TxtModalContent.ScrollToHome();
+                ModalOverlay.Visibility = Visibility.Visible;
+            });
+        }
+
+        private void BtnCloseModal_Click(object sender, RoutedEventArgs e)
+        {
+            ModalOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void BtnModalCopy_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(TxtModalContent.Text);
+                Log("Pencere içeriği panoya kopyalandı.");
+            }
+            catch (Exception ex)
+            {
+                Log($"Panoya kopyalama hatası: {ex.Message}");
+            }
+        }
+
+        private void BtnModalSave_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var sfd = new Microsoft.Win32.SaveFileDialog
+                {
+                    FileName = TxtModalTitle.Text.Contains("xml", StringComparison.OrdinalIgnoreCase) ? "autounattend.xml" : "Rapor.txt",
+                    Filter = "Dosyalar (*.*)|*.*"
+                };
+                if (sfd.ShowDialog() == true)
+                {
+                    File.WriteAllText(sfd.FileName, TxtModalContent.Text, Encoding.UTF8);
+                    Log($"İçerik dosyaya kaydedildi: {sfd.FileName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Kaydetme hatası: {ex.Message}");
+            }
+        }
+
+        // ==========================================
+        // SYSFORGE: KATILIMSIZ ISO & WIM İŞLEMLERİ
+        // ==========================================
+
+        private async void BtnGenerateIsoXml_Click(object sender, RoutedEventArgs e)
+        {
+            Log("Windows 11 Katılımsız (autounattend.xml) yanıt dosyası üretiliyor...");
+            var user = string.IsNullOrWhiteSpace(TxtIsoUser.Text) ? "WinoxAdmin" : TxtIsoUser.Text.Trim();
+            var pass = TxtIsoPass.Password;
+            var tpm = ChkIsoBypassTpm.IsChecked == true;
+            var secureBoot = ChkIsoBypassSecureBoot.IsChecked == true;
+            var ram = ChkIsoBypassRam.IsChecked == true;
+            var cpu = ChkIsoBypassCpu.IsChecked == true;
+
+            var (success, xml, savedPath) = await NativeSystemEngine.GenerateUnattendedXmlAsync(user, pass, tpm, secureBoot, ram, cpu);
+            if (success)
+            {
+                Log($"autounattend.xml başarıyla oluşturuldu: {savedPath}");
+                ShowModal("autounattend.xml — Katılımsız Kurulum Dosyası", xml, $"Dosya kaydedildi: {savedPath}");
+            }
+            else
+            {
+                Log($"Hata: {xml}");
+            }
+        }
+
+        private void BtnOpenIsoWorkspace_Click(object sender, RoutedEventArgs e)
+        {
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var dir = Path.Combine(desktop, "WinoxIT_ISO_Workspace");
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            Process.Start("explorer.exe", dir);
+        }
+
+        private void BtnBrowseWim_Click(object sender, RoutedEventArgs e)
+        {
+            var ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Windows Image (*.wim)|*.wim|Tüm Dosyalar (*.*)|*.*",
+                Title = "WIM İmaj Dosyası Seçin"
+            };
+            if (ofd.ShowDialog() == true)
+            {
+                TxtWimFilePath.Text = ofd.FileName;
+            }
+        }
+
+        private async void BtnWimMount_Click(object sender, RoutedEventArgs e)
+        {
+            Log($"DISM Mount başlatılıyor: {TxtWimFilePath.Text} -> {TxtWimMountDir.Text}");
+            var (success, output) = await NativeSystemEngine.MountWimAsync(TxtWimFilePath.Text, 1, TxtWimMountDir.Text);
+            Log(output);
+            ShowModal("DISM Mount Sonucu", output);
+        }
+
+        private async void BtnWimInjectDrivers_Click(object sender, RoutedEventArgs e)
+        {
+            var driversDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "drivers", "universal_nic");
+            Log($"Sürücü enjeksiyonu başlatılıyor: {driversDir}");
+            var (success, output) = await NativeSystemEngine.InjectDriversToWimAsync(TxtWimMountDir.Text, driversDir);
+            Log(output);
+            ShowModal("Sürücü Enjeksiyon Sonucu", output);
+        }
+
+        private async void BtnWimCommit_Click(object sender, RoutedEventArgs e)
+        {
+            Log($"DISM Commit (Kaydet & Kapat) başlatılıyor: {TxtWimMountDir.Text}");
+            var (success, output) = await NativeSystemEngine.UnmountWimAsync(TxtWimMountDir.Text, commit: true);
+            Log(output);
+            ShowModal("DISM Commit Sonucu", output);
+        }
+
+        private async void BtnWimDiscard_Click(object sender, RoutedEventArgs e)
+        {
+            Log($"DISM Discard (İptal Et) başlatılıyor: {TxtWimMountDir.Text}");
+            var (success, output) = await NativeSystemEngine.UnmountWimAsync(TxtWimMountDir.Text, commit: false);
+            Log(output);
+            ShowModal("DISM Discard Sonucu", output);
+        }
+
+        // ==========================================
+        // SYSFORGE: LAN FİLO DAĞITIMI & PUSH AGENT
+        // ==========================================
+
+        private async void BtnDiscoverLanFleet_Click(object sender, RoutedEventArgs e)
+        {
+            Log("Yerel ağdaki cihazlar taranıyor (ARP / NetNeighbor)...");
+            var nodes = await NativeSystemEngine.DiscoverLanNodesAsync();
+            GridLanFleet.ItemsSource = nodes;
+            Log($"Tarama tamamlandı: {nodes.Count} aktif ağ cihazı tespit edildi.");
+            if (nodes.Count > 0 && string.IsNullOrWhiteSpace(TxtFleetTargetIp.Text))
+            {
+                TxtFleetTargetIp.Text = nodes[0].IPAddress;
+            }
+        }
+
+        private async void BtnPingFleetTarget_Click(object sender, RoutedEventArgs e)
+        {
+            var target = TxtFleetTargetIp.Text.Trim();
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                Log("Lütfen geçerli bir hedef IP girin.");
+                return;
+            }
+            Log($"Ping testi gönderiliyor: {target}...");
+            var (reachable, msg) = await NativeSystemEngine.PingLanHostAsync(target);
+            Log(msg);
+            ShowModal("Ağ Ping Testi Sonucu", msg);
+        }
+
+        private async void BtnProbeFleetTarget_Click(object sender, RoutedEventArgs e)
+        {
+            var target = TxtFleetTargetIp.Text.Trim();
+            if (string.IsNullOrWhiteSpace(target)) return;
+            Log($"Hedef cihaza WinoxIT sağlık probu gönderiliyor: http://{target}:9999/api/status ...");
+            try
+            {
+                using var client = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(4) };
+                var res = await client.GetStringAsync($"http://{target}:9999/api/status");
+                Log($"Cihaz yanıt verdi ({target}):\n{res}");
+                ShowModal($"WinoxIT Sağlık Raporu ({target})", res);
+            }
+            catch (Exception ex)
+            {
+                Log($"Cihazda WinoxIT servisi algılanamadı ({target}): {ex.Message}");
+                ShowModal("Sağlık Probu Hatası", $"Hedef cihazda (http://{target}:9999) WinoxIT sunucusu yanıt vermedi.\n\nHata: {ex.Message}");
+            }
         }
 
         // ==========================================

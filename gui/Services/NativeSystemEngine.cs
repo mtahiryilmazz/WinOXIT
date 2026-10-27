@@ -580,7 +580,232 @@ namespace WinoxIT.Services
                 'Klasik sağ tık menüsü geri getirildi.'
             ";
             var res = await RunPowerShellAsync(script);
-            return res.Success ? "Klasik Windows 10 Sağ Tık Menüsü etkinleştirildi." : $"Hata: {res.Output}";
+            return res.Success ? "Klasik Windows 10 sağ tık menüsü geri getirildi." : $"Hata: {res.Output}";
         }
+
+        // =========================================================================
+        // 6. SYSFORGE TRANSFERRED: KATILIMSIZ (UNATTENDED) ISO & WIM İMAJ MOTORU
+        // =========================================================================
+
+        public static async Task<(bool Success, string Xml, string SavedPath)> GenerateUnattendedXmlAsync(
+            string username = "WinoxAdmin",
+            string password = "",
+            bool bypassTpm = true,
+            bool bypassSecureBoot = true,
+            bool bypassRam = true,
+            bool bypassCpu = true,
+            string targetPath = "")
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    var passElement = string.IsNullOrWhiteSpace(password)
+                        ? "<Password><Value></Value><PlainText>true</PlainText></Password>"
+                        : $"<Password><Value>{password}</Value><PlainText>true</PlainText></Password>";
+
+                    var labCommands = new StringBuilder();
+                    int order = 1;
+
+                    if (bypassTpm)
+                    {
+                        labCommands.AppendLine($@"                <RunSynchronousCommand wcm:action=""add"">
+                    <Order>{order++}</Order>
+                    <Path>reg add HKLM\SYSTEM\Setup\LabConfig /v BypassTPMCheck /t REG_DWORD /d 1 /f</Path>
+                    <Description>Bypass TPM 2.0 Check</Description>
+                </RunSynchronousCommand>");
+                    }
+                    if (bypassSecureBoot)
+                    {
+                        labCommands.AppendLine($@"                <RunSynchronousCommand wcm:action=""add"">
+                    <Order>{order++}</Order>
+                    <Path>reg add HKLM\SYSTEM\Setup\LabConfig /v BypassSecureBootCheck /t REG_DWORD /d 1 /f</Path>
+                    <Description>Bypass SecureBoot Check</Description>
+                </RunSynchronousCommand>");
+                    }
+                    if (bypassRam)
+                    {
+                        labCommands.AppendLine($@"                <RunSynchronousCommand wcm:action=""add"">
+                    <Order>{order++}</Order>
+                    <Path>reg add HKLM\SYSTEM\Setup\LabConfig /v BypassRAMCheck /t REG_DWORD /d 1 /f</Path>
+                    <Description>Bypass RAM Check</Description>
+                </RunSynchronousCommand>");
+                    }
+                    if (bypassCpu)
+                    {
+                        labCommands.AppendLine($@"                <RunSynchronousCommand wcm:action=""add"">
+                    <Order>{order++}</Order>
+                    <Path>reg add HKLM\SYSTEM\Setup\LabConfig /v BypassCPUCheck /t REG_DWORD /d 1 /f</Path>
+                    <Description>Bypass CPU Check</Description>
+                </RunSynchronousCommand>");
+                    }
+
+                    // Always bypass storage check for VM / legacy drives
+                    labCommands.AppendLine($@"                <RunSynchronousCommand wcm:action=""add"">
+                    <Order>{order++}</Order>
+                    <Path>reg add HKLM\SYSTEM\Setup\LabConfig /v BypassStorageCheck /t REG_DWORD /d 1 /f</Path>
+                    <Description>Bypass Storage Check</Description>
+                </RunSynchronousCommand>");
+
+                    var xml = $@"<?xml version=""1.0"" encoding=""utf-8""?>
+<unattend xmlns=""urn:schemas-microsoft-com:unattend"">
+    <!-- ⚡ WinoxIT Enterprise Unattended Answer File (autounattend.xml) -->
+    <!-- Windows 11 TPM, SecureBoot, RAM & CPU Check Bypass Active -->
+    <settings pass=""windowsPE"">
+        <component name=""Microsoft-Windows-Setup"" processorArchitecture=""amd64"" publicKeyToken=""31bf3856ad364e35"" language=""neutral"" versionScope=""nonSxS"" xmlns:wcm=""http://schemas.microsoft.com/WMIConfig/2002/State"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+            <RunSynchronous>
+{labCommands}
+            </RunSynchronous>
+            <UserData>
+                <AcceptEula>true</AcceptEula>
+            </UserData>
+        </component>
+        <component name=""Microsoft-Windows-International-Core-WinPE"" processorArchitecture=""amd64"" publicKeyToken=""31bf3856ad364e35"" language=""neutral"" versionScope=""nonSxS"" xmlns:wcm=""http://schemas.microsoft.com/WMIConfig/2002/State"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+            <SetupUILanguage>
+                <UILanguage>tr-TR</UILanguage>
+            </SetupUILanguage>
+            <InputLocale>041f:0000041f</InputLocale>
+            <SystemLocale>tr-TR</SystemLocale>
+            <UILanguage>tr-TR</UILanguage>
+            <UserLocale>tr-TR</UserLocale>
+        </component>
+    </settings>
+    <settings pass=""specialize"">
+        <component name=""Microsoft-Windows-Shell-Setup"" processorArchitecture=""amd64"" publicKeyToken=""31bf3856ad364e35"" language=""neutral"" versionScope=""nonSxS"" xmlns:wcm=""http://schemas.microsoft.com/WMIConfig/2002/State"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+            <TimeZone>Turkey Standard Time</TimeZone>
+        </component>
+    </settings>
+    <settings pass=""oobeSystem"">
+        <component name=""Microsoft-Windows-Shell-Setup"" processorArchitecture=""amd64"" publicKeyToken=""31bf3856ad364e35"" language=""neutral"" versionScope=""nonSxS"" xmlns:wcm=""http://schemas.microsoft.com/WMIConfig/2002/State"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <HideLocalAccountScreen>true</HideLocalAccountScreen>
+                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+                <ProtectYourPC>3</ProtectYourPC>
+            </OOBE>
+            <UserAccounts>
+                <LocalAccounts>
+                    <LocalAccount wcm:action=""add"">
+                        {passElement}
+                        <Description>WinoxIT Local Administrator</Description>
+                        <DisplayName>{username}</DisplayName>
+                        <Group>Administrators</Group>
+                        <Name>{username}</Name>
+                    </LocalAccount>
+                </LocalAccounts>
+            </UserAccounts>
+            <AutoLogon>
+                {passElement}
+                <Enabled>true</Enabled>
+                <LogonCount>1</LogonCount>
+                <Username>{username}</Username>
+            </AutoLogon>
+        </component>
+    </settings>
+</unattend>";
+
+                    string saveFile = targetPath;
+                    if (string.IsNullOrWhiteSpace(saveFile))
+                    {
+                        var desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                        var workDir = Path.Combine(desktop, "WinoxIT_ISO_Workspace");
+                        if (!Directory.Exists(workDir)) Directory.CreateDirectory(workDir);
+                        saveFile = Path.Combine(workDir, "autounattend.xml");
+                    }
+
+                    File.WriteAllText(saveFile, xml, Encoding.UTF8);
+                    return (true, xml, saveFile);
+                }
+                catch (Exception ex)
+                {
+                    return (false, ex.Message, string.Empty);
+                }
+            });
+        }
+
+        public static async Task<(bool Success, string Output)> MountWimAsync(string wimPath, int index, string mountDir)
+        {
+            if (!File.Exists(wimPath)) return (false, $"WIM dosyası bulunamadı: {wimPath}");
+            if (!Directory.Exists(mountDir)) Directory.CreateDirectory(mountDir);
+
+            var cmd = $"dism /Mount-Image /ImageFile:\"{wimPath}\" /Index:{index} /MountDir:\"{mountDir}\"";
+            return await RunCmdAsync(cmd, 180000);
+        }
+
+        public static async Task<(bool Success, string Output)> UnmountWimAsync(string mountDir, bool commit)
+        {
+            var flag = commit ? "/Commit" : "/Discard";
+            var cmd = $"dism /Unmount-Image /MountDir:\"{mountDir}\" {flag}";
+            return await RunCmdAsync(cmd, 180000);
+        }
+
+        public static async Task<(bool Success, string Output)> InjectDriversToWimAsync(string mountDir, string driversDir)
+        {
+            var cmd = $"dism /Image:\"{mountDir}\" /Add-Driver /Driver:\"{driversDir}\" /Recurse /ForceUnsigned";
+            return await RunCmdAsync(cmd, 180000);
+        }
+
+        // =========================================================================
+        // 7. SYSFORGE TRANSFERRED: LAN FİLO DAĞITIMI & PUSH AGENT
+        // =========================================================================
+
+        public static async Task<List<LanFleetNode>> DiscoverLanNodesAsync()
+        {
+            var script = @"
+                Get-NetNeighbor -AddressFamily IPv4 -ErrorAction SilentlyContinue | 
+                Where-Object { $_.State -ne 'Permanent' -and $_.IPAddress -notlike '224.*' -and $_.IPAddress -notlike '239.*' -and $_.IPAddress -notlike '255.*' -and $_.IPAddress -notlike '127.*' } | 
+                Select-Object IPAddress, LinkLayerAddress, State | ConvertTo-Json -Compress
+            ";
+
+            var res = await RunPowerShellAsync(script, 10000);
+            var list = new List<LanFleetNode>();
+
+            if (res.Success && !string.IsNullOrWhiteSpace(res.Output))
+            {
+                try
+                {
+                    using var doc = JsonDocument.Parse(res.Output);
+                    if (doc.RootElement.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var el in doc.RootElement.EnumerateArray())
+                        {
+                            list.Add(ParseNode(el));
+                        }
+                    }
+                    else if (doc.RootElement.ValueKind == JsonValueKind.Object)
+                    {
+                        list.Add(ParseNode(doc.RootElement));
+                    }
+                }
+                catch { }
+            }
+
+            return list;
+
+            static LanFleetNode ParseNode(JsonElement el)
+            {
+                var ip = el.TryGetProperty("IPAddress", out var pIp) ? pIp.GetString() ?? "" : "";
+                var mac = el.TryGetProperty("LinkLayerAddress", out var pMac) ? pMac.GetString() ?? "" : "";
+                var state = el.TryGetProperty("State", out var pState) ? pState.GetString() ?? "" : "";
+                return new LanFleetNode { IPAddress = ip, MACAddress = mac, State = state, IsReachable = state == "Reachable" };
+            }
+        }
+
+        public static async Task<(bool Reachable, string Output)> PingLanHostAsync(string ip)
+        {
+            var script = $"Test-Connection -ComputerName '{ip}' -Count 2 -Quiet";
+            var res = await RunPowerShellAsync(script, 8000);
+            var reachable = res.Success && res.Output.Trim().Equals("True", StringComparison.OrdinalIgnoreCase);
+            return (reachable, reachable ? $"Cihaz ({ip}) ağda çevrimiçi ve yanıt veriyor." : $"Cihaz ({ip}) çevrimdışı veya ICMP kapalı.");
+        }
+    }
+
+    public class LanFleetNode
+    {
+        public string IPAddress { get; set; } = string.Empty;
+        public string MACAddress { get; set; } = string.Empty;
+        public string State { get; set; } = string.Empty;
+        public bool IsReachable { get; set; }
     }
 }

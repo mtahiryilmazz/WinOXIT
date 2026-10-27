@@ -14,7 +14,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280" />
+            <ColumnDefinition x:Name="ColSidebar" Width="270" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -27,68 +27,77 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <!-- Brand Header -->
-                <StackPanel Grid.Row="0" Margin="20,24,20,16">
-                    <Grid Margin="0,0,0,16">
+                <!-- Brand Header & Sidebar Toggle (Daralt / Genişlet) -->
+                <StackPanel Grid.Row="0" Margin="14,16,14,12">
+                    <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="{StaticResource BrushAccentGradient}" Margin="0,0,12,0">
-                            <TextBlock Text="⚡" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Grid.Column="0" Width="38" Height="38" CornerRadius="9" Background="{StaticResource BrushAccentGradient}" Margin="0,0,10,0">
+                            <TextBlock Text="⚡" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="WinoxIT" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" />
-                            <TextBlock Text="Enterprise IT Suite" FontSize="11" Foreground="{DynamicResource BrushTextSecondary}" />
+                        <StackPanel x:Name="BrandTextStack" Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="WinoxIT" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" />
+                            <TextBlock Text="Enterprise IT Suite" FontSize="10.5" Foreground="{DynamicResource BrushTextSecondary}" />
                         </StackPanel>
+
+                        <!-- Hamburger Toggle Button -->
+                        <Button x:Name="BtnToggleSidebar" Grid.Column="2" Content="☰" Style="{StaticResource FluentSidebarToggleBtn}"
+                                ToolTip="Menüyü Daralt / Genişlet" Click="BtnToggleSidebar_Click" VerticalAlignment="Center"/>
                     </Grid>
 
-                    <Separator Background="{DynamicResource BrushBorder}" Margin="0,0,0,8"/>
+                    <Separator Background="{DynamicResource BrushBorder}" Margin="0,0,0,4"/>
                 </StackPanel>
 
                 <!-- Navigation Menu Items -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Margin="0,4,0,0">
-                        <TextBlock Text="KONTROL MERKEZİ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="20,8,20,4"/>
-                        <RadioButton x:Name="NavDashboard" Content="📊  Genel Bakış &amp; Durum" Style="{StaticResource FluentNavButton}" IsChecked="True" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavLanServer" Content="🌐  Sanal Web Sunucu (LAN)" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                    <StackPanel Margin="0,2,0,0">
+                        <TextBlock x:Name="TxtNavSection1" Text="KONTROL MERKEZİ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,6,18,3"/>
+                        <RadioButton x:Name="NavDashboard" Content="📊  Genel Bakış &amp; Durum" ToolTip="Genel Bakış &amp; Durum" Style="{StaticResource FluentNavButton}" IsChecked="True" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavLanServer" Content="🌐  Sanal Web Sunucu (LAN)" ToolTip="Sanal Web Sunucu (LAN)" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
 
-                        <TextBlock Text="DONANIM &amp; EKSPERTİZ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="20,16,20,4"/>
-                        <RadioButton x:Name="NavHardware" Content="🛡️  Donanım Ekspertizi &amp; HWID" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavDrivers" Content="📦  Sürücüler &amp; Offline NIC" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavPrinters" Content="🖨️  Yazıcı &amp; Spooler Onarımı" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <TextBlock x:Name="TxtNavSectionSysForge" Text="İMAJ &amp; AĞ FİLOSU (SYSFORGE)" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
+                        <RadioButton x:Name="NavIsoStudio" Content="💿  Katılımsız ISO / WIM Stüdyosu" ToolTip="Katılımsız ISO / WIM Stüdyosu" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavLanFleet" Content="📡  LAN Filo &amp; Push Agent" ToolTip="LAN Filo &amp; Push Agent" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
 
-                        <TextBlock Text="YAZILIM &amp; DAĞITIM" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="20,16,20,4"/>
-                        <RadioButton x:Name="NavAppDeploy" Content="🛒  Kurumsal AppDeploy (Winget)" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <TextBlock x:Name="TxtNavSection2" Text="DONANIM &amp; EKSPERTİZ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
+                        <RadioButton x:Name="NavHardware" Content="🛡️  Donanım Ekspertizi &amp; HWID" ToolTip="Donanım Ekspertizi &amp; HWID" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavDrivers" Content="📦  Sürücüler &amp; Offline NIC" ToolTip="Sürücüler &amp; Offline NIC" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavPrinters" Content="🖨️  Yazıcı &amp; Spooler Onarımı" ToolTip="Yazıcı &amp; Spooler Onarımı" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
 
-                        <TextBlock Text="SİSTEM ONARIMI &amp; GİZLİLİK" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="20,16,20,4"/>
-                        <RadioButton x:Name="NavCleaner" Content="🧹  Sistem Temizliği &amp; Cache" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavDebloat" Content="⚡  Win 11 Debloat &amp; Gizlilik" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavNetwork" Content="📡  Ağ &amp; DNS &amp; TCP/IP Onarım" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <TextBlock x:Name="TxtNavSection3" Text="YAZILIM &amp; DAĞITIM" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
+                        <RadioButton x:Name="NavAppDeploy" Content="🛒  Kurumsal AppDeploy (Winget)" ToolTip="Kurumsal AppDeploy (Winget)" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
 
-                        <TextBlock Text="YÖNETİM &amp; ANALİZ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="20,16,20,4"/>
-                        <RadioButton x:Name="NavDiagnostics" Content="🔧  Çekirdek Sistem Onarımı" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavProcesses" Content="⚙️  İşlemler &amp; Hizmetler" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavStartup" Content="🚀  Başlangıç Yöneticisi" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
-                        <RadioButton x:Name="NavAI" Content="🤖  Yapay Zekâ Tanılama" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <TextBlock x:Name="TxtNavSection4" Text="SİSTEM ONARIMI &amp; GİZLİLİK" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
+                        <RadioButton x:Name="NavCleaner" Content="🧹  Sistem Temizliği &amp; Cache" ToolTip="Sistem Temizliği &amp; Cache" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavDebloat" Content="⚡  Win 11 Debloat &amp; Gizlilik" ToolTip="Win 11 Debloat &amp; Gizlilik" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavNetwork" Content="📶  Ağ &amp; DNS &amp; TCP/IP Onarım" ToolTip="Ağ &amp; DNS &amp; TCP/IP Onarım" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+
+                        <TextBlock x:Name="TxtNavSection5" Text="YÖNETİM &amp; ANALİZ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="18,12,18,3"/>
+                        <RadioButton x:Name="NavDiagnostics" Content="🔧  Çekirdek Sistem Onarımı" ToolTip="Çekirdek Sistem Onarımı" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavProcesses" Content="⚙️  İşlemler &amp; Hizmetler" ToolTip="İşlemler &amp; Hizmetler" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavStartup" Content="🚀  Başlangıç Yöneticisi" ToolTip="Başlangıç Yöneticisi" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
+                        <RadioButton x:Name="NavAI" Content="🤖  Yapay Zekâ Tanılama" ToolTip="Yapay Zekâ Tanılama" Style="{StaticResource FluentNavButton}" Checked="Nav_Checked"/>
                     </StackPanel>
                 </ScrollViewer>
 
                 <!-- Sidebar Bottom Status Footer -->
-                <Border Grid.Row="2" Padding="20,14" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="0,1,0,0" Background="{DynamicResource BrushBgSidebar}">
+                <Border Grid.Row="2" Padding="16,12" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="0,1,0,0" Background="{DynamicResource BrushBgSidebar}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="WinoxIT v1.0.0" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}"/>
-                            <TextBlock x:Name="TxtServerMiniStatus" Text="Sunucu: Kontrol ediliyor..." FontSize="10" Foreground="{DynamicResource BrushTextSecondary}"/>
+                        <StackPanel x:Name="TxtSidebarFooterText" Grid.Column="0">
+                            <TextBlock Text="WinoxIT v1.0.0" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                            <TextBlock x:Name="TxtServerMiniStatus" Text="Sunucu: Kontrol ediliyor..." FontSize="9.5" Foreground="{DynamicResource BrushTextSecondary}"/>
                         </StackPanel>
-                        <Border Grid.Column="1" Style="{StaticResource FluentBadge}">
-                            <TextBlock Text="NET 8 / RUST" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"/>
+                        <Border Grid.Column="1" Style="{StaticResource FluentBadge}" HorizontalAlignment="Center">
+                            <TextBlock Text="NET 8 / RUST" FontSize="9.5" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"/>
                         </Border>
                     </Grid>
                 </Border>
@@ -533,6 +542,122 @@
                         </Border>
                     </StackPanel>
 
+                    <!-- 12. VIEW: KATILIMSIZ ISO / WIM STÜDYOSU (SYSFORGE TRANSFERRED) -->
+                    <StackPanel x:Name="PanelIsoStudio" Visibility="Collapsed">
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="💿 Katılımsız (Unattended) Windows 11 ISO &amp; WIM Stüdyosu" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                <TextBlock Text="TPM 2.0, SecureBoot, RAM ve CPU kontrollerini bypass eden autounattend.xml ve DISM çevrimdışı sürücü enjeksiyonu." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                <TextBlock Text="DONANIM KISITLAMALARI BYPASS &amp; KURULUM AYARLARI" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,10"/>
+                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                    <CheckBox x:Name="ChkIsoBypassTpm" Content="Bypass TPM 2.0" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
+                                    <CheckBox x:Name="ChkIsoBypassSecureBoot" Content="Bypass SecureBoot" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
+                                    <CheckBox x:Name="ChkIsoBypassRam" Content="Bypass 4GB RAM Sınırı" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
+                                    <CheckBox x:Name="ChkIsoBypassCpu" Content="Bypass Desteklenmeyen CPU" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
+                                    <CheckBox x:Name="ChkIsoBypassStorage" Content="Bypass 64GB Depolama &amp; VM" IsChecked="True" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,20,10"/>
+                                </WrapPanel>
+
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Yerel Yönetici Kullanıcı Adı:" FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,4"/>
+                                        <TextBox x:Name="TxtIsoUser" Text="WinoxAdmin" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,6"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Yönetici Parolası (Boş bırakılabilir):" FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,4"/>
+                                        <PasswordBox x:Name="TxtIsoPass" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,6"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <WrapPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <Button x:Name="BtnGenerateIsoXml" Content="⚡ autounattend.xml Oluştur &amp; Pencerede Önizle" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnGenerateIsoXml_Click"/>
+                                    <Button x:Name="BtnOpenIsoWorkspace" Content="📂 ISO Çalışma Klasörünü Aç" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnOpenIsoWorkspace_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- DISM WIM Operations -->
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="📦 DISM Çevrimdışı WIM İmaj ve Sürücü Enjeksiyonu" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                <TextBlock Text="install.wim veya boot.wim dosyasını bağlayıp içine Universal NIC ve OEM sürücülerini internetsiz entegre edin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="WIM Dosya Yolu:" VerticalAlignment="Center" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                    <TextBox x:Name="TxtWimFilePath" Grid.Column="1" Text="C:\WinoxIT_Workspace\install.wim" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,6" Margin="0,0,8,0"/>
+                                    <Button Grid.Column="2" Content="Gözat..." Style="{StaticResource FluentButton}" Height="32" Click="BtnBrowseWim_Click"/>
+                                </Grid>
+
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Bağlama Dizini (Mount):" VerticalAlignment="Center" Foreground="{DynamicResource BrushTextSecondary}"/>
+                                    <TextBox x:Name="TxtWimMountDir" Grid.Column="1" Text="C:\WinoxIT_Mount" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="8,6"/>
+                                </Grid>
+
+                                <WrapPanel Orientation="Horizontal">
+                                    <Button x:Name="BtnWimMount" Content="📥 WIM İmajını Bağla (Mount)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimMount_Click"/>
+                                    <Button x:Name="BtnWimInjectDrivers" Content="📦 Universal NIC Sürücülerini Enjekte Et" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimInjectDrivers_Click"/>
+                                    <Button x:Name="BtnWimCommit" Content="💾 Kaydet &amp; Kapat (Commit)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimCommit_Click"/>
+                                    <Button x:Name="BtnWimDiscard" Content="❌ İptal Et &amp; Kapat (Discard)" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnWimDiscard_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- 13. VIEW: LAN FİLO DAĞITIMI & PUSH AGENT (SYSFORGE TRANSFERRED) -->
+                    <StackPanel x:Name="PanelLanFleet" Visibility="Collapsed">
+                        <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="📡 LAN Filo Keşfi &amp; Push Agent Yönetimi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                <TextBlock Text="Aynı yerel ağdaki (Ethernet &amp; Wi-Fi) tüm cihazları tek tıkla keşfedin, Ping ve WinoxIT uzaktan sağlık taraması komutları gönderin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="0" Content="🔍 Ağdaki Cihazları Keşfet (ARP / NetNeighbor)" Style="{StaticResource FluentButton}" Height="36" Click="BtnDiscoverLanFleet_Click"/>
+                                    
+                                    <TextBox x:Name="TxtFleetTargetIp" Grid.Column="2" Text="192.168.1.1" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" VerticalContentAlignment="Center" Padding="8,4" Margin="0,0,8,0"/>
+                                    <WrapPanel Grid.Column="3" Orientation="Horizontal">
+                                        <Button Content="📡 Ping Gönder" Style="{StaticResource FluentButton}" Height="36" Margin="0,0,8,0" Click="BtnPingFleetTarget_Click"/>
+                                        <Button Content="🛡️ Sağlık Taraması" Style="{StaticResource FluentButton}" Height="36" Click="BtnProbeFleetTarget_Click"/>
+                                    </WrapPanel>
+                                </Grid>
+
+                                <TextBlock Text="KEŞFEDİLEN AĞ CİHAZLARI LİSTESİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,8"/>
+                                <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="180" MaxHeight="280">
+                                    <DataGrid x:Name="GridLanFleet" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" 
+                                              BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
+                                              Foreground="{DynamicResource BrushTextPrimary}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="IP Adresi" Binding="{Binding IPAddress}" Width="160"/>
+                                            <DataGridTextColumn Header="MAC Adresi" Binding="{Binding MACAddress}" Width="180"/>
+                                            <DataGridTextColumn Header="Durum" Binding="{Binding State}" Width="140"/>
+                                            <DataGridCheckBoxColumn Header="Erişilebilir" Binding="{Binding IsReachable}" Width="100"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
                 </Grid>
             </ScrollViewer>
 
@@ -556,6 +681,46 @@
                     <TextBox x:Name="TxtConsoleLog" Grid.Row="1" Background="Transparent" Foreground="{DynamicResource BrushAccent}" 
                              BorderThickness="0" FontFamily="Consolas" FontSize="11.5" IsReadOnly="True" 
                              VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- In-App Modal Dialog Overlay (Popup Pencere) -->
+        <Grid x:Name="ModalOverlay" Grid.ColumnSpan="2" Background="#A0000000" Visibility="Collapsed">
+            <Border Style="{StaticResource FluentModalCard}" Width="780" MaxHeight="620" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Modal Header -->
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock x:Name="TxtModalTitle" Text="Detaylı Rapor &amp; Çıktı" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}"/>
+                            <TextBlock x:Name="TxtModalSubtitle" Text="Modül içi anlık önizleme penceresi" FontSize="11" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="✕" Style="{StaticResource FluentSidebarToggleBtn}" Width="30" Height="30" FontSize="14" Click="BtnCloseModal_Click" ToolTip="Kapat"/>
+                    </Grid>
+
+                    <!-- Modal Content Area -->
+                    <Border Grid.Row="1" Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,16">
+                        <TextBox x:Name="TxtModalContent" Background="Transparent" Foreground="{DynamicResource BrushTextPrimary}" 
+                                 BorderThickness="0" FontFamily="Consolas" FontSize="12" IsReadOnly="True" 
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+                    </Border>
+
+                    <!-- Modal Footer Actions -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="BtnModalCopy" Content="📋 Panoya Kopyala" Style="{StaticResource FluentButton}" Margin="0,0,10,0" Click="BtnModalCopy_Click"/>
+                        <Button x:Name="BtnModalSave" Content="💾 Dosyaya Kaydet" Style="{StaticResource FluentButton}" Margin="0,0,10,0" Click="BtnModalSave_Click"/>
+                        <Button Content="Kapat" Style="{StaticResource FluentButton}" Click="BtnCloseModal_Click"/>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>
