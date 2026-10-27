@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,12 @@ namespace WinoxIT
         private bool _isDarkMode = true;
         private bool _isSidebarCollapsed = false;
         private string _currentHardwareJson = "";
+
+        // LAN Network Discovery & Subnet Scanner State
+        private List<LocalNetworkAdapterItem> _cachedAdapters = new();
+        private List<LanHostNode> _currentLanHosts = new();
+        private CancellationTokenSource? _subnetScanCts = null;
+        private string _currentLanFilter = "All";
 
         private static void LogDiagnostic(string msg)
         {
@@ -251,7 +258,11 @@ namespace WinoxIT
             if (!_isInitialized || sender is not RadioButton rb) return;
 
             if (rb == SubNavDashboard) ShowDashboardSubPanel(PanelDashboard);
-            else if (rb == SubNavLanFleet) ShowDashboardSubPanel(PanelLanFleet);
+            else if (rb == SubNavLanFleet)
+            {
+                ShowDashboardSubPanel(PanelLanFleet);
+                EnsureNetworkAdaptersLoaded();
+            }
             else if (rb == SubNavLanServer) ShowDashboardSubPanel(PanelLanServer);
             else if (rb == SubNavIsoStudio) ShowDashboardSubPanel(PanelIsoStudio);
         }
@@ -475,16 +486,198 @@ namespace WinoxIT
             await LoadSystemSpecsAsync();
         }
 
-        // Lan Fleet
-        private async void BtnDiscoverLanFleet_Click(object sender, RoutedEventArgs e)
+        // ==========================================
+        // LAN FLEET: ETHERNET / WI-FI KEŞFİ & SUBNET TARAMASI
+        // ==========================================
+
+        private void EnsureNetworkAdaptersLoaded()
         {
-            Log("Yerel ağdaki cihazlar taranıyor (ARP / NetNeighbor)...");
-            var nodes = await NativeSystemEngine.DiscoverLanNodesAsync();
-            GridLanFleet.ItemsSource = nodes;
-            Log($"Tarama tamamlandı: {nodes.Count} aktif ağ cihazı tespit edildi.");
-            if (nodes.Count > 0 && string.IsNullOrWhiteSpace(TxtFleetTargetIp.Text))
+            if (_cachedAdapters.Count > 0) return;
+            RefreshNetworkAdapters();
+        }
+
+        private void BtnRefreshAdapters_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshNetworkAdapters();
+        }
+
+        private void RefreshNetworkAdapters()
+        {
+            try
             {
-                TxtFleetTargetIp.Text = nodes[0].IPAddress;
+                _cachedAdapters = NativeSystemEngine.GetLocalNetworkAdapters();
+                CmbNetworkAdapters.ItemsSource = null;
+                CmbNetworkAdapters.ItemsSource = _cachedAdapters;
+
+                if (_cachedAdapters.Count > 0)
+                {
+                    CmbNetworkAdapters.SelectedIndex = 0;
+                    Log($"Ağ Kartları Algılandı: {_cachedAdapters.Count} aktif ağ arayüzü listelendi.");
+                }
+                else
+                {
+                    Log("Aktif Ethernet veya Wi-Fi ağ kartı bulunamadı.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Ağ kartları listelenirken hata: {ex.Message}");
+            }
+        }
+
+        private void CmbNetworkAdapters_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CmbNetworkAdapters.SelectedItem is LocalNetworkAdapterItem adapter)
+            {
+                TxtScanRangeStart.Text = adapter.SubnetRangeStart;
+                TxtScanRangeEnd.Text = adapter.SubnetRangeEnd;
+                TxtScanStatusHint.Text = $"{adapter.InterfaceType} ({adapter.IpAddress}) seçildi.";
+            }
+        }
+
+        private async void BtnStartSubnetScan_Click(object sender, RoutedEventArgs e)
+        {
+            string startIp = (TxtScanRangeStart.Text ?? "").Trim();
+            string endIp = (TxtScanRangeEnd.Text ?? "").Trim();
+
+            if (string.IsNullOrWhiteSpace(startIp) || string.IsNullOrWhiteSpace(endIp))
+            {
+                MessageBox.Show("Lütfen geçerli bir başlangıç ve bitiş IP adresi giriniz.", "Geçersiz Aralık", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            _subnetScanCts?.Cancel();
+            _subnetScanCts = new CancellationTokenSource();
+            var ct = _subnetScanCts.Token;
+
+            BtnStartSubnetScan.IsEnabled = false;
+            BtnStopSubnetScan.IsEnabled = true;
+            ProgressSubnetScan.Value = 0;
+            TxtScanStatusHint.Text = "⚡ Layer-2 ARP ve ICMP ile taranıyor...";
+
+            _currentLanHosts.Clear();
+            GridLanFleet.ItemsSource = null;
+            TxtCountOnline.Text = "0";
+            TxtCountFirewall.Text = "0";
+            TxtCountIdle.Text = "0";
+            TxtCountTotal.Text = "0 / 0";
+
+            var sw = Stopwatch.StartNew();
+            Log($"Yerel ağ taraması başlatıldı: {startIp} — {endIp} ...");
+
+            var progress = new Progress<(int Current, int Total, LanHostNode? Found)>(p =>
+            {
+                ProgressSubnetScan.Maximum = p.Total;
+                ProgressSubnetScan.Value = p.Current;
+                TxtCountTotal.Text = $"{p.Current} / {p.Total}";
+                TxtScanDuration.Text = $"Süre: {sw.Elapsed.TotalSeconds:0.#}s";
+
+                if (p.Found != null)
+                {
+                    lock (_currentLanHosts)
+                    {
+                        if (!_currentLanHosts.Any(x => x.IPAddress == p.Found.IPAddress))
+                        {
+                            _currentLanHosts.Add(p.Found);
+                        }
+                    }
+
+                    int onlineCount = _currentLanHosts.Count(x => x.StatusCode == "Online");
+                    int firewallCount = _currentLanHosts.Count(x => x.StatusCode == "Firewall");
+                    int idleCount = _currentLanHosts.Count(x => x.StatusCode == "Idle");
+
+                    TxtCountOnline.Text = onlineCount.ToString();
+                    TxtCountFirewall.Text = firewallCount.ToString();
+                    TxtCountIdle.Text = idleCount.ToString();
+
+                    ApplyLanHostFilter();
+                }
+            });
+
+            try
+            {
+                var scanned = await NativeSystemEngine.ScanSubnetRangeAsync(startIp, endIp, progress, ct);
+                _currentLanHosts = scanned;
+                ApplyLanHostFilter();
+
+                sw.Stop();
+                int online = _currentLanHosts.Count(x => x.StatusCode == "Online");
+                int firewall = _currentLanHosts.Count(x => x.StatusCode == "Firewall");
+                int idle = _currentLanHosts.Count(x => x.StatusCode == "Idle");
+
+                TxtScanStatusHint.Text = $"✅ Tarama tamamlandı ({sw.Elapsed.TotalSeconds:0.##}s). {online} açık, {firewall} korumalı, {idle} boşta.";
+                Log($"Ağ taraması bitti: Toplam {_currentLanHosts.Count} IP tarandı ({online} açık, {firewall} korumalı, {idle} boşta).");
+            }
+            catch (OperationCanceledException)
+            {
+                TxtScanStatusHint.Text = "🛑 Tarama kullanıcı tarafından durduruldu.";
+                Log("Ağ taraması durduruldu.");
+            }
+            catch (Exception ex)
+            {
+                TxtScanStatusHint.Text = $"Hata: {ex.Message}";
+                Log($"Ağ tarama hatası: {ex.Message}");
+            }
+            finally
+            {
+                BtnStartSubnetScan.IsEnabled = true;
+                BtnStopSubnetScan.IsEnabled = false;
+            }
+        }
+
+        private void BtnStopSubnetScan_Click(object sender, RoutedEventArgs e)
+        {
+            _subnetScanCts?.Cancel();
+            BtnStopSubnetScan.IsEnabled = false;
+        }
+
+        private void BtnFilterLan_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string tag)
+            {
+                _currentLanFilter = tag;
+                ApplyLanHostFilter();
+            }
+        }
+
+        private void TxtFilterHost_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyLanHostFilter();
+        }
+
+        private void ApplyLanHostFilter()
+        {
+            if (_currentLanHosts == null) return;
+
+            var q = (TxtFilterHost.Text ?? "").Trim().ToLowerInvariant();
+            IEnumerable<LanHostNode> query = _currentLanHosts;
+
+            if (_currentLanFilter == "Online")
+            {
+                query = query.Where(x => x.StatusCode == "Online" || x.StatusCode == "Firewall");
+            }
+            else if (_currentLanFilter == "Idle")
+            {
+                query = query.Where(x => x.StatusCode == "Idle");
+            }
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                query = query.Where(x => 
+                    x.IPAddress.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                    x.Hostname.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                    x.MACAddress.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                    x.DeviceType.Contains(q, StringComparison.OrdinalIgnoreCase));
+            }
+
+            GridLanFleet.ItemsSource = query.ToList();
+        }
+
+        private void GridLanFleet_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (GridLanFleet.SelectedItem is LanHostNode host)
+            {
+                TxtFleetTargetIp.Text = host.IPAddress;
             }
         }
 
@@ -500,6 +693,27 @@ namespace WinoxIT
             var (reachable, msg) = await NativeSystemEngine.PingLanHostAsync(target);
             Log(msg);
             ShowModal("Ağ Ping Testi Sonucu", msg);
+        }
+
+        private void BtnOpenLanWeb_Click(object sender, RoutedEventArgs e)
+        {
+            var target = TxtFleetTargetIp.Text.Trim();
+            if (string.IsNullOrWhiteSpace(target)) return;
+
+            try
+            {
+                var url = target.StartsWith("http") ? target : $"http://{target}";
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+                Log($"Cihazın web arayüzü tarayıcıda açıldı: {url}");
+            }
+            catch (Exception ex)
+            {
+                Log($"Web arayüzü açılamadı: {ex.Message}");
+            }
         }
 
         private async void BtnProbeFleetTarget_Click(object sender, RoutedEventArgs e)
@@ -718,32 +932,14 @@ namespace WinoxIT
 
         private async Task UpdateHwidBoxAsync()
         {
-            var (hash, json) = await NativeSystemEngine.GetHardwareFingerprintDetailsAsync();
-            _currentHardwareJson = json;
-            TxtHwidHash.Text = hash;
-
-            // Extract parts for individual boxes
-            var res = await NativeSystemEngine.RunPowerShellAsync(@"
-                $cpu = (Get-CimInstance Win32_Processor).ProcessorId;
-                $mb = (Get-CimInstance Win32_BaseBoard).SerialNumber;
-                $disk = (Get-CimInstance Win32_DiskDrive | Select-Object -First 1).SerialNumber;
-                $mac = (Get-CimInstance Win32_NetworkAdapterConfiguration | Where-Object { $_.IPEnabled -eq $true } | Select-Object -First 1).MACAddress;
-                $gpu = (Get-CimInstance Win32_VideoController | Select-Object -First 1).PNPDeviceID;
-                ""$cpu|||$mb|||$disk|||$mac|||$gpu""
-            ");
-
-            if (res.Success && !string.IsNullOrWhiteSpace(res.Output))
-            {
-                var parts = res.Output.Split(new[] { "|||" }, StringSplitOptions.None);
-                if (parts.Length >= 5)
-                {
-                    TxtHwidCpu.Text = parts[0].Trim();
-                    TxtHwidMobo.Text = parts[1].Trim();
-                    TxtHwidDisk.Text = parts[2].Trim();
-                    TxtHwidMac.Text = parts[3].Trim();
-                    TxtHwidGpu.Text = parts[4].Trim();
-                }
-            }
+            var info = await Task.Run(() => NativeSystemEngine.GetHardwareInfoNative());
+            _currentHardwareJson = info.Json;
+            TxtHwidHash.Text = info.Hash;
+            TxtHwidCpu.Text = info.Cpu;
+            TxtHwidMobo.Text = info.Mobo;
+            TxtHwidDisk.Text = info.Disk;
+            TxtHwidMac.Text = info.Mac;
+            TxtHwidGpu.Text = info.Gpu;
 
             var baselinePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "hardware_baseline.json");
             if (File.Exists(baselinePath))
@@ -1318,57 +1514,69 @@ namespace WinoxIT
 
         private async void BtnRefreshStartup_Click(object sender, RoutedEventArgs e)
         {
-            Log("Windows Başlangıç programları listeleniyor...");
-            var script = "Get-CimInstance Win32_StartupCommand | Select-Object Name, Command, Location | ConvertTo-Json -Compress";
-            var res = await NativeSystemEngine.RunPowerShellAsync(script);
-            if (res.Success && !string.IsNullOrWhiteSpace(res.Output))
+            Log("Windows Başlangıç programları taranıyor (Kayıt Defteri & Görevler)...");
+            try
             {
-                try
-                {
-                    var list = new List<StartupItem>();
-                    using var doc = System.Text.Json.JsonDocument.Parse(res.Output);
-                    if (doc.RootElement.ValueKind == System.Text.Json.JsonValueKind.Array)
-                    {
-                        foreach (var el in doc.RootElement.EnumerateArray())
-                        {
-                            list.Add(new StartupItem
-                            {
-                                Name = el.TryGetProperty("Name", out var pN) ? pN.GetString() ?? "" : "",
-                                Command = el.TryGetProperty("Command", out var pC) ? pC.GetString() ?? "" : "",
-                                Location = el.TryGetProperty("Location", out var pL) ? pL.GetString() ?? "" : ""
-                            });
-                        }
-                    }
-                    else if (doc.RootElement.ValueKind == System.Text.Json.JsonValueKind.Object)
-                    {
-                        var el = doc.RootElement;
-                        list.Add(new StartupItem
-                        {
-                            Name = el.TryGetProperty("Name", out var pN) ? pN.GetString() ?? "" : "",
-                            Command = el.TryGetProperty("Command", out var pC) ? pC.GetString() ?? "" : "",
-                            Location = el.TryGetProperty("Location", out var pL) ? pL.GetString() ?? "" : ""
-                        });
-                    }
-                    GridStartup.ItemsSource = list;
-                    Log($"{list.Count} adet başlangıç öğesi listelendi.");
-                }
-                catch (Exception ex)
-                {
-                    Log($"Başlangıç öğelerini ayrıştırma hatası: {ex.Message}");
-                }
+                var list = await NativeSystemEngine.GetStartupItemsAsync();
+                GridStartup.ItemsSource = list;
+                int activeCount = list.Count(x => x.IsEnabled);
+                int disabledCount = list.Count(x => !x.IsEnabled);
+                Log($"{list.Count} başlangıç öğesi listelendi ({activeCount} etkin, {disabledCount} devre dışı).");
+            }
+            catch (Exception ex)
+            {
+                Log($"Başlangıç öğelerini okuma hatası: {ex.Message}");
             }
         }
 
-        private void BtnDisableStartupItem_Click(object sender, RoutedEventArgs e)
+        private async void BtnEnableStartupItem_Click(object sender, RoutedEventArgs e)
         {
-            if (GridStartup.SelectedItem is StartupItem item)
+            if (GridStartup.SelectedItem is StartupItemModel item)
             {
-                Log($"Başlangıç öğesi regedit üzerinden kaldırılıyor: {item.Name}...");
-                MessageBox.Show($"Başlangıç kaydı silindi: {item.Name}", "Başlangıç Düzenleme", MessageBoxButton.OK, MessageBoxImage.Information);
+                Log($"Başlangıç öğesi etkinleştiriliyor: {item.Name}...");
+                var (ok, msg) = await NativeSystemEngine.EnableStartupItemAsync(item);
+                Log(msg);
+                MessageBox.Show(msg, "Başlangıç Düzenleme", MessageBoxButton.OK, ok ? MessageBoxImage.Information : MessageBoxImage.Warning);
+                BtnRefreshStartup_Click(sender, e);
             }
             else
             {
-                MessageBox.Show("Lütfen tablodan kaldırılacak bir başlangıç öğesi seçiniz.", "Öğe Seçilmedi", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Lütfen tablodan etkinleştirilecek bir başlangıç öğesi seçiniz.", "Öğe Seçilmedi", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private async void BtnDisableStartupItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (GridStartup.SelectedItem is StartupItemModel item)
+            {
+                Log($"Başlangıç öğesi devre dışı bırakılıyor: {item.Name}...");
+                var (ok, msg) = await NativeSystemEngine.DisableStartupItemAsync(item);
+                Log(msg);
+                MessageBox.Show(msg, "Başlangıç Düzenleme", MessageBoxButton.OK, ok ? MessageBoxImage.Information : MessageBoxImage.Warning);
+                BtnRefreshStartup_Click(sender, e);
+            }
+            else
+            {
+                MessageBox.Show("Lütfen tablodan devre dışı bırakılacak bir başlangıç öğesi seçiniz.", "Öğe Seçilmedi", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private async void BtnRemoveStartupItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (GridStartup.SelectedItem is StartupItemModel item)
+            {
+                var confirm = MessageBox.Show($"'{item.Name}' başlangıç kaydı sistemden tamamen silinecektir.\nDevam etmek istiyor musunuz?", "Başlangıç Kaydı Sil", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (confirm != MessageBoxResult.Yes) return;
+
+                Log($"Başlangıç öğesi siliniyor: {item.Name}...");
+                var (ok, msg) = await NativeSystemEngine.RemoveStartupItemAsync(item);
+                Log(msg);
+                MessageBox.Show(msg, "Başlangıç Düzenleme", MessageBoxButton.OK, ok ? MessageBoxImage.Information : MessageBoxImage.Warning);
+                BtnRefreshStartup_Click(sender, e);
+            }
+            else
+            {
+                MessageBox.Show("Lütfen tablodan silinecek bir başlangıç öğesi seçiniz.", "Öğe Seçilmedi", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

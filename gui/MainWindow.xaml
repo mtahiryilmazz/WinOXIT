@@ -235,39 +235,133 @@
                         <StackPanel x:Name="PanelLanFleet" Visibility="Collapsed">
                             <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
                                 <StackPanel>
-                                    <TextBlock Text="📡 LAN Filo Keşfi &amp; Push Agent Yönetimi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                    <TextBlock Text="Aynı yerel ağdaki (Ethernet &amp; Wi-Fi) tüm cihazları tek tıkla keşfedin, Ping ve WinoxIT uzaktan sağlık taraması komutları gönderin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+                                    <TextBlock Text="📡 Ethernet / Wi-Fi Ağ Keşfi &amp; Yerel IP Tarayıcısı" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
+                                    <TextBlock Text="Sistemdeki Ethernet ve Wi-Fi kartlarını algılar; seçilen ağ kartının yerel alt ağındaki (Subnet) açık, korumalı (firewall) ve boşta olan tüm IP adreslerini ve cihazlarını listeler." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
 
-                                    <Grid Margin="0,0,0,16">
+                                    <!-- Ağ Kartı Seçimi ve IP Aralığı -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="8"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Row 0: Network Adapter ComboBox -->
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Ağ Kartı:" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                            <ComboBox x:Name="CmbNetworkAdapters" Grid.Row="0" Grid.Column="1" Height="32" VerticalContentAlignment="Center"
+                                                      DisplayMemberPath="DisplayText" SelectionChanged="CmbNetworkAdapters_SelectionChanged"
+                                                      Background="{DynamicResource BrushBgCard}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}"/>
+                                            <Button Grid.Row="0" Grid.Column="2" Content="🔄 Kartları Yenile" Style="{StaticResource FluentButton}" Height="32" Margin="8,0,0,0" Click="BtnRefreshAdapters_Click"/>
+
+                                            <!-- Row 2: Subnet Range and Action Buttons -->
+                                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="Tarama Aralığı:" FontWeight="SemiBold" Foreground="{DynamicResource BrushTextPrimary}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                <TextBox x:Name="TxtScanRangeStart" Text="192.168.1.1" Width="130" Height="30" VerticalContentAlignment="Center" Background="{DynamicResource BrushBgCard}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="6,2" Margin="0,0,6,0"/>
+                                                <TextBlock Text="—" Foreground="{DynamicResource BrushTextMuted}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                <TextBox x:Name="TxtScanRangeEnd" Text="192.168.1.254" Width="130" Height="30" VerticalContentAlignment="Center" Background="{DynamicResource BrushBgCard}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="6,2" Margin="0,0,12,0"/>
+
+                                                <Button x:Name="BtnStartSubnetScan" Content="🚀 IP Taramasını Başlat" Style="{StaticResource FluentButtonPrimary}" Height="32" Margin="0,0,8,0" Click="BtnStartSubnetScan_Click"/>
+                                                <Button x:Name="BtnStopSubnetScan" Content="🛑 Durdur" Style="{StaticResource FluentButton}" Height="32" Margin="0,0,12,0" IsEnabled="False" Click="BtnStopSubnetScan_Click"/>
+                                                
+                                                <TextBlock x:Name="TxtScanStatusHint" Text="Tarama bekleniyor..." FontSize="11" Foreground="{DynamicResource BrushTextSecondary}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Progress Bar -->
+                                    <ProgressBar x:Name="ProgressSubnetScan" Height="5" Minimum="0" Maximum="254" Value="0" Margin="0,0,0,12" Background="{DynamicResource BrushBorder}" Foreground="{DynamicResource BrushAccent}"/>
+
+                                    <!-- KPI İstatistik Sayaçları (Açık, Korumalı, Boşta) -->
+                                    <UniformGrid Columns="4" Margin="0,0,0,12">
+                                        <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,6,0">
+                                            <StackPanel>
+                                                <TextBlock Text="🟢 AÇIK CİHAZLAR" FontSize="10" FontWeight="Bold" Foreground="#10B981"/>
+                                                <TextBlock x:Name="TxtCountOnline" Text="0" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,2,0,0"/>
+                                                <TextBlock Text="ARP / Ping yanıtı veren" FontSize="10" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,6,0">
+                                            <StackPanel>
+                                                <TextBlock Text="🟡 KORUMALI CİHAZLAR" FontSize="10" FontWeight="Bold" Foreground="#F59E0B"/>
+                                                <TextBlock x:Name="TxtCountFirewall" Text="0" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,2,0,0"/>
+                                                <TextBlock Text="Firewall Ping bloklu (ARP var)" FontSize="10" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,6,0">
+                                            <StackPanel>
+                                                <TextBlock Text="⚪ BOŞTA (KULLANILABİLİR)" FontSize="10" FontWeight="Bold" Foreground="#94A3B8"/>
+                                                <TextBlock x:Name="TxtCountIdle" Text="0" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,2,0,0"/>
+                                                <TextBlock Text="Serbest / Yanıtsız IP'ler" FontSize="10" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="10">
+                                            <StackPanel>
+                                                <TextBlock Text="📊 TOPLAM TARANAN" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"/>
+                                                <TextBlock x:Name="TxtCountTotal" Text="0 / 0" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,2,0,0"/>
+                                                <TextBlock x:Name="TxtScanDuration" Text="Süre: 0s" FontSize="10" Foreground="{DynamicResource BrushTextMuted}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </UniformGrid>
+
+                                    <!-- Filtre Butonları ve Arama -->
+                                    <Grid Margin="0,0,0,8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="16"/>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="220"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <Button Grid.Column="0" Content="🔍 Ağdaki Cihazları Keşfet (ARP / NetNeighbor)" Style="{StaticResource FluentButton}" Height="36" Click="BtnDiscoverLanFleet_Click"/>
-                                        
-                                        <TextBox x:Name="TxtFleetTargetIp" Grid.Column="2" Text="192.168.1.1" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" VerticalContentAlignment="Center" Padding="8,4" Margin="0,0,8,0"/>
-                                        <WrapPanel Grid.Column="3" Orientation="Horizontal">
-                                            <Button Content="📡 Ping Gönder" Style="{StaticResource FluentButton}" Height="36" Margin="0,0,8,0" Click="BtnPingFleetTarget_Click"/>
-                                            <Button Content="🛡️ Sağlık Taraması" Style="{StaticResource FluentButton}" Height="36" Click="BtnProbeFleetTarget_Click"/>
-                                        </WrapPanel>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <Button x:Name="BtnFilterAll" Content="Tümü" Style="{StaticResource FluentButton}" Height="28" Padding="10,2" Margin="0,0,6,0" Click="BtnFilterLan_Click" Tag="All"/>
+                                            <Button x:Name="BtnFilterOnline" Content="🟢 Sadece Açık &amp; Korumalı" Style="{StaticResource FluentButton}" Height="28" Padding="10,2" Margin="0,0,6,0" Click="BtnFilterLan_Click" Tag="Online"/>
+                                            <Button x:Name="BtnFilterIdle" Content="⚪ Sadece Boşta IP'ler" Style="{StaticResource FluentButton}" Height="28" Padding="10,2" Click="BtnFilterLan_Click" Tag="Idle"/>
+                                        </StackPanel>
+
+                                        <TextBox x:Name="TxtFilterHost" Grid.Column="2" Text="" Height="28" VerticalContentAlignment="Center"
+                                                 Padding="6,2" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}"
+                                                 BorderBrush="{DynamicResource BrushBorder}" TextChanged="TxtFilterHost_TextChanged"
+                                                 ToolTip="IP adresi, MAC veya Cihaz adı ile filtreleyin..."/>
                                     </Grid>
 
-                                    <TextBlock Text="KEŞFEDİLEN AĞ CİHAZLARI LİSTESİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource BrushTextMuted}" Margin="0,0,0,8"/>
-                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="180" MaxHeight="280">
+                                    <!-- Cihaz Tablosu -->
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="220" MaxHeight="320">
                                         <DataGrid x:Name="GridLanFleet" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" 
                                                   BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
-                                                  Foreground="{DynamicResource BrushTextPrimary}">
+                                                  Foreground="{DynamicResource BrushTextPrimary}" SelectionChanged="GridLanFleet_SelectionChanged">
                                             <DataGrid.Columns>
-                                                <DataGridTextColumn Header="IP Adresi" Binding="{Binding IPAddress}" Width="160"/>
-                                                <DataGridTextColumn Header="MAC Adresi" Binding="{Binding MACAddress}" Width="180"/>
-                                                <DataGridTextColumn Header="Durum" Binding="{Binding State}" Width="140"/>
-                                                <DataGridCheckBoxColumn Header="Erişilebilir" Binding="{Binding IsReachable}" Width="100"/>
+                                                <DataGridTextColumn Header="IP Adresi" Binding="{Binding IPAddress}" Width="130" FontWeight="SemiBold"/>
+                                                <DataGridTextColumn Header="Durum" Binding="{Binding Status}" Width="170"/>
+                                                <DataGridTextColumn Header="Cihaz Adı / Hostname" Binding="{Binding Hostname}" Width="180"/>
+                                                <DataGridTextColumn Header="MAC Adresi" Binding="{Binding MACAddress}" Width="150"/>
+                                                <DataGridTextColumn Header="Yanıt (Ping)" Binding="{Binding Latency}" Width="130"/>
+                                                <DataGridTextColumn Header="Cihaz / Ağ Rolü" Binding="{Binding DeviceType}" Width="*"/>
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </Border>
+
+                                    <!-- Hızlı Eylem Çubuğu -->
+                                    <Grid Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Seçili Hedef IP:" Foreground="{DynamicResource BrushTextPrimary}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBox x:Name="TxtFleetTargetIp" Grid.Column="1" Text="192.168.1.1" Height="30" VerticalContentAlignment="Center" Background="{DynamicResource BrushBgWindow}" Foreground="{DynamicResource BrushTextPrimary}" BorderBrush="{DynamicResource BrushBorder}" Padding="6,2" Margin="0,0,10,0"/>
+
+                                        <WrapPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Content="📡 Hızlı Ping" Style="{StaticResource FluentButton}" Height="30" Margin="0,0,8,0" Click="BtnPingFleetTarget_Click"/>
+                                            <Button Content="🌐 Web Arayüzü Aç (HTTP)" Style="{StaticResource FluentButton}" Height="30" Margin="0,0,8,0" Click="BtnOpenLanWeb_Click"/>
+                                            <Button Content="🛡️ Sağlık Taraması" Style="{StaticResource FluentButton}" Height="30" Click="BtnProbeFleetTarget_Click"/>
+                                        </WrapPanel>
+                                    </Grid>
                                 </StackPanel>
                             </Border>
                         </StackPanel>
@@ -947,21 +1041,24 @@
                             <Border Style="{StaticResource FluentCard}" Margin="0,0,0,16">
                                 <StackPanel>
                                     <TextBlock Text="🚀 Windows Başlangıç Programları Yöneticisi" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource BrushTextPrimary}" Margin="0,0,0,6"/>
-                                    <TextBlock Text="Açılışı yavaşlatan başlangıç kayıtlarını denetleyin ve tek tıkla devre dışı bırakın." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
+                                    <TextBlock Text="Açılışı yavaşlatan başlangıç kayıtlarını denetleyin; tek tıkla devre dışı bırakın, yeniden etkinleştirin veya sistemden tamamen silin." FontSize="12" Foreground="{DynamicResource BrushTextSecondary}" Margin="0,0,0,16"/>
 
                                     <WrapPanel Orientation="Horizontal" Margin="0,0,0,16">
                                         <Button Content="🔄 Başlangıç Listesini Yenile" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRefreshStartup_Click"/>
-                                        <Button Content="❌ Seçili Başlangıç Öğesini Kaldır" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDisableStartupItem_Click"/>
+                                        <Button Content="✅ Seçileni Etkinleştir" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnEnableStartupItem_Click"/>
+                                        <Button Content="🛑 Seçileni Devre Dışı Bırak" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnDisableStartupItem_Click"/>
+                                        <Button Content="🗑️ Sistemden Kaldır" Style="{StaticResource FluentButton}" Margin="0,0,10,10" Click="BtnRemoveStartupItem_Click"/>
                                     </WrapPanel>
 
-                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="200" MaxHeight="300">
+                                    <Border Background="{DynamicResource BrushBgWindow}" BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1" CornerRadius="6" MinHeight="220" MaxHeight="320">
                                         <DataGrid x:Name="GridStartup" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" 
                                                   BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
                                                   Foreground="{DynamicResource BrushTextPrimary}">
                                             <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Kayıt Adı" Binding="{Binding Name}" Width="200"/>
-                                                <DataGridTextColumn Header="Komut / Dosya Yolu" Binding="{Binding Command}" Width="320"/>
-                                                <DataGridTextColumn Header="Konum" Binding="{Binding Location}" Width="160"/>
+                                                <DataGridTextColumn Header="Durum" Binding="{Binding Status}" Width="120" FontWeight="SemiBold"/>
+                                                <DataGridTextColumn Header="Kayıt Adı" Binding="{Binding Name}" Width="180"/>
+                                                <DataGridTextColumn Header="Komut / Dosya Yolu" Binding="{Binding Command}" Width="360"/>
+                                                <DataGridTextColumn Header="Konum / Kovan" Binding="{Binding Location}" Width="160"/>
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </Border>

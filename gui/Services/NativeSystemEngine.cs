@@ -2,11 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Management;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace WinoxIT.Services
 {
@@ -18,10 +25,12 @@ namespace WinoxIT.Services
             {
                 try
                 {
+                    var bytes = Encoding.Unicode.GetBytes(script);
+                    var encoded = Convert.ToBase64String(bytes);
                     var psi = new ProcessStartInfo
                     {
                         FileName = "powershell.exe",
-                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; {script}\"",
+                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -EncodedCommand {encoded}",
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,
@@ -96,37 +105,194 @@ namespace WinoxIT.Services
         }
 
         // =========================================================================
-        // 1. HARDWARE DRIFT & DETERMINISTIC SHA-256 FINGERPRINT
+        // 1. HARDWARE DRIFT & DETERMINISTIC SHA-256 FINGERPRINT (PURE NATIVE C#)
         // =========================================================================
 
-        public static async Task<(string Hash, string Json)> GetHardwareFingerprintDetailsAsync()
+        public static (string Cpu, string Mobo, string Disk, string Mac, string Gpu, string Hash, string Json) GetHardwareInfoNative()
         {
-            var script = @"
-                $bb = Get-CimInstance Win32_BaseBoard -ErrorAction SilentlyContinue | Select-Object Manufacturer, Product, SerialNumber
-                $cpu = Get-CimInstance Win32_Processor -ErrorAction SilentlyContinue | Select-Object Name, ProcessorId, NumberOfCores, NumberOfLogicalProcessors
-                $rams = Get-CimInstance Win32_PhysicalMemory -ErrorAction SilentlyContinue | Select-Object BankLabel, Capacity, Manufacturer, PartNumber, SerialNumber, Speed
-                $disks = Get-CimInstance Win32_DiskDrive -ErrorAction SilentlyContinue | Select-Object Model, SerialNumber, Size, InterfaceType
-                $nics = Get-CimInstance Win32_NetworkAdapter -ErrorAction SilentlyContinue | Where-Object { $_.PhysicalAdapter -eq $true } | Select-Object Name, MACAddress
-                $gpus = Get-CimInstance Win32_VideoController -ErrorAction SilentlyContinue | Select-Object Name, DriverVersion
+            string cpu = "Bilinmiyor";
+            string mobo = "Bilinmiyor";
+            string disk = "Bilinmiyor";
+            string mac = "Bilinmiyor";
+            string gpu = "Bilinmiyor";
+            var rams = new List<string>();
+            var disks = new List<string>();
+            var nics = new List<string>();
+            var gpus = new List<string>();
+            int cores = Environment.ProcessorCount;
 
-                [PSCustomObject]@{
-                    MachineName = $env:COMPUTERNAME
-                    Motherboard = ""$($bb.Manufacturer) $($bb.Product)"".Trim()
-                    MotherboardSerial = ""$($bb.SerialNumber)"".Trim()
-                    Processor = ""$($cpu.Name)"".Trim()
-                    ProcessorId = ""$($cpu.ProcessorId)"".Trim()
-                    Cores = [int]$cpu.NumberOfLogicalProcessors
-                    Rams = @($rams | ForEach-Object { ""$($_.BankLabel): $($_.Manufacturer) $($_.PartNumber) | SN: $($_.SerialNumber) | $([math]::Round($_.Capacity/1GB))GB @$($_.Speed)MHz"" })
-                    Disks = @($disks | ForEach-Object { ""$($_.Model) | SN: $($_.SerialNumber) | $([math]::Round($_.Size/1GB))GB ($($_.InterfaceType))"" })
-                    Nics = @($nics | ForEach-Object { ""$($_.Name) | MAC: $($_.MACAddress)"" })
-                    Gpus = @($gpus | ForEach-Object { ""$($_.Name) (Sürücü: $($_.DriverVersion))"" })
-                } | ConvertTo-Json -Depth 4
-            ";
+            // 1. CPU
+            try
+            {
+                using var searcher = new ManagementObjectSearcher("SELECT ProcessorId, Name, NumberOfLogicalProcessors FROM Win32_Processor");
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    var pid = obj["ProcessorId"]?.ToString()?.Trim();
+                    var name = obj["Name"]?.ToString()?.Trim();
+                    if (!string.IsNullOrWhiteSpace(pid)) cpu = pid;
+                    else if (!string.IsNullOrWhiteSpace(name)) cpu = name;
 
-            var res = await RunPowerShellAsync(script);
-            var json = res.Success ? res.Output : "{}";
+                    if (obj["NumberOfLogicalProcessors"] != null && int.TryParse(obj["NumberOfLogicalProcessors"]?.ToString(), out int c))
+                    {
+                        cores = c;
+                    }
+                    break;
+                }
+            }
+            catch { }
+
+            // 2. Motherboard
+            try
+            {
+                using var searcher = new ManagementObjectSearcher("SELECT Manufacturer, Product, SerialNumber FROM Win32_BaseBoard");
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    var sn = obj["SerialNumber"]?.ToString()?.Trim();
+                    var mfg = obj["Manufacturer"]?.ToString()?.Trim();
+                    var prod = obj["Product"]?.ToString()?.Trim();
+
+                    if (!string.IsNullOrWhiteSpace(sn) && sn != "Default string" && sn != "None" && sn != "To be filled by O.E.M.")
+                    {
+                        mobo = $"{mfg} {prod} (SN: {sn})".Trim();
+                    }
+                    else
+                    {
+                        mobo = $"{mfg} {prod}".Trim();
+                    }
+                    break;
+                }
+            }
+            catch { }
+
+            // 3. Disk
+            try
+            {
+                using var searcher = new ManagementObjectSearcher("SELECT Model, SerialNumber, Size, InterfaceType FROM Win32_DiskDrive");
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    var sn = obj["SerialNumber"]?.ToString()?.Trim();
+                    var model = obj["Model"]?.ToString()?.Trim();
+                    var sizeObj = obj["Size"];
+                    long sizeGb = 0;
+                    if (sizeObj != null && long.TryParse(sizeObj.ToString(), out long bytes))
+                    {
+                        sizeGb = bytes / (1024 * 1024 * 1024);
+                    }
+                    var iface = obj["InterfaceType"]?.ToString()?.Trim() ?? "Disk";
+
+                    if (disk == "Bilinmiyor")
+                    {
+                        disk = !string.IsNullOrWhiteSpace(sn) ? $"{sn} ({model})" : model ?? "Disk";
+                    }
+
+                    disks.Add($"{model} | SN: {sn} | {sizeGb}GB ({iface})");
+                }
+            }
+            catch { }
+
+            // 4. Physical Network MAC
+            try
+            {
+                foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    if (ni.OperationalStatus == OperationalStatus.Up && 
+                        ni.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
+                        !ni.Description.Contains("Virtual", StringComparison.OrdinalIgnoreCase) &&
+                        !ni.Description.Contains("Pseudo", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var rawMac = ni.GetPhysicalAddress().ToString();
+                        if (!string.IsNullOrWhiteSpace(rawMac) && rawMac.Length == 12)
+                        {
+                            mac = string.Join(":", Enumerable.Range(0, 6).Select(i => rawMac.Substring(i * 2, 2)));
+                            nics.Add($"{ni.Name} ({ni.Description}) | MAC: {mac}");
+                            break;
+                        }
+                    }
+                }
+                if (mac == "Bilinmiyor")
+                {
+                    foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                    {
+                        var rawMac = ni.GetPhysicalAddress().ToString();
+                        if (!string.IsNullOrWhiteSpace(rawMac) && rawMac.Length == 12)
+                        {
+                            mac = string.Join(":", Enumerable.Range(0, 6).Select(i => rawMac.Substring(i * 2, 2)));
+                            nics.Add($"{ni.Name} | MAC: {mac}");
+                            break;
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            // 5. GPU
+            try
+            {
+                using var searcher = new ManagementObjectSearcher("SELECT Name, DriverVersion, PNPDeviceID FROM Win32_VideoController");
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    var name = obj["Name"]?.ToString()?.Trim();
+                    var pnp = obj["PNPDeviceID"]?.ToString()?.Trim();
+                    var drv = obj["DriverVersion"]?.ToString()?.Trim();
+
+                    if (gpu == "Bilinmiyor")
+                    {
+                        gpu = !string.IsNullOrWhiteSpace(pnp) ? pnp : name ?? "GPU";
+                    }
+
+                    gpus.Add($"{name} (Sürücü: {drv})");
+                }
+            }
+            catch { }
+
+            // 6. RAM
+            try
+            {
+                using var searcher = new ManagementObjectSearcher("SELECT BankLabel, Capacity, Manufacturer, PartNumber, SerialNumber, Speed FROM Win32_PhysicalMemory");
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    var bank = obj["BankLabel"]?.ToString()?.Trim() ?? "Bank";
+                    var mfg = obj["Manufacturer"]?.ToString()?.Trim() ?? "";
+                    var part = obj["PartNumber"]?.ToString()?.Trim() ?? "";
+                    var sn = obj["SerialNumber"]?.ToString()?.Trim() ?? "";
+                    var capObj = obj["Capacity"];
+                    long capGb = 0;
+                    if (capObj != null && long.TryParse(capObj.ToString(), out long b)) capGb = b / (1024 * 1024 * 1024);
+                    var speed = obj["Speed"]?.ToString()?.Trim() ?? "";
+
+                    rams.Add($"{bank}: {mfg} {part} | SN: {sn} | {capGb}GB @{speed}MHz");
+                }
+            }
+            catch { }
+
+            var profileObj = new
+            {
+                MachineName = Environment.MachineName,
+                Motherboard = mobo,
+                ProcessorId = cpu,
+                Cores = cores,
+                PrimaryDisk = disk,
+                MacAddress = mac,
+                Gpu = gpu,
+                Rams = rams,
+                Disks = disks,
+                Nics = nics,
+                Gpus = gpus
+            };
+
+            var json = JsonSerializer.Serialize(profileObj, new JsonSerializerOptions { WriteIndented = true });
             var hash = ComputeSha256(json);
-            return (hash, json);
+
+            return (cpu, mobo, disk, mac, gpu, hash, json);
+        }
+
+        public static Task<(string Hash, string Json)> GetHardwareFingerprintDetailsAsync()
+        {
+            return Task.Run(() =>
+            {
+                var info = GetHardwareInfoNative();
+                return (info.Hash, info.Json);
+            });
         }
 
         public static async Task<(bool Matched, string DiffLog)> CompareHardwareBaselineAsync(string baselineJson)
@@ -1051,6 +1217,261 @@ namespace WinoxIT.Services
         // 7. SYSFORGE TRANSFERRED: LAN FİLO DAĞITIMI & PUSH AGENT
         // =========================================================================
 
+        [DllImport("iphlpapi.dll", ExactSpelling = true)]
+        private static extern int SendARP(int destIp, int srcIp, byte[] macAddr, ref uint physicalAddrLen);
+
+        public static List<LocalNetworkAdapterItem> GetLocalNetworkAdapters()
+        {
+            var list = new List<LocalNetworkAdapterItem>();
+            try
+            {
+                var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+                foreach (var ni in interfaces)
+                {
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+                    if (ni.OperationalStatus != OperationalStatus.Up) continue;
+
+                    var ipProps = ni.GetIPProperties();
+                    var unicast = ipProps.UnicastAddresses
+                        .FirstOrDefault(u => u.Address.AddressFamily == AddressFamily.InterNetwork && 
+                                            !IPAddress.IsLoopback(u.Address));
+
+                    if (unicast == null) continue;
+
+                    var ip = unicast.Address.ToString();
+                    var mask = unicast.IPv4Mask?.ToString() ?? "255.255.255.0";
+                    var gateway = ipProps.GatewayAddresses
+                        .FirstOrDefault(g => g.Address.AddressFamily == AddressFamily.InterNetwork)?.Address.ToString() ?? "-";
+
+                    var rawMac = ni.GetPhysicalAddress().ToString();
+                    string formattedMac = "-";
+                    if (!string.IsNullOrWhiteSpace(rawMac) && rawMac.Length == 12)
+                    {
+                        formattedMac = string.Join(":", Enumerable.Range(0, 6).Select(i => rawMac.Substring(i * 2, 2)));
+                    }
+
+                    string speedStr = "Bilinmiyor";
+                    if (ni.Speed > 0)
+                    {
+                        if (ni.Speed >= 1_000_000_000)
+                            speedStr = $"{ni.Speed / 1_000_000_000.0:0.##} Gbps";
+                        else
+                            speedStr = $"{ni.Speed / 1_000_000.0:0.##} Mbps";
+                    }
+
+                    string typeStr = ni.NetworkInterfaceType switch
+                    {
+                        NetworkInterfaceType.Ethernet => "Ethernet (Kablolu)",
+                        NetworkInterfaceType.Wireless80211 => "Wi-Fi (Kablosuz)",
+                        NetworkInterfaceType.GigabitEthernet => "Gigabit Ethernet",
+                        _ => ni.NetworkInterfaceType.ToString()
+                    };
+
+                    // Compute subnet range
+                    string rangeStart = "192.168.1.1";
+                    string rangeEnd = "192.168.1.254";
+                    var octets = ip.Split('.');
+                    if (octets.Length == 4)
+                    {
+                        rangeStart = $"{octets[0]}.{octets[1]}.{octets[2]}.1";
+                        rangeEnd = $"{octets[0]}.{octets[1]}.{octets[2]}.254";
+                    }
+
+                    list.Add(new LocalNetworkAdapterItem
+                    {
+                        Id = ni.Id,
+                        Name = ni.Name,
+                        Description = ni.Description,
+                        InterfaceType = typeStr,
+                        IpAddress = ip,
+                        SubnetMask = mask,
+                        Gateway = gateway,
+                        MacAddress = formattedMac,
+                        Speed = speedStr,
+                        SubnetRangeStart = rangeStart,
+                        SubnetRangeEnd = rangeEnd
+                    });
+                }
+            }
+            catch { }
+
+            return list;
+        }
+
+        public static async Task<List<LanHostNode>> ScanSubnetRangeAsync(
+            string startIpStr, 
+            string endIpStr, 
+            IProgress<(int Current, int Total, LanHostNode? Found)>? progress = null, 
+            CancellationToken ct = default)
+        {
+            var results = new List<LanHostNode>();
+
+            if (!IPAddress.TryParse(startIpStr, out var startIp) || !IPAddress.TryParse(endIpStr, out var endIp))
+            {
+                return results;
+            }
+
+            var startBytes = startIp.GetAddressBytes();
+            var endBytes = endIp.GetAddressBytes();
+            if (startBytes.Length != 4 || endBytes.Length != 4) return results;
+
+            int startNum = (startBytes[0] << 24) | (startBytes[1] << 16) | (startBytes[2] << 8) | startBytes[3];
+            int endNum = (endBytes[0] << 24) | (endBytes[1] << 16) | (endBytes[2] << 8) | endBytes[3];
+            if (startNum > endNum) (startNum, endNum) = (endNum, startNum);
+
+            int total = endNum - startNum + 1;
+            if (total > 1024) total = 1024; // safety cap
+
+            var ipList = new List<string>();
+            for (int i = 0; i < total; i++)
+            {
+                int current = startNum + i;
+                byte[] b = {
+                    (byte)((current >> 24) & 0xFF),
+                    (byte)((current >> 16) & 0xFF),
+                    (byte)((current >> 8) & 0xFF),
+                    (byte)(current & 0xFF)
+                };
+                ipList.Add(new IPAddress(b).ToString());
+            }
+
+            int scannedCount = 0;
+            using var semaphore = new SemaphoreSlim(35); // 35 concurrent probes
+
+            var tasks = ipList.Select(async ip =>
+            {
+                await semaphore.WaitAsync(ct);
+                try
+                {
+                    if (ct.IsCancellationRequested) return;
+
+                    var node = await ProbeHostAsync(ip, ct);
+                    lock (results)
+                    {
+                        results.Add(node);
+                    }
+
+                    int count = Interlocked.Increment(ref scannedCount);
+                    progress?.Report((count, total, node));
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+
+            await Task.WhenAll(tasks);
+            return results.OrderBy(r => IpToLong(r.IPAddress)).ToList();
+
+            static long IpToLong(string ip)
+            {
+                if (IPAddress.TryParse(ip, out var addr))
+                {
+                    var bytes = addr.GetAddressBytes();
+                    if (bytes.Length == 4)
+                        return ((long)bytes[0] << 24) | ((long)bytes[1] << 16) | ((long)bytes[2] << 8) | bytes[3];
+                }
+                return 0;
+            }
+        }
+
+        private static async Task<LanHostNode> ProbeHostAsync(string ipStr, CancellationToken ct)
+        {
+            var node = new LanHostNode
+            {
+                IPAddress = ipStr,
+                Hostname = "-",
+                MACAddress = "-",
+                Status = "⚪ Boşta (Kullanılabilir)",
+                StatusCode = "Idle",
+                Latency = "-",
+                DeviceType = "Serbest IP",
+                IsOnline = false
+            };
+
+            if (!IPAddress.TryParse(ipStr, out var ipAddr)) return node;
+
+            bool arpSuccess = false;
+            string mac = "";
+
+            try
+            {
+                byte[] macBytes = new byte[6];
+                uint len = (uint)macBytes.Length;
+                int dest = BitConverter.ToInt32(ipAddr.GetAddressBytes(), 0);
+                int arpRes = SendARP(dest, 0, macBytes, ref len);
+                if (arpRes == 0 && len == 6)
+                {
+                    arpSuccess = true;
+                    mac = string.Join(":", macBytes.Select(b => b.ToString("X2")));
+                }
+            }
+            catch { }
+
+            // Ping probe
+            bool pingSuccess = false;
+            long pingMs = 0;
+            try
+            {
+                using var pinger = new Ping();
+                var reply = await pinger.SendPingAsync(ipAddr, 350);
+                if (reply != null && reply.Status == IPStatus.Success)
+                {
+                    pingSuccess = true;
+                    pingMs = reply.RoundtripTime;
+                }
+            }
+            catch { }
+
+            if (arpSuccess || pingSuccess)
+            {
+                node.IsOnline = true;
+                node.MACAddress = !string.IsNullOrEmpty(mac) ? mac : "ARP Gizli/Yönlendirilmiş";
+
+                if (pingSuccess)
+                {
+                    node.Status = "🟢 Açık (Online)";
+                    node.StatusCode = "Online";
+                    node.Latency = $"{pingMs} ms";
+                }
+                else
+                {
+                    node.Status = "🟡 Korumalı (Firewall)";
+                    node.StatusCode = "Firewall";
+                    node.Latency = "ARP Yanıtı (ICMP Kapalı)";
+                }
+
+                // Identify common device types by IP or MAC
+                var lastOctet = ipAddr.GetAddressBytes()[3];
+                if (lastOctet == 1 || lastOctet == 254)
+                {
+                    node.DeviceType = "Ağ Geçidi / Modem / Router";
+                }
+                else
+                {
+                    node.DeviceType = "Bilgisayar / Ağ Cihazı";
+                }
+
+                // Quick reverse DNS
+                try
+                {
+                    var dnsTask = Dns.GetHostEntryAsync(ipStr);
+                    var completed = await Task.WhenAny(dnsTask, Task.Delay(250, ct));
+                    if (completed == dnsTask && !dnsTask.IsFaulted)
+                    {
+                        var entry = await dnsTask;
+                        if (!string.IsNullOrWhiteSpace(entry.HostName))
+                        {
+                            node.Hostname = entry.HostName;
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            return node;
+        }
+
         public static async Task<List<LanFleetNode>> DiscoverLanNodesAsync()
         {
             var script = @"
@@ -1118,6 +1539,282 @@ namespace WinoxIT.Services
                 }}";
             return await RunPowerShellAsync(script, 90000);
         }
+
+        // =========================================================================
+        // 8. WINDOWS BAŞLANGIÇ YÖNETİCİSİ (ETKİNLEŞTİR / DEVRE DIŞI BIRAK / KALDIR)
+        // =========================================================================
+
+        private const string DisabledStartupRegKey = @"Software\WinoxIT\DisabledStartup";
+
+        public static Task<List<StartupItemModel>> GetStartupItemsAsync()
+        {
+            return Task.Run(() =>
+            {
+                var list = new List<StartupItemModel>();
+
+                // 1. HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+                try
+                {
+                    using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                    if (key != null)
+                    {
+                        foreach (var name in key.GetValueNames())
+                        {
+                            var cmd = key.GetValue(name)?.ToString() ?? "";
+                            list.Add(new StartupItemModel
+                            {
+                                Name = name,
+                                Command = cmd,
+                                Location = @"HKCU\...\CurrentVersion\Run",
+                                Status = "🟢 Etkin",
+                                IsEnabled = true,
+                                Scope = "HKCU"
+                            });
+                        }
+                    }
+                }
+                catch { }
+
+                // 2. HKLM\Software\Microsoft\Windows\CurrentVersion\Run
+                try
+                {
+                    using var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                    if (key != null)
+                    {
+                        foreach (var name in key.GetValueNames())
+                        {
+                            var cmd = key.GetValue(name)?.ToString() ?? "";
+                            list.Add(new StartupItemModel
+                            {
+                                Name = name,
+                                Command = cmd,
+                                Location = @"HKLM\...\CurrentVersion\Run",
+                                Status = "🟢 Etkin",
+                                IsEnabled = true,
+                                Scope = "HKLM"
+                            });
+                        }
+                    }
+                }
+                catch { }
+
+                // 3. HKLM WOW6432Node
+                try
+                {
+                    using var key = Registry.LocalMachine.OpenSubKey(@"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Run");
+                    if (key != null)
+                    {
+                        foreach (var name in key.GetValueNames())
+                        {
+                            var cmd = key.GetValue(name)?.ToString() ?? "";
+                            if (!list.Any(x => x.Name == name))
+                            {
+                                list.Add(new StartupItemModel
+                                {
+                                    Name = name,
+                                    Command = cmd,
+                                    Location = @"HKLM\WOW6432Node\...\Run",
+                                    Status = "🟢 Etkin",
+                                    IsEnabled = true,
+                                    Scope = "HKLM"
+                                });
+                            }
+                        }
+                    }
+                }
+                catch { }
+
+                // 4. Disabled items in HKCU\Software\WinoxIT\DisabledStartup
+                try
+                {
+                    using var key = Registry.CurrentUser.OpenSubKey(DisabledStartupRegKey);
+                    if (key != null)
+                    {
+                        foreach (var name in key.GetValueNames())
+                        {
+                            var raw = key.GetValue(name)?.ToString() ?? "";
+                            string scope = "HKCU";
+                            string cmd = raw;
+                            if (raw.Contains("|||"))
+                            {
+                                var parts = raw.Split(new[] { "|||" }, 2, StringSplitOptions.None);
+                                scope = parts[0];
+                                cmd = parts[1];
+                            }
+
+                            list.Add(new StartupItemModel
+                            {
+                                Name = name,
+                                Command = cmd,
+                                Location = scope == "HKLM" ? @"HKLM (Devre Dışı)" : @"HKCU (Devre Dışı)",
+                                Status = "⚪ Devre Dışı",
+                                IsEnabled = false,
+                                Scope = scope
+                            });
+                        }
+                    }
+                }
+                catch { }
+
+                return list;
+            });
+        }
+
+        public static Task<(bool Success, string Message)> DisableStartupItemAsync(StartupItemModel item)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    if (!item.IsEnabled) return (true, "Öğe zaten devre dışı.");
+
+                    // 1. Save to DisabledStartup
+                    using (var dKey = Registry.CurrentUser.CreateSubKey(DisabledStartupRegKey))
+                    {
+                        if (dKey == null) return (false, "WinoxIT devre dışı kayıt defteri anahtarı açılamadı.");
+                        dKey.SetValue(item.Name, $"{item.Scope}|||{item.Command}");
+                    }
+
+                    // 2. Remove from active Run key
+                    if (item.Scope == "HKLM")
+                    {
+                        using var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                        key?.DeleteValue(item.Name, false);
+                    }
+                    else
+                    {
+                        using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                        key?.DeleteValue(item.Name, false);
+                    }
+
+                    return (true, $"'{item.Name}' başlangıç öğesi başarıyla devre dışı bırakıldı.");
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"Hata: {ex.Message}");
+                }
+            });
+        }
+
+        public static Task<(bool Success, string Message)> EnableStartupItemAsync(StartupItemModel item)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    if (item.IsEnabled) return (true, "Öğe zaten etkin.");
+
+                    // 1. Put back to active Run key
+                    if (item.Scope == "HKLM")
+                    {
+                        using var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                        if (key != null)
+                        {
+                            key.SetValue(item.Name, item.Command);
+                        }
+                        else
+                        {
+                            // fallback to HKCU if not admin
+                            using var uKey = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                            uKey?.SetValue(item.Name, item.Command);
+                        }
+                    }
+                    else
+                    {
+                        using var key = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                        key?.SetValue(item.Name, item.Command);
+                    }
+
+                    // 2. Remove from DisabledStartup
+                    using (var dKey = Registry.CurrentUser.OpenSubKey(DisabledStartupRegKey, true))
+                    {
+                        dKey?.DeleteValue(item.Name, false);
+                    }
+
+                    return (true, $"'{item.Name}' başlangıç öğesi başarıyla yeniden etkinleştirildi.");
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"Hata: {ex.Message}");
+                }
+            });
+        }
+
+        public static Task<(bool Success, string Message)> RemoveStartupItemAsync(StartupItemModel item)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    // Remove from Run keys
+                    try
+                    {
+                        using var uKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                        uKey?.DeleteValue(item.Name, false);
+                    }
+                    catch { }
+
+                    try
+                    {
+                        using var mKey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                        mKey?.DeleteValue(item.Name, false);
+                    }
+                    catch { }
+
+                    // Remove from Disabled store
+                    try
+                    {
+                        using var dKey = Registry.CurrentUser.OpenSubKey(DisabledStartupRegKey, true);
+                        dKey?.DeleteValue(item.Name, false);
+                    }
+                    catch { }
+
+                    return (true, $"'{item.Name}' başlangıç kaydı sistemden tamamen silindi.");
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"Hata: {ex.Message}");
+                }
+            });
+        }
+    }
+
+    public class LocalNetworkAdapterItem
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string InterfaceType { get; set; } = string.Empty;
+        public string IpAddress { get; set; } = string.Empty;
+        public string SubnetMask { get; set; } = string.Empty;
+        public string Gateway { get; set; } = string.Empty;
+        public string MacAddress { get; set; } = string.Empty;
+        public string Speed { get; set; } = string.Empty;
+        public string SubnetRangeStart { get; set; } = string.Empty;
+        public string SubnetRangeEnd { get; set; } = string.Empty;
+        public string DisplayText => $"[{InterfaceType}] {Name} ({IpAddress}) - {Speed}";
+    }
+
+    public class LanHostNode
+    {
+        public string IPAddress { get; set; } = string.Empty;
+        public string Hostname { get; set; } = string.Empty;
+        public string MACAddress { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string StatusCode { get; set; } = string.Empty; // Online, Firewall, Idle
+        public string Latency { get; set; } = string.Empty;
+        public string DeviceType { get; set; } = string.Empty;
+        public bool IsOnline { get; set; }
+    }
+
+    public class StartupItemModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Command { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public string Status { get; set; } = "🟢 Etkin";
+        public bool IsEnabled { get; set; } = true;
+        public string Scope { get; set; } = "HKCU";
     }
 
     public class LanFleetNode
